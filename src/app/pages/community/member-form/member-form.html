@@ -1,0 +1,183 @@
+<div class="member-form">
+  <div class="form-header">
+    <h2>{{ isEditMode ? 'עריכת חבר' : 'הוסף חבר חדש' }}</h2>
+  </div>
+
+  <form (ngSubmit)="onSubmit()">
+    <!-- Personal Info -->
+    <div class="form-section">
+      <h3>פרטים אישיים</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">שם פרטי *</label>
+          <input type="text" id="firstName" [(ngModel)]="member.firstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">שם משפחה *</label>
+          <input type="text" id="lastName" [(ngModel)]="member.lastName" name="lastName" required>
+        </div>
+        <div class="form-group">
+          <label for="title">תואר</label>
+          <input type="text" id="title" [(ngModel)]="member.title" name="title">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>מגדר</label>
+          <app-custom-select [options]="genderOptions" [(value)]="member.gender"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label for="gregorianBirthDate">תאריך לידה (לועזי)</label>
+          <input type="date" id="gregorianBirthDate" [(ngModel)]="member.gregorianBirthDate" name="gregorianBirthDate">
+        </div>
+        <div class="form-group">
+          <label for="hebrewBirthDate">תאריך לידה (עברי)</label>
+          <input type="text" id="hebrewBirthDate" [(ngModel)]="member.hebrewBirthDate" name="hebrewBirthDate">
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="form-section">
+      <h3>פרטי התקשרות</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="mobile">סלולר</label>
+          <input type="tel" id="mobile" [(ngModel)]="member.mobile" name="mobile">
+        </div>
+        <div class="form-group">
+          <label for="phone">טלפון</label>
+          <input type="tel" id="phone" [(ngModel)]="member.phone" name="phone">
+        </div>
+        <div class="form-group">
+          <label for="email">אימייל</label>
+          <input type="email" id="email" [(ngModel)]="member.email" name="email">
+        </div>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="form-section">
+      <h3>כתובת</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="address">כתובת</label>
+          <input type="text" id="address" [(ngModel)]="member.address" name="address">
+        </div>
+        <div class="form-group">
+          <label for="address2">כתובת 2</label>
+          <input type="text" id="address2" [(ngModel)]="member.address2" name="address2">
+        </div>
+        <div class="form-group">
+          <label for="city">עיר</label>
+          <input type="text" id="city" [(ngModel)]="member.city" name="city">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="zipcode">מיקוד</label>
+          <input type="text" id="zipcode" [(ngModel)]="member.zipcode" name="zipcode">
+        </div>
+        <div class="form-group">
+          <label for="country">מדינה</label>
+          <input type="text" id="country" [(ngModel)]="member.country" name="country">
+        </div>
+        <div class="form-group"></div>
+      </div>
+    </div>
+
+    <!-- Membership -->
+    <div class="form-section">
+      <h3>פרטי חברות</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>סוג חבר</label>
+          <app-custom-select [options]="typeOptions" [(value)]="member.type"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label for="memberNumber">מספר חבר</label>
+          <input type="text" id="memberNumber" [(ngModel)]="member.memberNumber" name="memberNumber">
+        </div>
+        <div class="form-group">
+          <label for="tag">תגית</label>
+          <input type="text" id="tag" [(ngModel)]="member.tag" name="tag">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" [(ngModel)]="member.hasWebsiteAccount" name="hasWebsiteAccount">
+            יש חשבון באתר
+          </label>
+        </div>
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" [(ngModel)]="member.shouldMail" name="shouldMail">
+            לשלוח דואר
+          </label>
+        </div>
+        <div class="form-group"></div>
+      </div>
+    </div>
+
+    <!-- Contact Person -->
+    <div class="form-section">
+      <h3>איש קשר</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="contactPerson">שם איש קשר</label>
+          <input type="text" id="contactPerson" [(ngModel)]="member.contactPerson" name="contactPerson">
+        </div>
+        <div class="form-group">
+          <label>סוג איש קשר</label>
+          <app-custom-select [options]="contactPersonTypeOptions" [(value)]="member.contactPersonType"></app-custom-select>
+        </div>
+        <div class="form-group"></div>
+      </div>
+    </div>
+
+    <!-- Dates -->
+    <div class="form-section">
+      <h3>תאריכים</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gregorianWeddingDate">תאריך חתונה (לועזי)</label>
+          <input type="date" id="gregorianWeddingDate" [(ngModel)]="member.gregorianWeddingDate" name="gregorianWeddingDate">
+        </div>
+        <div class="form-group">
+          <label for="hebrewWeddingDate">תאריך חתונה (עברי)</label>
+          <input type="text" id="hebrewWeddingDate" [(ngModel)]="member.hebrewWeddingDate" name="hebrewWeddingDate">
+        </div>
+        <div class="form-group"></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gregorianDeathDate">תאריך פטירה (לועזי)</label>
+          <input type="date" id="gregorianDeathDate" [(ngModel)]="member.gregorianDeathDate" name="gregorianDeathDate">
+        </div>
+        <div class="form-group">
+          <label for="hebrewDeathDate">תאריך פטירה (עברי)</label>
+          <input type="text" id="hebrewDeathDate" [(ngModel)]="member.hebrewDeathDate" name="hebrewDeathDate">
+        </div>
+        <div class="form-group"></div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-outline" (click)="onCancel()">ביטול</button>
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'שומר...' : 'שמור' }}
+      </button>
+    </div>
+  </form>
+</div>

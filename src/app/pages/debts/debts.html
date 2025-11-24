@@ -1,0 +1,118 @@
+<div class="debts">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-text">
+      <h1>חובות</h1>
+      <p>כאן תמצא את החובות והנדרים</p>
+    </div>
+    <button class="btn-primary" (click)="navigateToCreate()">
+      <span>⊕</span>
+      צור חוב חדש
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <div class="tabs">
+      @for (tab of tabs; track tab.id) {
+        <button
+          class="tab"
+          [class.active]="activeTab === tab.id"
+          (click)="onTabClick(tab.id)">
+          {{ tab.label }}
+          <span class="count">({{ tab.count }})</span>
+        </button>
+      }
+    </div>
+    <button class="filter-btn">
+      <i class="fa-solid fa-filter"></i>
+      פילטרים נוספים
+    </button>
+  </div>
+
+  <!-- Filters Row -->
+  <div class="filters-row">
+    <div class="filter-dropdowns">
+      <app-custom-select
+        [options]="displayRangeOptions"
+        [(value)]="displayRange"
+        prefix="הצג חובות:">
+      </app-custom-select>
+      <app-custom-select
+        [options]="sortOptions"
+        [(value)]="sortBy"
+        prefix="מיין לפי:">
+      </app-custom-select>
+    </div>
+    <div class="filter-checkbox">
+      <label>
+        <input type="checkbox" [(ngModel)]="showAutoPaymentOnly">
+        הצג חובות עם אפשרות לתשלום אוטומטי בלבד
+      </label>
+    </div>
+  </div>
+
+  <!-- Actions Row -->
+  <div class="table-header">
+    <div class="bulk-actions">
+      <span>פעולות קולקטיביות:</span>
+      <button class="action-icon" (click)="onBulkAction('message')"><i class="fa-regular fa-comment"></i></button>
+      <button class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
+      <button class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
+      <button class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
+    </div>
+    <div class="export-action">
+      <button class="btn-outline">ייצא לקובץ</button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <app-data-table
+    [isLoading]="isLoading"
+    [columns]="tableColumns"
+    [data]="debts"
+    [totalItems]="totalDebts"
+    [currentPage]="currentPage"
+    [itemsPerPage]="itemsPerPage"
+    [totalPages]="totalPages"
+    (pageChange)="onPageChange($event)">
+    @for (debt of debts; track debt.id; let i = $index) {
+      <tr>
+        <td class="col-number">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+        <td class="col-checkbox">
+          <input type="checkbox"
+                 [checked]="isDebtSelected(debt.id)"
+                 (change)="toggleDebtSelection(debt.id, $event)">
+        </td>
+        <td>{{ debt.fullName }}</td>
+        <td>
+          <span class="approval-status" [class.approved]="debt.autoPaymentApproved" [class.not-approved]="!debt.autoPaymentApproved">
+            <i class="fa-solid fa-circle"></i>
+            {{ debt.autoPaymentApproved ? 'מאושר' : 'לא מאושר' }}
+          </span>
+        </td>
+        <td>{{ debt.amount }}₪</td>
+        <td>{{ debt.hebrewDate }}</td>
+        <td>{{ debt.gregorianDate }}</td>
+        <td>{{ debt.description }}</td>
+        <td>{{ debt.lastReminder || '--' }}</td>
+        <td>
+          <span class="status-badge" [class.active]="debt.status === 'active'" [class.paid]="debt.status === 'paid'">
+            {{ debt.status === 'active' ? 'חוב פעיל' : 'שולם' }}
+          </span>
+        </td>
+        <td class="col-actions">
+          <button class="row-action"><i class="fa-regular fa-comment"></i></button>
+          <button class="row-action"><i class="fa-regular fa-envelope"></i></button>
+          <button class="row-action"><i class="fa-regular fa-trash-can"></i></button>
+          <button class="row-action" (click)="navigateToEdit(debt)"><i class="fa-solid fa-pencil"></i></button>
+        </td>
+      </tr>
+    }
+  </app-data-table>
+
+  <!-- Footer -->
+  <div class="table-footer">
+    <span>(נמצאו {{ totalDebts }} רשומות, סה"כ סכום החובות בהן הוא: <strong>{{ getTotalAmount() }}₪</strong>)</span>
+  </div>
+</div>

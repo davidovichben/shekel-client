@@ -1,0 +1,12 @@
+@if (isOpen) {
+  <div class="dialog-backdrop" (click)="onBackdropClick($event)">
+    <div class="dialog-content">
+      <h3 class="dialog-title">{{ title }}</h3>
+      <p class="dialog-message">{{ message }}</p>
+      <div class="dialog-actions">
+        <button class="btn-cancel" (click)="onCancel()">{{ cancelText }}</button>
+        <button class="btn-confirm" (click)="onConfirm()">{{ confirmText }}</button>
+      </div>
+    </div>
+  </div>
+}

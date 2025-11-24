@@ -1,0 +1,59 @@
+<div class="debt-form">
+  <div class="form-header">
+    <h2>{{ isEditMode ? 'עריכת חוב' : 'צור חוב חדש' }}</h2>
+  </div>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-section">
+      <h3>פרטי החוב</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fullName">שם מלא *</label>
+          <input type="text" id="fullName" [(ngModel)]="debt.fullName" name="fullName" required>
+        </div>
+        <div class="form-group">
+          <label for="amount">סכום *</label>
+          <input type="number" id="amount" [(ngModel)]="debt.amount" name="amount" required>
+        </div>
+        <div class="form-group">
+          <label>סטטוס</label>
+          <app-custom-select [options]="statusOptions" [(value)]="debt.status"></app-custom-select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="description">תיאור חוב</label>
+          <input type="text" id="description" [(ngModel)]="debt.description" name="description">
+        </div>
+        <div class="form-group">
+          <label for="gregorianDate">תאריך לועזי</label>
+          <input type="date" id="gregorianDate" [(ngModel)]="debt.gregorianDate" name="gregorianDate">
+        </div>
+        <div class="form-group">
+          <label for="hebrewDate">תאריך עברי</label>
+          <input type="text" id="hebrewDate" [(ngModel)]="debt.hebrewDate" name="hebrewDate">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" [(ngModel)]="debt.autoPaymentApproved" name="autoPaymentApproved">
+            אישור תשלום אוטומטי
+          </label>
+        </div>
+        <div class="form-group"></div>
+        <div class="form-group"></div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-outline" (click)="onCancel()">ביטול</button>
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'שומר...' : 'שמור' }}
+      </button>
+    </div>
+  </form>
+</div>

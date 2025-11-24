@@ -1,0 +1,101 @@
+@use '../../../../variables' as *
+
+.data-table-container
+  width: 100%
+
+.table-container
+  background: white
+  border-radius: 8px
+  overflow: hidden
+
+  table
+    width: 100%
+    border-collapse: collapse
+
+  thead
+    background: #f8f9fa
+
+    th
+      padding: 12px 16px
+      text-align: right
+      font-weight: 600
+      font-size: 14px
+      color: $text-dark
+      border-bottom: 1px solid #e0e0e0
+
+  tbody
+    tr
+      &:hover
+        background: #f8f9fa
+
+      &:not(:last-child)
+        border-bottom: 1px solid #f0f0f0
+
+    td
+      padding: 12px 16px
+      font-size: 14px
+
+  .col-number
+    width: 50px
+    text-align: center
+
+  .col-checkbox
+    width: 40px
+    text-align: center
+
+  .col-actions
+    width: 150px
+
+.loading-cell
+  text-align: center
+  padding: 40px !important
+  height: 400px
+  vertical-align: middle
+
+.spinner
+  display: inline-block
+  width: 40px
+  height: 40px
+  border: 3px solid #f3f3f3
+  border-top: 3px solid $btn-primary
+  border-radius: 50%
+  animation: spin 1s linear infinite
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+
+.pagination
+  display: flex
+  justify-content: center
+  align-items: center
+  gap: 8px
+  padding: 16px
+  background: white
+  border-top: 1px solid #e0e0e0
+
+  .page-btn
+    width: 32px
+    height: 32px
+    display: flex
+    align-items: center
+    justify-content: center
+    border: 1px solid #e0e0e0
+    background: white
+    border-radius: 4px
+    cursor: pointer
+    font-size: 14px
+
+    &:hover:not(:disabled)
+      background: #f5f5f5
+
+    &.active
+      background: $btn-primary
+      color: white
+      border-color: $btn-primary
+
+    &:disabled
+      opacity: 0.5
+      cursor: not-allowed

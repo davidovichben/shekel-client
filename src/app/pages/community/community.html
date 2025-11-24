@@ -1,0 +1,105 @@
+<div class="community">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-text">
+      <h1>קהילה</h1>
+      <p>כאן תוכל לצפות, להוסיף, לערוך ולנהל את חברי הקהילה שלך</p>
+    </div>
+    <button class="btn-primary" (click)="navigateToCreate()">
+      <span>⊕</span>
+      הוסף חבר חדש
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <div class="tabs">
+      @for (tab of tabs; track tab.id) {
+        <button
+          class="tab"
+          [class.active]="activeTab === tab.id"
+          (click)="onTabClick(tab.id)">
+          {{ tab.label }}
+          @if (tab.count !== null) {
+            <span class="count">({{ tab.count }})</span>
+          }
+        </button>
+      }
+    </div>
+    <button class="filter-btn">
+      <i class="fa-solid fa-filter"></i>
+      פילטרים נוספים
+    </button>
+  </div>
+
+  <!-- Search and Actions -->
+  <div class="table-header">
+	  <div class="filters">
+		  <div class="search-box">
+			  <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+			  <input type="text" placeholder="חפש חברי קהילה" [(ngModel)]="searchText">
+		  </div>
+		  <app-custom-select
+			  [options]="sortOptions"
+			  [(value)]="sortBy"
+			  prefix="מיין לפי">
+		  </app-custom-select>
+	  </div>
+    <div class="table-actions">
+	    <div class="bulk-actions">
+		    <span>פעולות קולקטיביות:</span>
+		    <button class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
+		    <button class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
+		    <button class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
+	    </div>
+	    <div class="export-action">
+		    <button class="btn-outline">ייצא לקובץ</button>
+	    </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <app-data-table
+    [isLoading]="isLoading"
+    [columns]="tableColumns"
+    [data]="members"
+    [totalItems]="totalMembers"
+    [currentPage]="currentPage"
+    [itemsPerPage]="itemsPerPage"
+    [totalPages]="totalPages"
+    (pageChange)="onPageChange($event)">
+    @for (member of members; track member.id; let i = $index) {
+      <tr>
+        <td class="col-number">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+        <td class="col-checkbox">
+          <input type="checkbox"
+                 [checked]="isMemberSelected(member.id)"
+                 (change)="toggleMemberSelection(member.id, $event)">
+        </td>
+        <td>{{ member.fullName }}</td>
+        <td>{{ getMemberTypeName(member.type) }}</td>
+        <td [class.negative]="+member.balance < 0">{{ member.balance }}₪</td>
+        <td>{{ member.mobile }}</td>
+        <td>{{ member.lastMessageDate || '--' }}</td>
+        <td>
+          <div class="groups">
+            @for (group of member.groups; track group) {
+              <span class="group-tag">{{ group }}</span>
+            }
+          </div>
+        </td>
+        <td class="col-actions">
+          <button class="row-action" (click)="navigateToEdit(member)"><i class="fa-solid fa-pencil"></i></button>
+          <button class="row-action" (click)="openDeleteDialog(member)"><i class="fa-regular fa-trash-can"></i></button>
+          <button class="row-action"><i class="fa-regular fa-clipboard"></i></button>
+          <button class="row-action"><i class="fa-regular fa-comment"></i></button>
+        </td>
+      </tr>
+    }
+  </app-data-table>
+
+  <!-- Footer -->
+  <div class="table-footer">
+    <span>(נמצאו {{ totalMembers }} רשומות, סה"כ יתרות החשבון בהן הוא: <strong>{{ getTotalBalance() }}₪</strong>)</span>
+  </div>
+</div>

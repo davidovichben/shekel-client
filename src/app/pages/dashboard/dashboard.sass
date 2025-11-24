@@ -1,0 +1,342 @@
+@use '../../../variables' as *
+
+.dashboard
+  padding: 1.5rem
+
+// Greeting
+.greeting-section
+  padding: 2rem 1.5rem 1rem
+  text-align: right
+
+  h1
+    margin: 0 0 0.25rem
+    font-size: 1.75rem
+    color: $text-dark
+    font-family: 'OpenSansBold', sans-serif
+
+  p
+    margin: 0
+    color: $text-dark
+    font-size: 1.1rem
+
+// Stats Grid
+.stats-grid
+  display: grid
+  grid-template-columns: repeat(4, 1fr)
+  gap: 1rem
+  padding: 1rem 1.5rem
+
+.stat-card
+  background: $card-bg
+  border-radius: 12px
+  padding: 0.7rem 1rem 0
+  text-align: center
+  box-shadow: none
+
+.stat-icon
+  margin: 0 auto 0.5rem
+  font-size: 1.5rem
+  color: $icon-color
+
+.stat-label
+  font-size: 0.85rem
+  color: #666
+  margin-bottom: 0.5rem
+
+.stat-value
+  font-size: 2rem
+  font-family: 'OpenSansBold', sans-serif
+  color: #333
+  margin-bottom: 0.25rem
+
+.stat-subtitle
+  font-size: 0.75rem
+  color: #999
+  margin-bottom: 1rem
+
+.stat-btn
+  width: 60%
+  padding: 0.75rem 0.5rem
+  background: $btn-primary
+  color: white
+  border: none
+  border-radius: 20px
+  font-size: 0.8rem
+  cursor: pointer
+  transition: all 0.2s
+  position: relative
+  margin-bottom: -50px
+
+  &:hover
+    background: $btn-primary-hover
+
+// Charts Section
+.charts-section
+  display: grid
+  grid-template-columns: 1fr 1fr 1.5fr
+  gap: 1rem
+  padding: 0 1.5rem 1rem
+
+.chart-card
+  background: white
+  border-radius: 12px
+  padding: 1.5rem
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
+
+  h3
+    margin: 0 0 0.25rem
+    font-size: 1rem
+    color: #333
+
+  .chart-subtitle
+    margin: 0 0 1rem
+    font-size: 0.8rem
+    color: #999
+
+// Balance Chart
+.bar-chart
+  display: flex
+  justify-content: center
+  gap: 2rem
+  height: 120px
+  align-items: flex-end
+  margin-bottom: 1rem
+
+  .bar
+    width: 60px
+    border-radius: 4px 4px 0 0
+    display: flex
+    align-items: flex-start
+    justify-content: center
+    padding-top: 0.5rem
+
+    span
+      font-size: 0.75rem
+      font-family: 'OpenSansSemi', sans-serif
+
+    &.income
+      background: #1976d2
+
+      span
+        color: white
+
+    &.expense
+      background: #e0e0e0
+
+      span
+        color: #333
+
+.chart-legend
+  display: flex
+  justify-content: center
+  gap: 1.5rem
+  font-size: 0.8rem
+  margin-bottom: 0.5rem
+
+  .dot
+    display: inline-block
+    width: 10px
+    height: 10px
+    border-radius: 50%
+    margin-left: 0.5rem
+
+    &.income
+      background: #1976d2
+
+    &.expense
+      background: #e0e0e0
+
+.balance-result
+  text-align: center
+  font-size: 0.85rem
+  color: #666
+
+// Pie Chart
+.pie-chart-container
+  display: flex
+  align-items: center
+  justify-content: space-around
+
+.pie-chart
+  width: 100px
+  height: 100px
+  border-radius: 50%
+  background: conic-gradient(#e0e0e0 0% 40%, #bdbdbd 40% 70%, #424242 70% 100%)
+  display: flex
+  align-items: center
+  justify-content: center
+  position: relative
+
+  &::before
+    content: ''
+    position: absolute
+    width: 60px
+    height: 60px
+    background: white
+    border-radius: 50%
+
+  .pie-value
+    position: relative
+    font-family: 'OpenSansBold', sans-serif
+    font-size: 0.9rem
+
+.pie-legend
+  display: flex
+  flex-direction: column
+  gap: 0.5rem
+  font-size: 0.8rem
+
+  .dot
+    display: inline-block
+    width: 10px
+    height: 10px
+    border-radius: 2px
+    margin-left: 0.5rem
+
+    &.gray
+      background: #e0e0e0
+
+    &.light-gray
+      background: #bdbdbd
+
+    &.dark
+      background: #424242
+
+// Review Chart
+.toggle-container
+  display: flex
+  align-items: center
+  justify-content: space-between
+  margin-bottom: 1rem
+  font-size: 0.8rem
+  color: #666
+
+.monthly-bars
+  display: flex
+  justify-content: space-between
+  align-items: flex-end
+  height: 120px
+
+.month-bar
+  display: flex
+  flex-direction: column
+  align-items: center
+  flex: 1
+
+  .bar-fill
+    width: 30px
+    background: linear-gradient(to top, #f5f5f5, #e0e0e0)
+    border-radius: 4px 4px 0 0
+
+  .amount
+    font-size: 0.65rem
+    color: #666
+    margin-top: 0.5rem
+
+  .month
+    font-size: 0.65rem
+    color: #999
+
+// Bottom Section
+.bottom-section
+  display: grid
+  grid-template-columns: 300px 1fr
+  gap: 1rem
+  padding: 0 1.5rem 1.5rem
+
+// Quick Reports
+.quick-reports
+  background: white
+  border-radius: 12px
+  padding: 1.5rem
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
+
+  h3
+    margin: 0 0 0.25rem
+    font-size: 1rem
+    color: #333
+
+  > p
+    margin: 0 0 1rem
+    font-size: 0.8rem
+    color: #999
+
+.report-item
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 0.75rem 0
+  border-bottom: 1px solid #f0f0f0
+
+  &:last-child
+    border-bottom: none
+
+  span
+    font-size: 0.85rem
+    color: #333
+
+.report-btn
+  padding: 0.4rem 0.8rem
+  background: #fff3e0
+  color: #e65100
+  border: none
+  border-radius: 6px
+  font-size: 0.75rem
+  cursor: pointer
+
+// Recent Debts
+.recent-debts
+  background: white
+  border-radius: 12px
+  padding: 1.5rem
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
+
+  h3
+    margin: 0 0 0.25rem
+    font-size: 1rem
+    color: #333
+
+  > p
+    margin: 0 0 1rem
+    font-size: 0.8rem
+    color: #999
+
+  table
+    width: 100%
+    border-collapse: collapse
+
+  th, td
+    padding: 0.75rem
+    text-align: right
+    font-size: 0.85rem
+
+  th
+    color: #666
+    font-weight: normal
+    border-bottom: 1px solid #e0e0e0
+
+  td
+    border-bottom: 1px solid #f0f0f0
+
+  .status
+    padding: 0.25rem 0.5rem
+    border-radius: 4px
+    font-size: 0.75rem
+
+    &.paid
+      background: #e8f5e9
+      color: #43a047
+
+    &.unpaid
+      background: #ffebee
+      color: #e53935
+
+.action-btn
+  padding: 0.4rem 0.8rem
+  background: #e3f2fd
+  color: #1976d2
+  border: none
+  border-radius: 6px
+  font-size: 0.75rem
+  cursor: pointer
+  white-space: nowrap

@@ -1,0 +1,205 @@
+<div class="dashboard">
+  <!-- Greeting -->
+  <div class="greeting-section">
+    <h1>בוקר טוב מר יוסף חיים,</h1>
+    <p>לפניך סקירה כללית על מצב בית הכנסת לחודש תשרי תשפ״ה</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid mb-5">
+    <div class="stat-card">
+      <div class="stat-icon">⤴</div>
+      <div class="stat-label">סכום תרומות החודש</div>
+      <div class="stat-value">₪18,450</div>
+      <div class="stat-subtitle">-5% מהחודש שעבר</div>
+      <button class="stat-btn">הוסף תרומה</button>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">↙</div>
+      <div class="stat-label">סכום הוצאות החודש</div>
+      <div class="stat-value">₪12,104</div>
+      <div class="stat-subtitle">+2% מהחודש שעבר</div>
+      <button class="stat-btn">הוסף הוצאה</button>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">△</div>
+      <div class="stat-label">סכום חובות פתוחים</div>
+      <div class="stat-value">₪5,450</div>
+      <div class="stat-subtitle">18 חובות פעילים</div>
+      <button class="stat-btn">שלח דרישת תשלום</button>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">₪</div>
+      <div class="stat-label">מאזן כספי מתחילת החודש</div>
+      <div class="stat-value">₪234</div>
+      <div class="stat-subtitle">הכנסות מחות הוצאות</div>
+      <button class="stat-btn">הפק דוח</button>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <div class="chart-card balance-chart">
+      <h3>מאזן החודש אחרון</h3>
+      <p class="chart-subtitle">הכנסות מול הוצאות בחודש הקודם (ינואר)</p>
+      <div class="chart-placeholder">
+        <div class="bar-chart">
+          <div class="bar income h-4/5">
+            <span>3118₪</span>
+          </div>
+          <div class="bar expense h-3/5">
+            <span>1487₪</span>
+          </div>
+        </div>
+        <div class="chart-legend">
+          <span><span class="dot income"></span> הכנסות</span>
+          <span><span class="dot expense"></span> הוצאות</span>
+        </div>
+        <div class="balance-result">מאזן: 1631 ש״ח ביתרה</div>
+      </div>
+    </div>
+
+    <div class="chart-card pie-chart-card">
+      <h3>התפלגות החובות לבית הכנסת</h3>
+      <p class="chart-subtitle">חובות ידועים שהצטברו עד היום בשקלים</p>
+      <div class="pie-chart-container">
+        <div class="pie-chart">
+          <span class="pie-value">₪2549</span>
+        </div>
+        <div class="pie-legend">
+          <span><span class="dot gray"></span> נדרים</span>
+          <span><span class="dot light-gray"></span> עליות</span>
+          <span><span class="dot dark"></span> דמי חבר</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card review-chart">
+      <h3>סקירה חצי שנתית:</h3>
+      <div class="toggle-container">
+        <span>מאזן הוצאות והכנסות</span>
+        <label class="toggle">
+          <input type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="monthly-bars">
+        <div class="month-bar">
+          <div class="bar-fill h-[70%]"></div>
+          <span class="amount">35,874</span>
+          <span class="month">01/25</span>
+        </div>
+        <div class="month-bar">
+          <div class="bar-fill h-[70%]"></div>
+          <span class="amount">35,874</span>
+          <span class="month">02/25</span>
+        </div>
+        <div class="month-bar">
+          <div class="bar-fill h-[70%]"></div>
+          <span class="amount">35,874</span>
+          <span class="month">03/25</span>
+        </div>
+        <div class="month-bar">
+          <div class="bar-fill h-[70%]"></div>
+          <span class="amount">35,874</span>
+          <span class="month">04/25</span>
+        </div>
+        <div class="month-bar">
+          <div class="bar-fill h-[70%]"></div>
+          <span class="amount">35,874</span>
+          <span class="month">05/25</span>
+        </div>
+        <div class="month-bar">
+          <div class="bar-fill h-[70%]"></div>
+          <span class="amount">35,874</span>
+          <span class="month">06/25</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="bottom-section">
+    <!-- Quick Reports -->
+    <div class="quick-reports">
+      <h3>דוחות שימושיים</h3>
+      <p>דוחות שימושיים מוכנים להפקה מהירה בלחיצה</p>
+      <div class="report-item">
+        <span>דוח הוצאות לתקופה</span>
+        <button class="report-btn">הפק דוח 📄</button>
+      </div>
+      <div class="report-item">
+        <span>דוח תרומות והכנסות</span>
+        <button class="report-btn">הפק דוח 📄</button>
+      </div>
+      <div class="report-item">
+        <span>דוח חובות הקהילה</span>
+        <button class="report-btn">הפק דוח 📄</button>
+      </div>
+      <div class="report-item">
+        <span>דוח מאזן כספי</span>
+        <button class="report-btn">הפק דוח 📄</button>
+      </div>
+    </div>
+
+    <!-- Recent Debts Table -->
+    <div class="recent-debts">
+      <h3>חובות אחרונים</h3>
+      <p>כל החובות האחרונים של חברי הקהילה לבית הכנסת</p>
+      <table>
+        <thead>
+          <tr>
+            <th>שם מלא</th>
+            <th>תיאור חוב</th>
+            <th>סכום</th>
+            <th>סטטוס</th>
+            <th>תאריך עברי</th>
+            <th>תאריך לועזי</th>
+            <th>פעולה</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>דוד בן יאיר חזן</td>
+            <td>עלייה לתורה</td>
+            <td>₪300</td>
+            <td><span class="status unpaid">לא שולם</span></td>
+            <td>כה' אב תשפ״ה</td>
+            <td>11/05/2025</td>
+            <td><button class="action-btn">שלח תזכורת 📧</button></td>
+          </tr>
+          <tr>
+            <td>מאיר הכהן</td>
+            <td>נדר שבת</td>
+            <td>₪500</td>
+            <td><span class="status unpaid">לא שולם</span></td>
+            <td>ג' אלול תשפ״ה</td>
+            <td>15/06/2025</td>
+            <td><button class="action-btn">שלח תזכורת 📧</button></td>
+          </tr>
+          <tr>
+            <td>ידידיה לוי</td>
+            <td>דמי חבר</td>
+            <td>₪18</td>
+            <td><span class="status paid">שולם</span></td>
+            <td>ז' תשרי תשפ״ה</td>
+            <td>10/06/2025</td>
+            <td><button class="action-btn">שלח חשבונית 📄</button></td>
+          </tr>
+          <tr>
+            <td>נועם שמר</td>
+            <td>הוצאות ספר תורה</td>
+            <td>₪900</td>
+            <td><span class="status unpaid">לא שולם</span></td>
+            <td>יד' תשרי תשפ״ה</td>
+            <td>26/10/2025</td>
+            <td><button class="action-btn">שלח תזכורת 📧</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
