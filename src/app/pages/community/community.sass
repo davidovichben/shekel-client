@@ -1,5 +1,8 @@
+@use '../../../variables' as *
+
 .community
   padding: 1.5rem
+  background: white
 
 .add-member-btn
   margin-bottom: 1.5rem
@@ -8,13 +11,35 @@
   display: flex
   align-items: center
   gap: 0.5rem
-  padding: 0.5rem 1rem
-  background: none
-  border: 1px solid #e0e0e0
-  border-radius: 6px
+  padding: 0.4rem 0.75rem
+  background: white
+  border: 1px solid #d1d5dc
+  border-radius: 20px
   font-size: 0.85rem
-  color: #666
+  color: #4a5565
   cursor: pointer
+  position: relative
+  font-family: 'Heebo', 'OpenSans', sans-serif
+  white-space: nowrap
+
+  .filter-icon-wrapper
+    position: relative
+    display: flex
+    align-items: center
+
+    i
+      color: #4a5565
+
+    &::after
+      content: ''
+      position: absolute
+      top: -4px
+      left: 8px
+      width: 6px
+      height: 6px
+      background: #e53935
+      border-radius: 50%
+      border: 1.5px solid white
 
 .groups
   display: flex
@@ -57,3 +82,115 @@
     transform: rotate(0deg)
   100%
     transform: rotate(360deg)
+
+@keyframes slideDown
+  from
+    max-height: 0
+    opacity: 0
+    padding-top: 0
+    padding-bottom: 0
+    margin-bottom: 0
+  to
+    max-height: 500px
+    opacity: 1
+    padding-top: 1.5rem
+    padding-bottom: 1.5rem
+    margin-bottom: 1rem
+
+// Additional Filters
+.additional-filters
+  background: white
+  padding: 1.5rem
+  margin-bottom: 1rem
+  border-radius: 8px
+  border: 1px solid #d1d5dc
+  overflow: hidden
+  animation: slideDown 0.3s ease-out
+
+.filters-row
+  display: flex
+  align-items: flex-end
+  gap: 2rem
+  justify-content: space-between
+
+.filters-content
+  display: flex
+  gap: 1rem
+  flex: 1
+  max-width: 900px
+
+.filter-group
+  flex: 0 0 200px
+  display: flex
+  flex-direction: column
+  gap: 0.4rem
+
+  label
+    font-size: 0.8rem
+    color: #4a5565
+    font-family: 'Heebo', 'OpenSans', sans-serif
+
+  input[type="text"]
+    padding: 0.4rem 0.6rem
+    border: 1px solid #d1d5dc
+    border-radius: 6px
+    font-size: 0.8rem
+    background: white
+    color: #4a5565
+    font-family: 'Heebo', 'OpenSans', sans-serif
+    direction: rtl
+    width: 100%
+    box-sizing: border-box
+
+    &:focus
+      outline: none
+      border-color: #0b1a51
+
+    &::placeholder
+      color: #999
+
+  app-custom-select
+    width: 100%
+
+.filter-actions
+  display: flex
+  gap: 0.75rem
+  align-items: center
+
+.btn-save-filters
+  padding: 0.5rem 1.25rem
+  background: #d1d5dc
+  color: $text-primary
+  border: none
+  border-radius: 8px
+  font-size: 0.85rem
+  cursor: pointer
+  font-family: 'Heebo', 'OpenSans', sans-serif
+  white-space: nowrap
+
+  &:hover
+    background: #c4c9d0
+
+  &:disabled
+    background: #d1d5dc
+    color: $text-primary
+    cursor: not-allowed
+
+.btn-clear-filters
+  padding: 0.5rem 1.25rem
+  background: #f48c8c
+  color: white
+  border: none
+  border-radius: 8px
+  font-size: 0.85rem
+  cursor: pointer
+  font-family: 'Heebo', 'OpenSans', sans-serif
+  white-space: nowrap
+
+  &:hover:not(:disabled)
+    background: #f07575
+
+  &:disabled
+    background: #d1d5dc
+    color: white
+    cursor: not-allowed

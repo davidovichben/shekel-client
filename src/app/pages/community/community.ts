@@ -58,6 +58,17 @@ export class CommunityComponent implements OnInit {
   totalPages = 1;
   isLoading = false;
   selectedMembers: Set<string> = new Set();
+  showAdditionalFilters = false;
+
+  // Filter values
+  filterMemberType = '';
+  filterGroup = '';
+  filterHasDebt = '';
+
+  debtOptions = [
+    { value: 'yes', label: 'כן' },
+    { value: 'no', label: 'לא' }
+  ];
 
   sortBy = 'fullName';
   sortOptions = [
@@ -107,6 +118,17 @@ export class CommunityComponent implements OnInit {
 
     if (this.activeTab !== 'all') {
       params.type = this.activeTab;
+    }
+
+    // Add filter parameters
+    if (this.filterMemberType) {
+      params.memberType = this.filterMemberType;
+    }
+    if (this.filterGroup) {
+      params.group = this.filterGroup;
+    }
+    if (this.filterHasDebt) {
+      params.hasDebt = this.filterHasDebt;
     }
 
     this.isLoading = true;
@@ -235,5 +257,28 @@ export class CommunityComponent implements OnInit {
 
   sendMessage(member: Member): void {
     console.log('Send message to:', member.id);
+  }
+
+  toggleAdditionalFilters(): void {
+    this.showAdditionalFilters = !this.showAdditionalFilters;
+  }
+
+  saveFilters(): void {
+    // Apply filters and reload members
+    this.currentPage = 1;
+    this.loadMembers();
+    this.showAdditionalFilters = false;
+  }
+
+  clearFilters(): void {
+    this.filterMemberType = '';
+    this.filterGroup = '';
+    this.filterHasDebt = '';
+    this.currentPage = 1;
+    this.loadMembers();
+  }
+
+  areFiltersEmpty(): boolean {
+    return !this.filterMemberType && !this.filterGroup && !this.filterHasDebt;
   }
 }

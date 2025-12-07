@@ -6,7 +6,7 @@
       <p>כאן תוכל לצפות, להוסיף, לערוך ולנהל את חברי הקהילה שלך</p>
     </div>
     <button class="btn-primary" (click)="navigateToCreate()">
-      <span>⊕</span>
+      <img src="/assets/icons/plus-icon.svg" alt="+" class="btn-icon" />
       הוסף חבר חדש
     </button>
   </div>
@@ -26,11 +26,43 @@
         </button>
       }
     </div>
-    <button class="filter-btn">
-      <i class="fa-solid fa-filter"></i>
+    <button class="filter-btn" (click)="toggleAdditionalFilters()">
+      <span class="filter-icon-wrapper">
+        <i class="fa-solid fa-filter"></i>
+      </span>
       פילטרים נוספים
     </button>
   </div>
+
+  <!-- Additional Filters -->
+  @if (showAdditionalFilters) {
+    <div class="additional-filters">
+      <div class="filters-row">
+        <div class="filters-content">
+          <div class="filter-group">
+            <label>סוג חבר:</label>
+            <input type="text" [(ngModel)]="filterMemberType" placeholder="זבולון">
+          </div>
+          <div class="filter-group">
+            <label>נמצא בקבוצה:</label>
+            <input type="text" [(ngModel)]="filterGroup" placeholder="זבולון">
+          </div>
+          <div class="filter-group">
+            <label>בעל חוב:</label>
+            <app-custom-select
+              [options]="debtOptions"
+              [(value)]="filterHasDebt"
+              placeholder="כן">
+            </app-custom-select>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button class="btn-save-filters" (click)="saveFilters()">שמור פילטרים</button>
+          <button class="btn-clear-filters" (click)="clearFilters()" [disabled]="areFiltersEmpty()">נקה</button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- Search and Actions -->
   <div class="table-header">

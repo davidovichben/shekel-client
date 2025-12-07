@@ -2,15 +2,15 @@
 
 @font-face
   font-family: 'OpenSans'
-  src: url('assets/fonts/OpenSans-Regular.ttf') format('truetype')
+  src: url('/assets/fonts/OpenSans-Regular.ttf') format('truetype')
 
 @font-face
   font-family: 'OpenSansSemi'
-  src: url('assets/fonts/OpenSans-SemiBold.ttf') format('truetype')
+  src: url('/assets/fonts/OpenSans-SemiBold.ttf') format('truetype')
 
 @font-face
   font-family: 'OpenSansBold'
-  src: url('assets/fonts/OpenSans-Bold.ttf') format('truetype')
+  src: url('/assets/fonts/OpenSans-Bold.ttf') format('truetype')
 
 html, body
   margin: 0
@@ -19,8 +19,11 @@ html, body
   height: 100%
   overflow-x: hidden
 
+*
+  font-family: 'Heebo', 'OpenSans', sans-serif
+
 body
-  font-family: 'OpenSans', sans-serif
+  font-family: 'Heebo', 'OpenSans', sans-serif
   direction: rtl
 
 // Global checkbox and radio styling
@@ -65,12 +68,13 @@ input[type="radio"]
   h1
     margin: 0 0 0.25rem
     font-size: 1.5rem
-    color: $text-dark
-    font-family: 'OpenSansBold', sans-serif
+    color: #0b1a51
+    font-family: 'Heebo', 'OpenSansBold', sans-serif
+    font-weight: 700
 
   p
     margin: 0
-    color: $text-dark
+    color: #6b7280
     font-size: 0.95rem
 
 // Shared Buttons
@@ -82,12 +86,19 @@ input[type="radio"]
   background: $btn-primary
   color: white
   border: none
-  border-radius: 20px
+  border-radius: 8px
   font-size: 0.9rem
   cursor: pointer
+  font-family: 'Heebo', 'OpenSans', sans-serif
 
   &:hover
     background: $btn-primary-hover
+
+  .btn-icon
+    display: block
+    width: 19px
+    height: 19px
+    flex-shrink: 0
 
 .btn-outline
   padding: 0.5rem 1rem
@@ -121,6 +132,10 @@ input[type="radio"]
   cursor: pointer
   border-bottom: 2px solid transparent
   transition: all 0.2s
+  white-space: nowrap
+  display: flex
+  align-items: center
+  gap: 0.25rem
 
   &:hover
     color: #333
