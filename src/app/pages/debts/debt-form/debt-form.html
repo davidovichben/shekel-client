@@ -1,59 +1,87 @@
-<div class="debt-form">
-  <div class="form-header">
-    <h2>{{ isEditMode ? 'עריכת חוב' : 'צור חוב חדש' }}</h2>
-  </div>
-
-  <form (ngSubmit)="onSubmit()">
-    <div class="form-section">
-      <h3>פרטי החוב</h3>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="fullName">שם מלא *</label>
-          <input type="text" id="fullName" [(ngModel)]="debt.fullName" name="fullName" required>
-        </div>
-        <div class="form-group">
-          <label for="amount">סכום *</label>
-          <input type="number" id="amount" [(ngModel)]="debt.amount" name="amount" required>
-        </div>
-        <div class="form-group">
-          <label>סטטוס</label>
-          <app-custom-select [options]="statusOptions" [(value)]="debt.status"></app-custom-select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="description">תיאור חוב</label>
-          <input type="text" id="description" [(ngModel)]="debt.description" name="description">
-        </div>
-        <div class="form-group">
-          <label for="gregorianDate">תאריך לועזי</label>
-          <input type="date" id="gregorianDate" [(ngModel)]="debt.gregorianDate" name="gregorianDate">
-        </div>
-        <div class="form-group">
-          <label for="hebrewDate">תאריך עברי</label>
-          <input type="text" id="hebrewDate" [(ngModel)]="debt.hebrewDate" name="hebrewDate">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group checkbox-group">
-          <label>
-            <input type="checkbox" [(ngModel)]="debt.autoPaymentApproved" name="autoPaymentApproved">
-            אישור תשלום אוטומטי
-          </label>
-        </div>
-        <div class="form-group"></div>
-        <div class="form-group"></div>
-      </div>
-    </div>
-
-    <div class="form-actions">
-      <button type="button" class="btn-outline" (click)="onCancel()">ביטול</button>
-      <button type="submit" class="btn-primary" [disabled]="isSubmitting">
-        {{ isSubmitting ? 'שומר...' : 'שמור' }}
+<div class="dialog-backdrop">
+  <div class="dialog-container">
+    <div class="dialog-header">
+      <h2>{{ isEditMode ? 'עריכת חוב' : 'יצירת חוב חדש' }}</h2>
+      <button class="close-btn" (click)="onClose()">
+        <span>&times;</span>
       </button>
     </div>
-  </form>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        <div class="form-grid">
+          <!-- Row 1 -->
+          <div class="form-group">
+            <label class="required">סוג חייב:</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="debtorType" value="group" [(ngModel)]="debtorType">
+                <span class="radio-label">קבוצה</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="debtorType" value="individual" [(ngModel)]="debtorType">
+                <span class="radio-label">יחיד</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="required">חייב:</label>
+            <app-member-autocomplete
+              [memberName]="debt.fullName"
+              (memberSelected)="onMemberSelected($event)"
+              placeholder="חיפוש חייב..."
+            ></app-member-autocomplete>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="form-group">
+            <label class="required">סוג חוב:</label>
+            <app-custom-select
+              [options]="debtTypeOptions"
+              [(value)]="debt.debtType"
+              placeholder="בחר סוג חוב"
+            ></app-custom-select>
+          </div>
+          <div class="form-group">
+            <label>סכום:</label>
+            <div class="amount-input">
+              <input type="number" [(ngModel)]="debt.amount" name="amount" placeholder="">
+              <span class="currency">ש"ח</span>
+            </div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="form-group">
+            <label class="required">תאריך:</label>
+            <input type="date" [(ngModel)]="debt.gregorianDate" name="gregorianDate">
+          </div>
+          <div class="form-group">
+            <label>תיאור חוב:</label>
+            <input type="text" [(ngModel)]="debt.description" name="description" placeholder="">
+          </div>
+
+          <!-- Row 4: Checkbox spanning right column -->
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="sendReminderOnCreate" name="sendReminder">
+              <span>שלח הודעת תזכורת לתשלום מיד ביצירה</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+          <span class="btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+          </span>
+          {{ isSubmitting ? 'שומר...' : (isEditMode ? 'עדכן חוב' : 'צור חוב') }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

@@ -5,9 +5,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard';
 import { CommunityComponent } from './pages/community/community';
 import { MemberFormComponent } from './pages/community/member-form/member-form';
 import { DebtsComponent } from './pages/debts/debts';
-import { DebtFormComponent } from './pages/debts/debt-form/debt-form';
+import { InvoicesComponent } from './pages/invoices/invoices';
 import { memberResolver } from './core/resolvers/member.resolver';
-import { debtResolver } from './core/resolvers/debt.resolver';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -21,8 +20,7 @@ export const routes: Routes = [
       { path: 'community/new', component: MemberFormComponent },
       { path: 'community/edit/:id', component: MemberFormComponent, resolve: { member: memberResolver } },
       { path: 'debts', component: DebtsComponent },
-      { path: 'debts/new', component: DebtFormComponent },
-      { path: 'debts/edit/:id', component: DebtFormComponent, resolve: { debt: debtResolver } }
+      { path: 'invoices', component: InvoicesComponent }
     ]
   }
 ];

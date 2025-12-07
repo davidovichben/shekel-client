@@ -1,0 +1,89 @@
+<div class="general-tab">
+  <div class="section-header">
+    <h2>פרטים כלליים</h2>
+    <p>כאן ניתן למצוא ולערוך מידע כללי על חבר הקהילה</p>
+  </div>
+
+  <form class="general-form">
+    <!-- Row 1: Type, Title, First Name, Last Name -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>שם משפחה: <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="formData.lastName" name="lastName" placeholder="יוחננוף">
+      </div>
+      <div class="form-group">
+        <label>שם פרטי: <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="formData.firstName" name="firstName" placeholder="יוחנן">
+      </div>
+      <div class="form-group">
+        <label>תואר:</label>
+        <app-custom-select
+          [options]="titleOptions"
+          [(value)]="formData.title"
+          placeholder="מר"
+        ></app-custom-select>
+      </div>
+      <div class="form-group">
+        <label>סיווג:</label>
+        <app-custom-select
+          [options]="typeOptions"
+          [(value)]="formData.type"
+          placeholder="חבר קהילה"
+        ></app-custom-select>
+      </div>
+    </div>
+
+    <!-- Row 2: Email, Mobile -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>מספר נייד:</label>
+        <input type="tel" [(ngModel)]="formData.mobile" name="mobile" placeholder="058-448-2254" class="ltr-input">
+      </div>
+      <div class="form-group">
+        <label>דוא"ל: <span class="required">*</span></label>
+        <input type="email" [(ngModel)]="formData.email" name="email" placeholder="email@gmail.com">
+      </div>
+      <div class="form-group empty"></div>
+      <div class="form-group empty"></div>
+    </div>
+
+    <!-- Row 3: Country, City, Street, House Number, Apartment Number -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>ארץ:</label>
+        <input type="text" [(ngModel)]="formData.country" name="country" placeholder="ישראל">
+      </div>
+      <div class="form-group">
+        <label>עיר:</label>
+        <input type="text" [(ngModel)]="formData.city" name="city" placeholder="בני ברק">
+      </div>
+      <div class="form-group">
+        <label>רחוב:</label>
+        <input type="text" [(ngModel)]="formData.address" name="address" placeholder="זבולון">
+      </div>
+      <div class="form-group small">
+        <label>מספר בית:</label>
+        <input type="text" [(ngModel)]="formData.address2" name="address2" placeholder="87">
+      </div>
+      <div class="form-group small">
+        <label>מספר דירה:</label>
+        <input type="text" [(ngModel)]="formData.zipcode" name="zipcode" placeholder="5">
+      </div>
+    </div>
+  </form>
+
+  <!-- Footer Buttons -->
+  <div class="form-footer">
+    <button type="button" class="btn-cancel" (click)="onCancel()">בטל</button>
+    <button type="button" class="btn-save" (click)="onSave()">
+      <span class="btn-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+          <polyline points="7 3 7 8 15 8"></polyline>
+        </svg>
+      </span>
+      שמור שינויים
+    </button>
+  </div>
+</div>

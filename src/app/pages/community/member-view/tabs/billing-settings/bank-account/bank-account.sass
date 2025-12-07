@@ -1,0 +1,83 @@
+@use '../../../../../../../variables' as *
+
+.bank-account-section
+  padding: 20px 0
+
+.section-header
+  text-align: right
+  margin-bottom: 24px
+
+  h3
+    margin: 0 0 8px
+    font-size: 18px
+    font-weight: 700
+    color: $text-dark
+
+  p
+    margin: 0
+    font-size: 14px
+    color: $text-muted
+
+.payment-form
+  display: flex
+  flex-direction: column
+  gap: 16px
+
+.form-row
+  display: flex
+  gap: 16px
+  flex-direction: row-reverse
+
+  &.two-cols
+    .form-group
+      flex: 1
+
+  &.three-cols
+    .form-group
+      flex: 1
+
+.form-group
+  display: flex
+  flex-direction: column
+
+  label
+    display: block
+    margin-bottom: 8px
+    font-size: 14px
+    font-weight: 500
+    color: $text-dark
+    text-align: right
+
+    .required
+      color: #ef4444
+
+  input
+    width: 100%
+    padding: 10px 14px
+    border: 1px solid #e5e7eb
+    border-radius: 20px
+    font-size: 14px
+    box-sizing: border-box
+    direction: rtl
+    background: white
+
+    &:focus
+      outline: none
+      border-color: $btn-primary
+
+    &::placeholder
+      color: $gray-500
+
+.currency-input
+  position: relative
+
+  input
+    padding-left: 45px
+
+  .currency
+    position: absolute
+    left: 14px
+    top: 50%
+    transform: translateY(-50%)
+    font-size: 14px
+    color: $gray-500

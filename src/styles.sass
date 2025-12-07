@@ -23,6 +23,26 @@ body
   font-family: 'OpenSans', sans-serif
   direction: rtl
 
+// Global checkbox and radio styling
+input[type="checkbox"],
+input[type="radio"]
+  margin-left: 10px
+  vertical-align: middle
+  width: 18px
+  height: 18px
+
+.checkbox-label,
+.radio-option
+  display: flex
+  align-items: center
+  cursor: pointer
+  font-size: 14px
+  line-height: 1
+
+  span
+    vertical-align: middle
+    line-height: 18px
+
 .semi-bold
   font-family: 'OpenSansSemi', sans-serif
 
@@ -136,7 +156,7 @@ body
   align-items: center
   justify-content: center
   padding: 0 1rem
-  background: $bg-actions
+  background: transparent
   border-radius: 25px
     
 .search-box
@@ -177,6 +197,12 @@ body
   cursor: pointer
   font-size: 1rem
   padding: 0.25rem
+  pointer-events: auto
+  position: relative
+  z-index: 1
+
+  &:hover
+    opacity: 0.7
 
 // Shared Table Styles
 .table-container
@@ -232,6 +258,9 @@ body
     font-size: 0.9rem
     padding: 0.25rem
     color: #666
+    pointer-events: auto
+    position: relative
+    z-index: 1
 
     &:hover
       color: #333
@@ -250,6 +279,14 @@ body
   strong
     color: #333
 
+// Empty state for tables
+.empty-cell
+  text-align: center !important
+  padding: 48px !important
+  color: $text-dark
+  font-size: 1.1rem
+  font-family: 'OpenSansBold', sans-serif
+
 // Shared Tags
 .tag
   padding: 0.25rem 0.5rem
@@ -266,6 +303,193 @@ body
   display: flex
   gap: 0.5rem
   flex-wrap: wrap
+
+// Dialog Styles
+.dialog-backdrop
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  background: rgba(0, 0, 0, 0.5)
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 1000
+
+.dialog-container
+  background: white
+  border-radius: 12px
+  width: 100%
+  max-width: 850px
+  max-height: 90vh
+  overflow-y: auto
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15)
+  direction: rtl
+
+.dialog-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 12px 24px
+  border-bottom: 1px solid $gray-300
+
+  h2
+    margin: 0
+    font-size: 18px
+    font-weight: 600
+    color: $text-dark
+
+  .close-btn
+    background: none
+    border: none
+    font-size: 24px
+    color: $gray-500
+    cursor: pointer
+    padding: 0
+    line-height: 1
+    width: 32px
+    height: 32px
+    display: flex
+    align-items: center
+    justify-content: center
+    border-radius: 50%
+
+    &:hover
+      background: $gray-100
+      color: $text-dark
+
+.form-content
+  padding: 16px 24px
+
+.form-row
+  margin-bottom: 16px
+
+  &.two-columns
+    display: grid
+    grid-template-columns: 1fr 1fr
+    gap: 16px 32px
+
+.form-grid
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: 16px 32px
+  direction: rtl
+
+.form-group
+  label
+    display: block
+    margin-bottom: 6px
+    font-size: 14px
+    font-weight: 500
+    color: $text-dark
+
+    &.required::after
+      content: ' *'
+      color: $error
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"]
+    width: 100%
+    padding: 10px 12px
+    border: 1px solid $gray-300
+    border-radius: 25px
+    font-size: 14px
+    box-sizing: border-box
+    direction: rtl
+    background: white
+
+    &:focus
+      outline: none
+      border-color: $btn-primary
+
+    &::placeholder
+      color: $gray-500
+
+.amount-input
+  position: relative
+
+  input
+    padding-left: 45px !important
+
+  .currency
+    position: absolute
+    left: 14px
+    top: 50%
+    transform: translateY(-50%)
+    font-size: 14px
+    color: $gray-500
+
+.checkbox-group
+  display: flex
+  align-items: flex-start
+
+  .checkbox-label
+    display: flex
+    align-items: center
+    gap: 10px
+    color: $text-dark
+    font-size: 14px
+
+    input[type="checkbox"]
+      accent-color: $btn-primary
+      margin-left: 0
+
+.radio-group
+  display: flex
+  gap: 32px
+  height: 40px
+  align-items: center
+
+.radio-option
+  flex-direction: row-reverse
+
+  input[type="radio"]
+    accent-color: $btn-primary
+
+  .radio-label
+    color: $text-dark
+
+.form-actions
+  padding: 12px 24px
+  border-top: 1px solid $gray-300
+  display: flex
+  justify-content: flex-end
+
+  .btn-primary
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    gap: 8px
+    padding: 10px 20px
+    background: $btn-primary
+    color: white
+    border: none
+    border-radius: 8px
+    font-size: 14px
+    font-weight: 500
+    cursor: pointer
+
+    &:hover
+      background: $btn-primary-hover
+
+    &:disabled
+      opacity: 0.6
+      cursor: not-allowed
+
+    .btn-icon
+      display: flex
+      align-items: center
+      justify-content: center
+
+      svg
+        width: 16px
+        height: 16px
+
+app-custom-select
+  display: block
+  width: 100%
 
 // Pagination
 .pagination
@@ -301,3 +525,40 @@ body
   &:disabled
     opacity: 0.5
     cursor: not-allowed
+
+// Member View Dialog
+.member-view-dialog
+  .mat-mdc-dialog-container
+    padding: 0
+    border-radius: 12px
+    overflow: hidden
+
+  .mdc-dialog__surface
+    border-radius: 12px !important
+    overflow: hidden
+
+  // Disable close animation
+  &.ng-animating .mdc-dialog__surface
+    opacity: 1 !important
+    transform: none !important
+
+// Confirm Dialog
+.confirm-dialog-panel
+  .mat-mdc-dialog-container
+    padding: 0
+    border-radius: 12px
+    overflow: visible
+
+  .mdc-dialog__surface
+    border-radius: 12px !important
+    overflow: visible
+    background: transparent !important
+    box-shadow: none !important
+
+  // Disable close animation
+  &.ng-animating .mdc-dialog__surface
+    opacity: 1 !important
+    transform: none !important
+
+.confirm-dialog-backdrop
+  background: rgba(0, 0, 0, 0.3)

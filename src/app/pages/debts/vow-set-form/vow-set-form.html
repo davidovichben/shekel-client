@@ -1,0 +1,91 @@
+<div class="dialog-backdrop">
+  <div class="dialog-container">
+    <div class="dialog-header">
+      <h2>{{ isEditMode ? 'עריכת סט נדרים' : 'יצירת סט נדרים חדש' }}</h2>
+      <button class="close-btn" (click)="onClose()">
+        <span>&times;</span>
+      </button>
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        <!-- Row 1: Date and Description -->
+        <div class="form-row two-columns">
+          <div class="form-group">
+            <label class="required">תאריך:</label>
+            <input type="date" [(ngModel)]="vowSet.gregorianDate" name="gregorianDate">
+          </div>
+          <div class="form-group">
+            <label>תיאור כולל לנדרים בסט:</label>
+            <input type="text" [(ngModel)]="vowSet.description" name="description" placeholder="נדר שבת שובה">
+          </div>
+        </div>
+
+        <!-- Vows List -->
+        <div class="vows-section">
+          @for (vow of vows; track $index) {
+            <div class="vow-item">
+              <div class="vow-row">
+                <div class="form-group">
+                  <label class="required">חייב:</label>
+                  <app-member-autocomplete
+                    [memberName]="vow.fullName"
+                    (memberSelected)="onMemberSelected($event, $index)"
+                    placeholder="חיפוש חייב..."
+                  ></app-member-autocomplete>
+                </div>
+                <div class="form-group">
+                  <label>עליה:</label>
+                  <app-custom-select
+                    [options]="aliyahOptions"
+                    [(value)]="vow.aliyahType"
+                    placeholder="בחר עליה"
+                  ></app-custom-select>
+                </div>
+              </div>
+              <div class="vow-row">
+                <div class="form-group checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="vow.sendReminder" [name]="'sendReminder_' + $index">
+                    <span>שלח הודעת תזכורת לתשלום מיד ביצירה</span>
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label class="required">סכום:</label>
+                  <div class="amount-input">
+                    <input type="number" [(ngModel)]="vow.amount" [name]="'amount_' + $index">
+                    <span class="currency">ש"ח</span>
+                  </div>
+                </div>
+              </div>
+              @if (vows.length > 1) {
+                <button type="button" class="remove-vow-btn" (click)="removeVow($index)">
+                  <span>&times;</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Add Vow Button -->
+        <button type="button" class="add-vow-btn" (click)="addVow()">
+          <span class="add-icon">+</span>
+          הוסף נדר לסט
+        </button>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+          <span class="btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+          </span>
+          {{ isSubmitting ? 'שומר...' : 'צור חובות' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="bank-account-section">
+  <div class="section-header">
+    <h3>פרטי תשלום:</h3>
+    <p>אנא מלא את הפרטים הבאים</p>
+  </div>
+
+  <form class="payment-form">
+    <!-- Row 1: Bank, Branch, Account -->
+    <div class="form-row three-cols">
+      <div class="form-group">
+        <label>מס חשבון <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="data.accountNumber" name="accountNumber" placeholder="654122" (ngModelChange)="onFieldChange()">
+      </div>
+      <div class="form-group">
+        <label>מס סניף <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="data.branchNumber" name="branchNumber" placeholder="265" (ngModelChange)="onFieldChange()">
+      </div>
+      <div class="form-group">
+        <label>מס בנק <span class="required">*</span></label>
+        <app-custom-select
+          [options]="bankOptions"
+          [(value)]="data.bankNumber"
+          placeholder="בחר בנק"
+          (valueChange)="onFieldChange()"
+        ></app-custom-select>
+      </div>
+    </div>
+
+    <!-- Row 2: ID, Full Name -->
+    <div class="form-row two-cols">
+      <div class="form-group">
+        <label>שם מלא <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="data.fullName" name="fullName" placeholder="שמואל לוי" (ngModelChange)="onFieldChange()">
+      </div>
+      <div class="form-group">
+        <label>מס מזהה <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="data.idNumber" name="idNumber" placeholder="6542121" (ngModelChange)="onFieldChange()">
+      </div>
+    </div>
+
+    <!-- Row 3: Authorization file, Expiry, Charge limit -->
+    <div class="form-row three-cols">
+      <div class="form-group">
+        <label>תקרת סכום החיוב <span class="required">*</span></label>
+        <div class="currency-input">
+          <input type="text" [(ngModel)]="data.chargeLimit" name="chargeLimit" placeholder="1000" (ngModelChange)="onFieldChange()">
+          <span class="currency">ש"ח</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>תוקף ההרשאה <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="data.authorizationExpiry" name="authorizationExpiry" placeholder="16/08/2027" (ngModelChange)="onFieldChange()">
+      </div>
+      <div class="form-group">
+        <label>צילום הרישאה לחיוב חשבון <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="data.authorizationFile" name="authorizationFile" placeholder="הרישאה.pdf" (ngModelChange)="onFieldChange()">
+      </div>
+    </div>
+  </form>
+</div>

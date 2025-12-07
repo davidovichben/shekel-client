@@ -14,7 +14,7 @@ export class MemberService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(params?: { type?: string; page?: number; limit?: number }): Observable<PaginationResponse<Member>> {
+  getAll(params?: { type?: string; page?: number; limit?: number; search?: string }): Observable<PaginationResponse<Member>> {
     return this.http.get<PaginationResponse<Member>>(this.apiUrl, { params: params as any }).pipe(
       map(response => ({
         ...response,

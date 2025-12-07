@@ -1,24 +1,44 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DebtService } from '../../../core/services/network/debt.service';
+import { DebtStatus } from '../../../core/entities/debt.entity';
+import { Member } from '../../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../../shared/components/custom-select/custom-select';
+import { MemberAutocompleteComponent } from '../../../shared/components/member-autocomplete/member-autocomplete';
+
+export interface DebtFormDialogData {
+  debt?: {
+    id: string;
+    memberId: string;
+    fullName: string;
+    amount: number;
+    description: string;
+    hebrewDate: string;
+    gregorianDate: string;
+    autoPaymentApproved: boolean;
+    status: DebtStatus;
+    debtType?: string;
+  };
+}
 
 @Component({
   selector: 'app-debt-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent],
   templateUrl: './debt-form.html',
   styleUrl: './debt-form.sass'
 })
 export class DebtFormComponent implements OnInit {
   private debtService = inject(DebtService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private dialogRef = inject(MatDialogRef<DebtFormComponent>);
+  private data: DebtFormDialogData = inject(MAT_DIALOG_DATA);
 
   isEditMode = false;
   debtId = '';
+
+  debtorType: 'individual' | 'group' = 'individual';
 
   debt = {
     memberId: '',
@@ -28,33 +48,42 @@ export class DebtFormComponent implements OnInit {
     hebrewDate: '',
     gregorianDate: '',
     autoPaymentApproved: false,
-    status: 'active'
+    status: DebtStatus.Active as DebtStatus,
+    debtType: ''
   };
 
-  statusOptions = [
-    { value: 'active', label: 'חוב פעיל' },
-    { value: 'paid', label: 'שולם' },
-    { value: 'cancelled', label: 'בוטל' }
+  debtTypeOptions = [
+    { value: 'neder_shabbat', label: 'נדר שבת' },
+    { value: 'tikun_nezek', label: 'תיקון נזק' },
+    { value: 'dmei_chaver', label: 'דמי חבר' },
+    { value: 'kiddush', label: 'קידוש שבת' },
+    { value: 'other', label: 'אחר' }
   ];
 
+  sendReminderOnCreate = false;
   isSubmitting = false;
 
   ngOnInit(): void {
-    const resolvedDebt = this.route.snapshot.data['debt'];
-    if (resolvedDebt) {
+    if (this.data?.debt) {
       this.isEditMode = true;
-      this.debtId = resolvedDebt.id;
+      this.debtId = this.data.debt.id;
       this.debt = {
-        memberId: resolvedDebt.memberId || '',
-        fullName: resolvedDebt.fullName || '',
-        amount: resolvedDebt.amount || 0,
-        description: resolvedDebt.description || '',
-        hebrewDate: resolvedDebt.hebrewDate || '',
-        gregorianDate: resolvedDebt.gregorianDate || '',
-        autoPaymentApproved: resolvedDebt.autoPaymentApproved || false,
-        status: resolvedDebt.status || 'active'
+        memberId: this.data.debt.memberId || '',
+        fullName: this.data.debt.fullName || '',
+        amount: this.data.debt.amount || 0,
+        description: this.data.debt.description || '',
+        hebrewDate: this.data.debt.hebrewDate || '',
+        gregorianDate: this.data.debt.gregorianDate || '',
+        autoPaymentApproved: this.data.debt.autoPaymentApproved || false,
+        status: this.data.debt.status || DebtStatus.Active,
+        debtType: this.data.debt.debtType || ''
       };
     }
+  }
+
+  onMemberSelected(member: Member): void {
+    this.debt.memberId = member.id;
+    this.debt.fullName = member.fullName;
   }
 
   onSubmit(): void {
@@ -69,9 +98,9 @@ export class DebtFormComponent implements OnInit {
       : this.debtService.create(this.debt);
 
     request.subscribe({
-      next: () => {
+      next: (result) => {
         this.isSubmitting = false;
-        this.router.navigate(['/debts']);
+        this.dialogRef.close(result);
       },
       error: (error) => {
         console.error('Error saving debt:', error);
@@ -80,7 +109,7 @@ export class DebtFormComponent implements OnInit {
     });
   }
 
-  onCancel(): void {
-    this.router.navigate(['/debts']);
+  onClose(): void {
+    this.dialogRef.close();
   }
 }

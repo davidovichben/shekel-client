@@ -1,0 +1,123 @@
+@use '../../../../../../../variables' as *
+
+.credit-cards-section
+  padding: 20px 0
+
+.section-header
+  text-align: right
+  margin-bottom: 24px
+
+  h3
+    margin: 0 0 8px
+    font-size: 18px
+    font-weight: 700
+    color: $text-dark
+
+  p
+    margin: 0
+    font-size: 14px
+    color: $text-muted
+
+.cards-grid
+  display: grid
+  grid-template-columns: repeat(2, 1fr)
+  gap: 16px
+
+.credit-card
+  background: linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 100%)
+  border-radius: 12px
+  padding: 16px
+  cursor: pointer
+  transition: all 0.2s
+  border: 2px solid transparent
+
+  &:hover
+    transform: translateY(-2px)
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+
+  &.selected
+    border-color: $btn-primary
+
+.card-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  margin-bottom: 16px
+
+.card-type
+  font-weight: 700
+
+  &.visa .visa-text
+    color: #1a1f71
+    font-size: 16px
+    font-style: italic
+
+  &.mastercard .mastercard-icon
+    display: inline-block
+    width: 30px
+    height: 18px
+    background: linear-gradient(90deg, #eb001b 50%, #f79e1b 50%)
+    border-radius: 50%
+    position: relative
+
+    &::before,
+    &::after
+      content: ''
+      position: absolute
+      width: 18px
+      height: 18px
+      border-radius: 50%
+      top: 0
+
+    &::before
+      background: #eb001b
+      left: 0
+
+    &::after
+      background: #f79e1b
+      right: 0
+
+.card-radio
+  width: 18px
+  height: 18px
+  border: 2px solid #ccc
+  border-radius: 50%
+  display: flex
+  align-items: center
+  justify-content: center
+
+  .radio-inner
+    width: 10px
+    height: 10px
+    border-radius: 50%
+    background: transparent
+    transition: background 0.2s
+
+    &.active
+      background: $btn-primary
+
+.card-number
+  display: flex
+  justify-content: center
+  gap: 8px
+  margin-bottom: 16px
+  font-size: 14px
+  color: #333
+
+  .dots
+    letter-spacing: 2px
+
+  .last-digits
+    font-weight: 600
+
+.card-footer
+  display: flex
+  justify-content: space-between
+  font-size: 12px
+  color: #666
+
+  .holder-name
+    text-transform: capitalize
+
+  .expiry-date
+    direction: ltr

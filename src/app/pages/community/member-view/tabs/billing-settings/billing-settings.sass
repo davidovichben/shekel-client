@@ -1,0 +1,299 @@
+@use '../../../../../../variables' as *
+
+.billing-settings-tab
+  display: flex
+  flex-direction: column
+  gap: 24px
+
+.settings-layout
+  display: flex
+  gap: 24px
+  flex-direction: row-reverse
+
+// Right panel - Settings
+.settings-panel
+  flex: 1
+  background: #f8fafc
+  border-radius: 8px
+  padding: 24px
+  border: 1px solid #e5e7eb
+
+.panel-header
+  text-align: right
+  margin-bottom: 20px
+
+  h2
+    margin: 0 0 4px
+    font-size: 18px
+    font-weight: 700
+    color: $text-dark
+    font-family: 'OpenSansBold', sans-serif
+
+  p
+    margin: 0
+    font-size: 14px
+    color: $text-muted
+
+.panel-content
+  margin-bottom: 24px
+
+.setting-row
+  display: flex
+  justify-content: flex-end
+  align-items: center
+  gap: 12px
+  padding: 12px 0
+  border-bottom: 1px solid #e5e7eb
+  flex-direction: row-reverse
+
+  &.vertical
+    flex-direction: column
+    align-items: flex-end
+    width: 100%
+
+    label
+      text-align: right
+      width: 100%
+
+    app-custom-select
+      width: 30%
+      align-self: flex-start
+
+  &:last-child
+    border-bottom: none
+
+  label
+    font-size: 14px
+    color: $text-dark
+
+.day-input
+  width: 150px
+  padding: 8px 12px
+  border: 1px solid #e5e7eb
+  border-radius: 20px
+  font-size: 14px
+  text-align: center
+  background: white
+
+  &:focus
+    outline: none
+    border-color: $btn-primary
+
+// Toggle switch
+.toggle-switch
+  position: relative
+  display: inline-block
+  width: 50px
+  height: 26px
+
+  input
+    opacity: 0
+    width: 0
+    height: 0
+
+  .toggle-slider
+    position: absolute
+    cursor: pointer
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background-color: #ccc
+    transition: 0.3s
+    border-radius: 26px
+
+    &:before
+      position: absolute
+      content: ""
+      height: 20px
+      width: 20px
+      left: 3px
+      bottom: 3px
+      background-color: white
+      transition: 0.3s
+      border-radius: 50%
+
+  input:checked + .toggle-slider
+    background-color: #10b981
+
+  input:checked + .toggle-slider:before
+    transform: translateX(24px)
+
+// Payment type section
+.payment-type-section
+  background: white
+  border-radius: 8px
+  padding: 20px
+  border: 1px solid #e5e7eb
+
+  h3
+    margin: 0 0 8px
+    font-size: 16px
+    font-weight: 600
+    color: $text-dark
+    text-align: right
+
+  .payment-type-description
+    margin: 0 0 16px
+    font-size: 14px
+    color: $text-muted
+    text-align: right
+
+.payment-type-options
+  display: flex
+  gap: 24px
+  justify-content: flex-start
+  margin-bottom: 16px
+
+.radio-option
+  display: flex
+  align-items: center
+  gap: 8px
+  cursor: pointer
+  flex-direction: row-reverse
+
+  input[type="radio"]
+    display: none
+
+  .radio-custom
+    width: 18px
+    height: 18px
+    border: 2px solid #ccc
+    border-radius: 50%
+    position: relative
+
+    &:after
+      content: ""
+      position: absolute
+      width: 10px
+      height: 10px
+      background: $btn-primary
+      border-radius: 50%
+      top: 50%
+      left: 50%
+      transform: translate(-50%, -50%)
+      opacity: 0
+      transition: opacity 0.2s
+
+  input[type="radio"]:checked + .radio-custom
+    border-color: $btn-primary
+
+    &:after
+      opacity: 1
+
+  .radio-label
+    font-size: 14px
+    color: $text-dark
+
+  .radio-icon
+    color: $text-muted
+    display: flex
+    align-items: center
+
+.premium-notice
+  display: flex
+  align-items: center
+  gap: 8px
+  padding: 12px 16px
+  background: #FFEECF
+  border-radius: 8px
+  font-size: 13px
+  color: #1e40af
+  flex-direction: row-reverse
+
+  svg
+    flex-shrink: 0
+
+  a
+    color: #1e40af
+    text-decoration: underline
+    font-weight: 600
+
+    &:hover
+      text-decoration: none
+
+// Left panel - Payment details
+.payment-details-panel
+  flex: 1.2
+  background: white
+  border-radius: 8px
+  padding: 24px
+
+.payment-form
+  display: flex
+  flex-direction: column
+  gap: 16px
+
+.form-row
+  display: flex
+  gap: 16px
+  flex-direction: row-reverse
+
+  &.two-cols
+    .form-group
+      flex: 1
+
+  &.three-cols
+    .form-group
+      flex: 1
+
+.form-group
+  display: flex
+  flex-direction: column
+
+  label
+    display: block
+    margin-bottom: 8px
+    font-size: 14px
+    font-weight: 500
+    color: $text-dark
+    text-align: right
+
+    .required
+      color: #ef4444
+
+  input
+    width: 100%
+    padding: 10px 14px
+    border: 1px solid #e5e7eb
+    border-radius: 20px
+    font-size: 14px
+    box-sizing: border-box
+    direction: rtl
+    background: white
+
+    &:focus
+      outline: none
+      border-color: $btn-primary
+
+    &::placeholder
+      color: $gray-500
+
+.currency-input
+  position: relative
+
+  input
+    padding-left: 45px
+
+  .currency
+    position: absolute
+    left: 14px
+    top: 50%
+    transform: translateY(-50%)
+    font-size: 14px
+    color: $gray-500
+
+.btn-update
+  align-self: flex-start
+  padding: 10px 24px
+  background: $btn-primary
+  color: white
+  border: none
+  border-radius: 8px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  margin-top: 8px
+
+  &:hover
+    background: $btn-primary-hover

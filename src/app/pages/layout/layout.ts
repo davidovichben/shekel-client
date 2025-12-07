@@ -11,5 +11,4 @@ import { HeaderComponent } from './header/header';
   templateUrl: './layout.html',
   styleUrl: './layout.sass'
 })
-export class LayoutComponent {
-}
+export class LayoutComponent {}

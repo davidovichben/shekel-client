@@ -1,0 +1,61 @@
+@if (member) {
+  <div class="member-view">
+    <!-- Top Header Bar -->
+    <div class="header-bar">
+      <div class="header-right">
+        <button class="btn-close-icon" (click)="onCloseClick()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </button>
+        <div class="member-info">
+          <span class="member-name">{{ member.firstName }} {{ member.lastName }}</span>
+          <span class="separator">|</span>
+          <span class="member-type">{{ getMemberTypeLabel(member.type) }}</span>
+        </div>
+      </div>
+      <div class="header-left">
+        <span class="join-date">הצטרף לקהילה בתאריך:</span>
+        <span class="join-date-value">{{ getJoinDate() }}</span>
+      </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-navigation">
+      @for (tab of tabs; track tab.id) {
+        <button
+          class="tab-btn"
+          [class.active]="isTabActive(tab.id)"
+          (click)="setActiveTab(tab)">
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      @switch (activeTab) {
+        @case ('general') {
+          <app-member-general [member]="member" (save)="onSaveMember($event)" (closeDialog)="closeDialog()"></app-member-general>
+        }
+        @case ('open-debts') {
+          <app-member-open-debts [member]="member"></app-member-open-debts>
+        }
+        @case ('payment-archive') {
+          <app-member-payment-archive [member]="member"></app-member-payment-archive>
+        }
+        @case ('billing-settings') {
+          <app-member-billing-settings [member]="member"></app-member-billing-settings>
+        }
+        @case ('payment-methods') {
+          <app-member-payment-methods [member]="member"></app-member-payment-methods>
+        }
+        @case ('groups') {
+          <app-member-groups [member]="member"></app-member-groups>
+        }
+      }
+    </div>
+  </div>
+}

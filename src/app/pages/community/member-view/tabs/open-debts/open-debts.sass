@@ -1,0 +1,156 @@
+@use '../../../../../../variables' as *
+
+.open-debts-tab
+  background: white
+  border-radius: 8px
+  padding: 24px
+
+// Header
+.tab-header
+  display: flex
+  justify-content: flex-end
+  align-items: center
+  margin-bottom: 16px
+
+.header-right
+  text-align: right
+
+  h2
+    margin: 0 0 4px
+    font-size: 18px
+    font-weight: 700
+    color: $text-dark
+    font-family: 'OpenSansBold', sans-serif
+    display: inline
+
+  .total-amount
+    display: block
+    font-size: 14px
+    color: $text-muted
+
+    strong
+      color: $text-dark
+
+// Action bar
+.action-bar
+  display: flex
+  justify-content: flex-start
+  margin-bottom: 20px
+
+.action-buttons
+  display: flex
+  gap: 12px
+  flex-direction: row-reverse
+
+.btn-action
+  display: flex
+  align-items: center
+  gap: 8px
+  padding: 10px 16px
+  border-radius: 20px
+  font-size: 14px
+  cursor: pointer
+  transition: all 0.2s
+  border: none
+
+  svg
+    width: 16px
+    height: 16px
+
+.btn-primary-action
+  background: $btn-primary
+  color: white
+
+  &:hover
+    background: $btn-primary-hover
+
+.btn-secondary-action
+  background: #e8eaed
+  color: $text-dark
+
+  &:hover
+    background: #d1d5dc
+
+// Table
+.table-container
+  background: white
+  border-radius: 8px
+  overflow: hidden
+
+  table
+    width: 100%
+    border-collapse: collapse
+
+  th, td
+    padding: 12px 16px
+    text-align: right
+    font-size: 14px
+    border-bottom: 1px solid #f0f0f0
+
+  th
+    background: #fafafa
+    color: $text-muted
+    font-weight: 600
+    font-family: 'OpenSansSemi', sans-serif
+
+  tbody tr:hover
+    background: #fafafa
+
+  .col-number
+    width: 50px
+    text-align: center
+
+  .col-checkbox
+    width: 50px
+    text-align: center
+
+  .col-actions
+    width: 160px
+
+// Status badge
+.status-badge
+  display: inline-block
+  padding: 4px 12px
+  border-radius: 12px
+  font-size: 12px
+  font-weight: 500
+
+  &.unpaid
+    background: #fff3e0
+    color: #e65100
+
+// Row actions
+.row-action
+  background: none
+  border: none
+  cursor: pointer
+  padding: 4px
+  color: $text-muted
+  transition: color 0.2s
+
+  &:hover
+    color: $text-dark
+
+  svg
+    display: block
+
+// Loading state
+.loading-cell
+  text-align: center
+  padding: 48px !important
+  color: $text-muted
+
+.spinner
+  display: inline-block
+  width: 32px
+  height: 32px
+  border: 3px solid #f3f3f3
+  border-top: 3px solid $btn-primary
+  border-radius: 50%
+  animation: spin 1s linear infinite
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)

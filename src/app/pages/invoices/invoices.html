@@ -1,0 +1,108 @@
+<div class="invoices">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-text">
+      <h1>חשבוניות</h1>
+      <p>כאן תמצא את כל החשבוניות</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="openCreateDialog()">
+        <span>⊕</span>
+        צור חשבונית חדשה
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <div class="tabs">
+      @for (tab of tabs; track tab.id) {
+        <button
+          class="tab"
+          [class.active]="activeTab === tab.id"
+          (click)="onTabClick(tab.id)">
+          {{ tab.label }}
+          <span class="count">({{ tab.count }})</span>
+        </button>
+      }
+    </div>
+    <button class="filter-btn">
+      <i class="fa-solid fa-filter"></i>
+      פילטרים נוספים
+    </button>
+  </div>
+
+  <!-- Filters Row -->
+  <div class="filters-row">
+    <div class="filter-dropdowns">
+      <app-custom-select
+        [options]="displayRangeOptions"
+        [(value)]="displayRange"
+        prefix="הצג חשבוניות:">
+      </app-custom-select>
+      <app-custom-select
+        [options]="sortOptions"
+        [(value)]="sortBy"
+        prefix="מיין לפי:">
+      </app-custom-select>
+    </div>
+  </div>
+
+  <!-- Actions Row -->
+  <div class="table-header">
+    <div class="bulk-actions">
+      <span>פעולות קולקטיביות:</span>
+      <button class="action-icon" (click)="onBulkAction('message')"><i class="fa-regular fa-comment"></i></button>
+      <button class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
+      <button class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
+      <button class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
+    </div>
+    <div class="export-action">
+      <button class="btn-outline">ייצא לקובץ</button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <app-data-table
+    [isLoading]="isLoading"
+    [columns]="tableColumns"
+    [data]="invoices"
+    [totalItems]="totalInvoices"
+    [currentPage]="currentPage"
+    [itemsPerPage]="itemsPerPage"
+    [totalPages]="totalPages"
+    (pageChange)="onPageChange($event)">
+    @for (invoice of invoices; track invoice.id; let i = $index) {
+      <tr>
+        <td class="col-number">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+        <td class="col-checkbox">
+          <input type="checkbox"
+                 [checked]="isInvoiceSelected(invoice.id)"
+                 (change)="toggleInvoiceSelection(invoice.id, $event)">
+        </td>
+        <td>{{ invoice.fullName }}</td>
+        <td>{{ invoice.invoiceNumber }}</td>
+        <td>{{ invoice.amount }}₪</td>
+        <td>{{ invoice.hebrewDate }}</td>
+        <td>{{ invoice.gregorianDate }}</td>
+        <td>{{ invoice.description }}</td>
+        <td>
+          <span class="status-badge" [class.pending]="invoice.status === 'pending'" [class.paid]="invoice.status === 'paid'" [class.cancelled]="invoice.status === 'cancelled'">
+            {{ invoice.status === 'pending' ? 'ממתין לתשלום' : invoice.status === 'paid' ? 'שולם' : 'בוטל' }}
+          </span>
+        </td>
+        <td class="col-actions">
+          <button class="row-action"><i class="fa-regular fa-comment"></i></button>
+          <button class="row-action"><i class="fa-regular fa-envelope"></i></button>
+          <button class="row-action"><i class="fa-regular fa-trash-can"></i></button>
+          <button class="row-action" (click)="openEditDialog(invoice)"><i class="fa-solid fa-pencil"></i></button>
+        </td>
+      </tr>
+    }
+  </app-data-table>
+
+  <!-- Footer -->
+  <div class="table-footer">
+    <span>(נמצאו {{ totalInvoices }} רשומות, סה"כ סכום החשבוניות הוא: <strong>{{ getTotalAmount() }}₪</strong>)</span>
+  </div>
+</div>

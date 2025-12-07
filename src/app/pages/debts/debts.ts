@@ -1,11 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomSelectComponent } from '../../shared/components/custom-select/custom-select';
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { DebtFormComponent } from './debt-form/debt-form';
+import { VowSetFormComponent } from './vow-set-form/vow-set-form';
 
 interface Debt {
   id: string;
@@ -27,15 +28,48 @@ interface Debt {
   styleUrl: './debts.sass'
 })
 export class DebtsComponent implements OnInit {
-  private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  navigateToCreate(): void {
-    this.router.navigate(['/debts/new']);
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open(DebtFormComponent, {
+      width: '500px',
+      panelClass: 'debt-form-dialog',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadDebts();
+      }
+    });
   }
 
-  navigateToEdit(debt: Debt): void {
-    this.router.navigate(['/debts/edit', debt.id]);
+  openEditDialog(debt: Debt): void {
+    const dialogRef = this.dialog.open(DebtFormComponent, {
+      width: '500px',
+      panelClass: 'debt-form-dialog',
+      data: { debt }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadDebts();
+      }
+    });
+  }
+
+  openVowSetDialog(): void {
+    const dialogRef = this.dialog.open(VowSetFormComponent, {
+      width: '900px',
+      panelClass: 'vow-set-form-dialog',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadDebts();
+      }
+    });
   }
 
   debts: Debt[] = [];

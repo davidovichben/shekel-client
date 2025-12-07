@@ -20,20 +20,35 @@
       color: $text-muted
       font-size: 0.9rem
 
-  .btn-primary
+  .header-actions
+    display: flex
+    gap: 0.75rem
+
+  .btn-primary,
+  .btn-secondary
     display: flex
     align-items: center
     gap: 0.5rem
     padding: 0.75rem 1.5rem
-    background: $btn-primary
-    color: white
     border: none
     border-radius: 6px
     font-size: 0.9rem
     cursor: pointer
 
+  .btn-primary
+    background: $btn-primary
+    color: white
+
     &:hover
       background: $btn-primary-hover
+
+  .btn-secondary
+    background: white
+    color: $text-dark
+    border: 1px solid $gray-300
+
+    &:hover
+      background: $gray-100
 
 .tabs-container
   display: flex
@@ -127,7 +142,7 @@
       color: $icon-color
 
       &:hover
-        background: darken($bg-actions, 10%)
+        background: $bg-actions-hover
 
   .export-action
     .btn-outline

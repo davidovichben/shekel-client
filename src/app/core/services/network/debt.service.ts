@@ -26,6 +26,30 @@ export class DebtService {
     );
   }
 
+  getByMemberOpen(memberId: string): Observable<PaginationResponse<Debt>> {
+    return this.http.get<PaginationResponse<Debt>>(`${environment.apiUrl}/members/${memberId}/debts/open`).pipe(
+      map(response => ({
+        ...response,
+        rows: response.rows.map((debt: any) => ({
+          ...debt,
+          id: debt.id || debt._id
+        }))
+      }))
+    );
+  }
+
+  getByMemberClosed(memberId: string): Observable<PaginationResponse<Debt>> {
+    return this.http.get<PaginationResponse<Debt>>(`${environment.apiUrl}/members/${memberId}/debts/closed`).pipe(
+      map(response => ({
+        ...response,
+        rows: response.rows.map((debt: any) => ({
+          ...debt,
+          id: debt.id || debt._id
+        }))
+      }))
+    );
+  }
+
   getOne(id: string): Observable<Debt> {
     return this.http.get<Debt>(`${this.apiUrl}/${id}`);
   }

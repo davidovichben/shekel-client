@@ -8,18 +8,22 @@
   align-items: center
   justify-content: space-between
   gap: 0.5rem
-  width: 300px
-  height: 42px
+  width: 100%
+  height: 40px
   padding: 0 1rem
   border: 1px solid #e0e0e0
-  border-radius: 25px
+  border-radius: 4px
   background: white
   font-size: 0.85rem
   cursor: pointer
+  box-sizing: border-box
 
   &:focus
     outline: none
     border-color: #1976d2
+
+  span
+    text-align: right
 
   i
     font-size: 0.7rem
@@ -40,7 +44,8 @@
   border-radius: 8px
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
   z-index: 100
-  overflow: hidden
+  max-height: 200px
+  overflow-y: auto
 
 .select-option
   display: block

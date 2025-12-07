@@ -1,0 +1,103 @@
+<div class="payment-methods-tab">
+  <div class="methods-layout">
+    <!-- Left column -->
+    <div class="left-column">
+      <!-- Standing Order Section -->
+      <div class="method-card">
+        <div class="method-header">
+          <h3>הרשאת מס"ב:</h3>
+          <span class="method-icon masav-icon">ש</span>
+        </div>
+        <p class="method-description">אפשרות לחיוב בעזרת הרשאה קבועה לחיוב בחשבון הבנק</p>
+        <button class="btn-primary" (click)="onCreateStandingOrder()">צור הרשאה</button>
+      </div>
+
+      <!-- Bit Section -->
+      <div class="method-card">
+        <div class="method-header">
+          <h3>ביט:</h3>
+          <span class="method-icon bit-icon">bit</span>
+        </div>
+        <p class="method-description">אפשרות לחיוב דרך אפליקציית ביט</p>
+
+        <div class="bit-options">
+          <label class="radio-option">
+            <input type="radio" name="bitOption" value="none" [(ngModel)]="bitOption">
+            <span class="radio-custom"></span>
+            <span class="radio-label">לחבר לא קיים חשבון ביט פעיל.</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="bitOption" value="primary" [(ngModel)]="bitOption">
+            <span class="radio-custom"></span>
+            <span class="radio-label">קיים חשבון ביט על מספר הנייד הראשי</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="bitOption" value="other" [(ngModel)]="bitOption">
+            <span class="radio-custom"></span>
+            <span class="radio-label">קיים חשבון ביט על מספר נייד אחר:</span>
+          </label>
+        </div>
+
+        @if (bitOption === 'other') {
+          <input type="text" class="bit-phone-input" [(ngModel)]="bitPhoneNumber" placeholder="058-448-2254">
+        }
+      </div>
+    </div>
+
+    <!-- Right column - Credit Cards -->
+    <div class="right-column">
+      <div class="method-card credit-cards-card">
+        <div class="method-header">
+          <h3>כרטיסי אשראי:</h3>
+        </div>
+        <p class="method-description">הכרטיס הנבחר הוא כרטיס ברירת המחדל לתשלומים במערכת</p>
+
+        @if (creditCards.length > 0) {
+          <div class="cards-grid">
+            @for (card of creditCards; track card.id) {
+              <div
+                class="credit-card"
+                [class.selected]="selectedCardId === card.id"
+                (click)="selectCard(card)">
+                <div class="card-header">
+                  <span class="card-type" [class.visa]="card.type === 'visa'" [class.mastercard]="card.type === 'mastercard'">
+                    @if (card.type === 'visa') {
+                      <span class="visa-text">VISA</span>
+                    } @else {
+                      <span class="mastercard-dots"></span>
+                    }
+                  </span>
+                  <span class="card-radio">
+                    <span class="radio-inner" [class.active]="selectedCardId === card.id"></span>
+                  </span>
+                </div>
+                <div class="card-number">
+                  <span class="dots">****</span>
+                  <span class="dots">****</span>
+                  <span class="dots">****</span>
+                  <span class="last-digits">{{ card.lastFourDigits }}</span>
+                </div>
+                <div class="card-footer">
+                  <span class="holder-name">{{ card.holderName }}</span>
+                  <span class="expiry-date">{{ card.expiryDate }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="no-cards-placeholder">
+            <div class="placeholder-icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+            </div>
+            <p>לא הוגדרו כרטיסי אשראי</p>
+          </div>
+        }
+
+        <button class="btn-primary add-card-btn" (click)="onAddCard()">הוסף כרטיס חדש</button>
+      </div>
+    </div>
+  </div>
+</div>

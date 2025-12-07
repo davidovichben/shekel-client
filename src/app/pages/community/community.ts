@@ -8,6 +8,7 @@ import { Member } from '../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../shared/components/custom-select/custom-select';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
+import { MemberViewComponent } from './member-view/member-view';
 
 @Component({
   selector: 'app-community',
@@ -27,6 +28,25 @@ export class CommunityComponent implements OnInit {
 
   navigateToEdit(member: Member): void {
     this.router.navigate(['/community/edit', member.id]);
+  }
+
+  navigateToMember(member: Member): void {
+    const dialogRef = this.dialog.open(MemberViewComponent, {
+      width: '95vw',
+      maxWidth: '1400px',
+      height: '720px',
+      panelClass: 'member-view-dialog',
+      autoFocus: false,
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: { memberId: member.id }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadMembers();
+      }
+    });
   }
 
   searchText = '';
@@ -165,11 +185,14 @@ export class CommunityComponent implements OnInit {
     if (this.selectedMembers.size === 0) {
       this.dialog.open(ConfirmDialogComponent, {
         width: '400px',
+        panelClass: 'confirm-dialog-panel',
+        backdropClass: 'confirm-dialog-backdrop',
+        enterAnimationDuration: '0ms',
+        exitAnimationDuration: '0ms',
         data: {
           title: 'שים לב',
           message: 'יש לבחור לפחות פריט אחד לפני ביצוע פעולה קולקטיבית',
-          confirmText: 'הבנתי',
-          cancelText: ''
+          confirmText: 'הבנתי'
         }
       });
       return;
@@ -203,5 +226,14 @@ export class CommunityComponent implements OnInit {
         });
       }
     });
+  }
+
+  copyToClipboard(member: Member): void {
+    const text = `${member.fullName} - ${member.mobile || ''} - ${member.email || ''}`;
+    navigator.clipboard.writeText(text);
+  }
+
+  sendMessage(member: Member): void {
+    console.log('Send message to:', member.id);
   }
 }
