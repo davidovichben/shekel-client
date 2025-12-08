@@ -1,0 +1,89 @@
+@use '../../../../variables' as *
+
+.credit-card
+  background: linear-gradient(135deg, #e8eaed 0%, #d8dce3 100%)
+  border-radius: 12px
+  padding: 16px
+  cursor: pointer
+  transition: all 0.2s
+  border: 2px solid transparent
+  min-width: 220px
+
+  &:hover
+    transform: translateY(-2px)
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+
+  &.selected
+    border-color: $header-bg
+
+.card-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  margin-bottom: 6px
+
+.card-type
+  flex-shrink: 0
+
+.card-logo
+  height: 30px
+  width: 30px
+  object-fit: contain
+
+.card-radio
+  width: 18px
+  height: 18px
+  border: 2px solid #ccc
+  border-radius: 50%
+  display: flex
+  align-items: center
+  justify-content: center
+  background: white
+
+  .radio-inner
+    width: 10px
+    height: 10px
+    border-radius: 50%
+    background: transparent
+    transition: background 0.2s
+
+    &.active
+      background: $header-bg
+
+.card-number
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 12px
+  background: #4a5565
+  color: white
+  font-size: 14px
+  font-weight: 500
+  height: 30px
+  padding: 0 12px
+  border-radius: 4px
+  direction: ltr
+  width: 100%
+  box-sizing: border-box
+  margin: 0 -16px
+  width: calc(100% + 32px)
+
+  .digit-group
+    letter-spacing: 2px
+
+  .last-digits
+    font-weight: 600
+
+.card-footer
+  display: flex
+  justify-content: space-between
+  font-size: 12px
+  padding-top: 8px
+
+  .holder-name
+    text-transform: capitalize
+    color: #4a5565
+
+  .expiry-date
+    direction: ltr
+    color: #4a5565

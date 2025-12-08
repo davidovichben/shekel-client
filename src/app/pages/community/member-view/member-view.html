@@ -53,7 +53,7 @@
           <app-member-payment-methods [member]="member"></app-member-payment-methods>
         }
         @case ('groups') {
-          <app-member-groups [member]="member"></app-member-groups>
+          <app-member-groups [member]="member" (closeDialog)="closeDialog()"></app-member-groups>
         }
       }
     </div>
