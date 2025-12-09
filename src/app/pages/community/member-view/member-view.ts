@@ -81,7 +81,7 @@ export class MemberViewComponent implements OnInit {
 
   onCloseClick(): void {
     const confirmDialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
+      width: '500px',
       panelClass: 'confirm-dialog-panel',
       backdropClass: 'confirm-dialog-backdrop',
       enterAnimationDuration: '0ms',

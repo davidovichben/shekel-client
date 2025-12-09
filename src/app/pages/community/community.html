@@ -11,82 +11,37 @@
     </button>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabs-container">
-    <div class="tabs">
-      @for (tab of tabs; track tab.id) {
-        <button
-          class="tab"
-          [class.active]="activeTab === tab.id"
-          (click)="onTabClick(tab.id)">
-          {{ tab.label }}
-          @if (tab.count !== null) {
-            <span class="count">({{ tab.count }})</span>
-          }
-        </button>
-      }
-    </div>
-    <button class="filter-btn" (click)="toggleAdditionalFilters()">
-      <span class="filter-icon-wrapper">
-        <i class="fa-solid fa-filter"></i>
-      </span>
-      פילטרים נוספים
-    </button>
-  </div>
-
-  <!-- Additional Filters -->
-  @if (showAdditionalFilters) {
-    <div class="additional-filters">
-      <div class="filters-row">
-        <div class="filters-content">
-          <div class="filter-group">
-            <label>סוג חבר:</label>
-            <input type="text" [(ngModel)]="filterMemberType" placeholder="זבולון">
-          </div>
-          <div class="filter-group">
-            <label>נמצא בקבוצה:</label>
-            <input type="text" [(ngModel)]="filterGroup" placeholder="זבולון">
-          </div>
-          <div class="filter-group">
-            <label>בעל חוב:</label>
-            <app-custom-select
-              [options]="debtOptions"
-              [(value)]="filterHasDebt"
-              placeholder="כן">
-            </app-custom-select>
-          </div>
-        </div>
-        <div class="filter-actions">
-          <button class="btn-save-filters" (click)="saveFilters()">שמור פילטרים</button>
-          <button class="btn-clear-filters" (click)="clearFilters()" [disabled]="areFiltersEmpty()">נקה</button>
-        </div>
-      </div>
-    </div>
-  }
+  <!-- Tabs and Filters -->
+  <app-additional-filters
+    [tabs]="tabs"
+    [activeTab]="activeTab"
+    [fields]="filterFields"
+    (tabClick)="onTabClick($event)"
+    (saveFilters)="onSaveFilters($event)"
+    (clearFilters)="onClearFilters()">
+  </app-additional-filters>
 
   <!-- Search and Actions -->
-  <div class="table-header">
-	  <div class="filters">
-		  <div class="search-box">
-			  <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-			  <input type="text" placeholder="חפש חברי קהילה" [(ngModel)]="searchText">
-		  </div>
-		  <app-custom-select
-			  [options]="sortOptions"
-			  [(value)]="sortBy"
-			  prefix="מיין לפי">
-		  </app-custom-select>
-	  </div>
-    <div class="table-actions">
-	    <div class="bulk-actions">
-		    <span>פעולות קולקטיביות:</span>
-		    <button type="button" class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
-		    <button type="button" class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
-		    <button type="button" class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
-	    </div>
-	    <div class="export-action">
-		    <button class="btn-outline">ייצא לקובץ</button>
-	    </div>
+  <div class="filters-actions-row">
+    <div class="filters-section">
+      <div class="search-box">
+        <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <input type="text" placeholder="חפש חברי קהילה" [(ngModel)]="searchText">
+      </div>
+      <app-custom-select
+        [options]="sortOptions"
+        [(value)]="sortBy"
+        prefix="מיין לפי">
+      </app-custom-select>
+    </div>
+    <div class="actions-section">
+      <div class="bulk-actions">
+        <span>פעולות קולקטיביות:</span>
+        <button type="button" class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
+      </div>
+      <button class="btn-secondary">ייצא לקובץ</button>
     </div>
   </div>
 

@@ -9,11 +9,12 @@ import { CustomSelectComponent } from '../../shared/components/custom-select/cus
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { MemberViewComponent } from './member-view/member-view';
+import { AdditionalFiltersComponent, FilterField } from '../../shared/components/additional-filters/additional-filters';
 
 @Component({
   selector: 'app-community',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent, AdditionalFiltersComponent],
   templateUrl: './community.html',
   styleUrl: './community.sass'
 })
@@ -58,16 +59,31 @@ export class CommunityComponent implements OnInit {
   totalPages = 1;
   isLoading = false;
   selectedMembers: Set<string> = new Set();
-  showAdditionalFilters = false;
 
-  // Filter values
-  filterMemberType = '';
-  filterGroup = '';
-  filterHasDebt = '';
-
-  debtOptions = [
-    { value: 'yes', label: 'כן' },
-    { value: 'no', label: 'לא' }
+  // Filter fields configuration
+  filterFields: FilterField[] = [
+    {
+      key: 'memberType',
+      label: 'סוג חבר',
+      type: 'text',
+      placeholder: 'זבולון'
+    },
+    {
+      key: 'group',
+      label: 'נמצא בקבוצה',
+      type: 'text',
+      placeholder: 'זבולון'
+    },
+    {
+      key: 'hasDebt',
+      label: 'בעל חוב',
+      type: 'select',
+      placeholder: 'כן',
+      options: [
+        { value: 'yes', label: 'כן' },
+        { value: 'no', label: 'לא' }
+      ]
+    }
   ];
 
   sortBy = 'fullName';
@@ -118,17 +134,6 @@ export class CommunityComponent implements OnInit {
 
     if (this.activeTab !== 'all') {
       params.type = this.activeTab;
-    }
-
-    // Add filter parameters
-    if (this.filterMemberType) {
-      params.memberType = this.filterMemberType;
-    }
-    if (this.filterGroup) {
-      params.group = this.filterGroup;
-    }
-    if (this.filterHasDebt) {
-      params.hasDebt = this.filterHasDebt;
     }
 
     this.isLoading = true;
@@ -206,7 +211,7 @@ export class CommunityComponent implements OnInit {
   onBulkAction(action: string): void {
     if (this.selectedMembers.size === 0) {
       this.dialog.open(ConfirmDialogComponent, {
-        width: '400px',
+        width: '500px',
         panelClass: 'confirm-dialog-panel',
         backdropClass: 'confirm-dialog-backdrop',
         enterAnimationDuration: '0ms',
@@ -227,12 +232,28 @@ export class CommunityComponent implements OnInit {
   // Delete functionality
   openDeleteDialog(member: Member): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
+      width: '500px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
       data: {
-        title: 'מחיקת חבר',
-        message: `האם אתה בטוח שברצונך למחוק את ${member.fullName}?`,
-        confirmText: 'מחק',
-        cancelText: 'ביטול'
+        title: 'האם אתה בטוח שאתה רוצה למחוק את הרשומה?',
+        description: `הרשומה למחיקה: ${member.fullName}`,
+        buttons: [
+          {
+            text: 'בטל',
+            icon: 'close-icon',
+            type: 'cancel',
+            action: 'cancel'
+          },
+          {
+            text: 'כן, מחק',
+            icon: 'trash-icon',
+            type: 'primary',
+            action: 'confirm'
+          }
+        ]
       }
     });
 
@@ -259,26 +280,15 @@ export class CommunityComponent implements OnInit {
     console.log('Send message to:', member.id);
   }
 
-  toggleAdditionalFilters(): void {
-    this.showAdditionalFilters = !this.showAdditionalFilters;
-  }
-
-  saveFilters(): void {
+  onSaveFilters(filters: Record<string, string>): void {
     // Apply filters and reload members
     this.currentPage = 1;
+    // You can use the filters object here to filter the data
     this.loadMembers();
-    this.showAdditionalFilters = false;
   }
 
-  clearFilters(): void {
-    this.filterMemberType = '';
-    this.filterGroup = '';
-    this.filterHasDebt = '';
+  onClearFilters(): void {
     this.currentPage = 1;
     this.loadMembers();
-  }
-
-  areFiltersEmpty(): boolean {
-    return !this.filterMemberType && !this.filterGroup && !this.filterHasDebt;
   }
 }

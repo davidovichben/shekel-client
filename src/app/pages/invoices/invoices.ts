@@ -155,7 +155,7 @@ export class InvoicesComponent implements OnInit {
   onBulkAction(action: string): void {
     if (this.selectedInvoices.size === 0) {
       this.dialog.open(ConfirmDialogComponent, {
-        width: '400px',
+        width: '500px',
         data: {
           title: 'שים לב',
           message: 'יש לבחור לפחות פריט אחד לפני ביצוע פעולה קולקטיבית',

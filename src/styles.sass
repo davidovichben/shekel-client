@@ -347,19 +347,18 @@ input[type="radio"]
   justify-content: space-between
   align-items: center
   padding: 12px 24px
+  background: $btn-primary
   border-bottom: 1px solid $gray-300
 
   h2
     margin: 0
     font-size: 18px
     font-weight: 600
-    color: $text-dark
+    color: white
 
   .close-btn
     background: none
     border: none
-    font-size: 24px
-    color: $gray-500
     cursor: pointer
     padding: 0
     line-height: 1
@@ -370,9 +369,13 @@ input[type="radio"]
     justify-content: center
     border-radius: 50%
 
+    img
+      width: 20px
+      height: 20px
+      display: block
+
     &:hover
-      background: $gray-100
-      color: $text-dark
+      background: rgba(255, 255, 255, 0.2)
 
 .form-content
   padding: 16px 24px

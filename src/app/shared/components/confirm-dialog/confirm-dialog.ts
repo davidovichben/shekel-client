@@ -2,11 +2,21 @@ import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
+export interface DialogButton {
+  text: string;
+  icon?: string;
+  type: 'primary' | 'cancel' | 'secondary' | 'success' | 'warning';
+  action: 'confirm' | 'cancel' | string;
+}
+
 export interface ConfirmDialogData {
   title: string;
-  message: string;
+  message?: string;
+  description?: string;
+  buttons?: DialogButton[];
   confirmText?: string;
   cancelText?: string;
+  showCloseButton?: boolean;
 }
 
 @Component({
@@ -15,29 +25,45 @@ export interface ConfirmDialogData {
   imports: [CommonModule, MatDialogModule],
   template: `
     <div class="confirm-dialog">
+      @if (data.showCloseButton !== false) {
+        <button class="close-btn" (click)="onCancel()" type="button">
+          <img src="/assets/icons/close-icon.svg" alt="X" />
+        </button>
+      }
       <div class="dialog-content">
         <h2>{{ data.title }}</h2>
-        <p>{{ data.message }}</p>
+        @if (data.message) {
+          <p class="message">{{ data.message }}</p>
+        }
+        @if (data.description) {
+          <p class="description">{{ data.description }}</p>
+        }
       </div>
       <div class="dialog-actions">
-        <button class="btn-confirm" (click)="onConfirm()">
-          @if (data.cancelText) {
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
+        @if (data.buttons && data.buttons.length > 0) {
+          @for (button of data.buttons; track button.action) {
+            <button [class]="'btn-' + button.type" (click)="onButtonClick(button.action)" type="button">
+              @if (button.icon) {
+                <img [src]="'/assets/icons/' + button.icon + '.svg'" [alt]="button.text" class="btn-icon" />
+              }
+              {{ button.text }}
+            </button>
           }
-          {{ data.confirmText || 'כן, מחק' }}
-        </button>
-        @if (data.cancelText) {
-          <button class="btn-cancel" (click)="onCancel()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="15" y1="9" x2="9" y2="15"></line>
-              <line x1="9" y1="9" x2="15" y2="15"></line>
-            </svg>
-            {{ data.cancelText }}
-          </button>
+        } @else {
+          @if (data.cancelText) {
+            <button class="btn-cancel" (click)="onCancel()" type="button">
+              <img src="/assets/icons/close-icon.svg" alt="ביטול" class="btn-icon" />
+              {{ data.cancelText }}
+            </button>
+          }
+          @if (data.confirmText) {
+            <button class="btn-confirm" (click)="onConfirm()" type="button">
+              @if (data.cancelText) {
+                <img src="/assets/icons/trash-icon.svg" alt="מחק" class="btn-icon" />
+              }
+              {{ data.confirmText }}
+            </button>
+          }
         }
       </div>
     </div>
@@ -56,5 +82,15 @@ export class ConfirmDialogComponent {
 
   onCancel(): void {
     this.dialogRef.close(false);
+  }
+
+  onButtonClick(action: string): void {
+    if (action === 'confirm') {
+      this.dialogRef.close(true);
+    } else if (action === 'cancel') {
+      this.dialogRef.close(false);
+    } else {
+      this.dialogRef.close(action);
+    }
   }
 }

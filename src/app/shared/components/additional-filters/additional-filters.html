@@ -1,0 +1,57 @@
+<div class="tabs-filters-container">
+  <div class="tabs-container">
+    <div class="tabs">
+      @for (tab of tabs; track tab.id) {
+        <button
+          class="tab"
+          [class.active]="activeTab === tab.id"
+          (click)="onTabClick(tab.id)">
+          {{ tab.label }}
+          @if (tab.count !== null) {
+            <span class="count">({{ tab.count }})</span>
+          }
+        </button>
+      }
+    </div>
+    @if (hasFilters) {
+      <button class="filter-btn" (click)="toggleFilters()">
+        <span class="filter-icon-wrapper">
+          <i class="fa-solid fa-filter"></i>
+        </span>
+        פילטרים נוספים
+      </button>
+    }
+  </div>
+
+  @if (hasFilters && showFilters) {
+    <div class="additional-filters">
+      <div class="filters-row">
+        <div class="filters-content">
+          @for (field of fields; track field.key) {
+            <div class="filter-group">
+              <label>{{ field.label }}</label>
+              @if (field.type === 'text') {
+                <input 
+                  type="text" 
+                  [(ngModel)]="filterValues[field.key]"
+                  [placeholder]="field.placeholder || ''"
+                  (ngModelChange)="updateFilterValue(field.key, $event)">
+              } @else if (field.type === 'select') {
+                <app-custom-select
+                  [options]="field.options || []"
+                  [(value)]="filterValues[field.key]"
+                  [placeholder]="field.placeholder || ''">
+                </app-custom-select>
+              }
+            </div>
+          }
+        </div>
+        <div class="filter-actions">
+          <button class="btn-save-filters" (click)="onSave()">שמור פילטרים</button>
+          <button class="btn-clear-filters" (click)="onClear()" [disabled]="areFiltersEmpty()">נקה</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+

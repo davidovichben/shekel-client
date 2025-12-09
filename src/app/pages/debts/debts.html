@@ -17,58 +17,44 @@
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabs-container">
-    <div class="tabs">
-      @for (tab of tabs; track tab.id) {
-        <button
-          class="tab"
-          [class.active]="activeTab === tab.id"
-          (click)="onTabClick(tab.id)">
-          {{ tab.label }}
-          <span class="count">({{ tab.count }})</span>
-        </button>
-      }
-    </div>
-    <button class="filter-btn">
-      <i class="fa-solid fa-filter"></i>
-      פילטרים נוספים
-    </button>
-  </div>
+  <!-- Tabs and Filters -->
+  <app-additional-filters
+    [tabs]="tabs"
+    [activeTab]="activeTab"
+    (tabClick)="onTabClick($event)">
+  </app-additional-filters>
 
-  <!-- Filters Row -->
-  <div class="filters-row">
-    <div class="filter-dropdowns">
-      <app-custom-select
-        [options]="displayRangeOptions"
-        [(value)]="displayRange"
-        prefix="הצג חובות:">
-      </app-custom-select>
-      <app-custom-select
-        [options]="sortOptions"
-        [(value)]="sortBy"
-        prefix="מיין לפי:">
-      </app-custom-select>
+  <!-- Filters and Actions Row -->
+  <div class="filters-actions-row">
+    <div class="filters-section">
+      <div class="filter-dropdowns">
+        <app-custom-select
+          [options]="displayRangeOptions"
+          [(value)]="displayRange"
+          prefix="הצג חובות:">
+        </app-custom-select>
+        <app-custom-select
+          [options]="sortOptions"
+          [(value)]="sortBy"
+          prefix="מיין לפי:">
+        </app-custom-select>
+      </div>
+      <div class="filter-checkbox">
+        <label>
+          <input type="checkbox" [(ngModel)]="showAutoPaymentOnly">
+          הצג חובות עם אפשרות לתשלום אוטומטי בלבד
+        </label>
+      </div>
     </div>
-    <div class="filter-checkbox">
-      <label>
-        <input type="checkbox" [(ngModel)]="showAutoPaymentOnly">
-        הצג חובות עם אפשרות לתשלום אוטומטי בלבד
-      </label>
-    </div>
-  </div>
-
-  <!-- Actions Row -->
-  <div class="table-header">
-    <div class="bulk-actions">
-      <span>פעולות קולקטיביות:</span>
-      <button class="action-icon" (click)="onBulkAction('message')"><i class="fa-regular fa-comment"></i></button>
-      <button class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
-      <button class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
-      <button class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
-    </div>
-    <div class="export-action">
-      <button class="btn-outline">ייצא לקובץ</button>
+    <div class="actions-section">
+      <div class="bulk-actions">
+        <span>פעולות קולקטיביות:</span>
+        <button class="action-icon" (click)="onBulkAction('message')"><i class="fa-regular fa-comment"></i></button>
+        <button class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
+        <button class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
+        <button class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
+      </div>
+      <button class="btn-secondary">ייצא לקובץ</button>
     </div>
   </div>
 
@@ -110,7 +96,7 @@
         <td class="col-actions">
           <button class="row-action"><i class="fa-regular fa-comment"></i></button>
           <button class="row-action"><i class="fa-regular fa-envelope"></i></button>
-          <button class="row-action"><i class="fa-regular fa-trash-can"></i></button>
+          <button class="row-action" (click)="openDeleteDialog(debt)"><i class="fa-regular fa-trash-can"></i></button>
           <button class="row-action" (click)="openEditDialog(debt)"><i class="fa-solid fa-pencil"></i></button>
         </td>
       </tr>

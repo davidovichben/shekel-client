@@ -8,54 +8,166 @@
   text-align: center
   padding: 24px
   position: relative
-  background: $bg-page
+  background: $bg-white
   border-radius: 12px
+  min-width: 500px
+
+.close-btn
+  position: absolute
+  top: 16px
+  right: 16px
+  width: 28px
+  height: 28px
+  border: none
+  background: transparent
+  cursor: pointer
+  display: flex
+  align-items: center
+  justify-content: center
+  border-radius: 50%
+  padding: 0
+  transition: background 0.2s
+
+  &:hover
+    background: rgba(0, 0, 0, 0.05)
+
+  img
+    width: 14px
+    height: 14px
+    // Make white icon visible on white background - convert to dark gray
+    filter: brightness(0) saturate(100%)
 
 .dialog-content
-  padding: 16px 0 24px
+  padding: 8px 0 24px
 
   h2
-    margin: 0 0 8px
-    font-size: 16px
+    margin: 0 0 12px
+    font-size: 18px
     font-weight: 700
-    color: $header-bg
+    color: $text-primary
+    text-align: center
 
-  p
+  .message
+    margin: 0 0 8px
+    font-size: 14px
+    color: $gray-700
+    text-align: center
+
+  .description
     margin: 0
     font-size: 14px
     color: $gray-700
+    text-align: center
+    font-weight: 500
 
 .dialog-actions
   display: flex
   justify-content: center
   gap: 12px
+  flex-direction: row-reverse
 
-.btn-confirm
+.btn-confirm,
+.btn-primary
   display: flex
   align-items: center
   gap: 8px
   padding: 10px 20px
-  background: $header-bg
+  background: $btn-primary
   color: white
   border: none
-  border-radius: 25px
+  border-radius: 8px
   font-size: 14px
+  font-weight: 500
   cursor: pointer
+  transition: background 0.2s
 
   &:hover
-    background: $header-bg-hover
+    background: $btn-primary-hover
+
+  .btn-icon
+    width: 16px
+    height: 16px
 
 .btn-cancel
   display: flex
   align-items: center
   gap: 8px
   padding: 10px 20px
-  background: $btn-cancel-light
-  color: $btn-cancel
+  background: #f48c8c
+  color: white
   border: none
-  border-radius: 25px
+  border-radius: 8px
   font-size: 14px
+  font-weight: 500
   cursor: pointer
+  transition: background 0.2s
 
   &:hover
-    background: $btn-cancel-light-hover
+    background: #e57373
+
+  .btn-icon
+    width: 14px
+    height: 14px
+
+.btn-secondary
+  display: flex
+  align-items: center
+  gap: 8px
+  padding: 10px 20px
+  background: $bg-actions
+  color: $text-primary
+  border: none
+  border-radius: 8px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  transition: background 0.2s
+
+  &:hover
+    background: $bg-actions-hover
+
+  .btn-icon
+    width: 16px
+    height: 16px
+
+.btn-success
+  display: flex
+  align-items: center
+  gap: 8px
+  padding: 10px 20px
+  background: $success
+  color: white
+  border: none
+  border-radius: 8px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  transition: background 0.2s
+
+  &:hover
+    background: darken($success, 10%)
+
+  .btn-icon
+    width: 16px
+    height: 16px
+
+.btn-warning
+  display: flex
+  align-items: center
+  gap: 8px
+  padding: 10px 20px
+  background: $warning
+  color: white
+  border: none
+  border-radius: 8px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  transition: background 0.2s
+
+  &:hover
+    background: darken($warning, 10%)
+
+  .btn-icon
+    width: 16px
+    height: 16px

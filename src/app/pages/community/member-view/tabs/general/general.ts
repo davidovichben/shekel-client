@@ -78,7 +78,7 @@ export class MemberGeneralComponent implements OnInit {
 
   onCancel(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
+      width: '500px',
       panelClass: 'confirm-dialog-panel',
       backdropClass: 'confirm-dialog-backdrop',
       enterAnimationDuration: '0ms',

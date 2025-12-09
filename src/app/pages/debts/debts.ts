@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomSelectComponent } from '../../shared/components/custom-select/custom-select';
+import { AdditionalFiltersComponent } from '../../shared/components/additional-filters/additional-filters';
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { DebtFormComponent } from './debt-form/debt-form';
 import { VowSetFormComponent } from './vow-set-form/vow-set-form';
+import { DebtService } from '../../core/services/network/debt.service';
 
 interface Debt {
   id: string;
@@ -23,12 +25,13 @@ interface Debt {
 @Component({
   selector: 'app-debts',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent, AdditionalFiltersComponent],
   templateUrl: './debts.html',
   styleUrl: './debts.sass'
 })
 export class DebtsComponent implements OnInit {
   private dialog = inject(MatDialog);
+  private debtService = inject(DebtService);
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(DebtFormComponent, {
@@ -174,7 +177,7 @@ export class DebtsComponent implements OnInit {
   onBulkAction(action: string): void {
     if (this.selectedDebts.size === 0) {
       this.dialog.open(ConfirmDialogComponent, {
-        width: '400px',
+        width: '500px',
         data: {
           title: 'שים לב',
           message: 'יש לבחור לפחות פריט אחד לפני ביצוע פעולה קולקטיבית',
@@ -186,4 +189,46 @@ export class DebtsComponent implements OnInit {
     }
     console.log(`Bulk action: ${action}`, Array.from(this.selectedDebts));
   }
+
+  openDeleteDialog(debt: Debt): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        title: 'האם אתה בטוח שאתה רוצה למחוק את הרשומה?',
+        description: `הרשומה למחיקה: ${debt.fullName}`,
+        buttons: [
+          {
+            text: 'בטל',
+            icon: 'close-icon',
+            type: 'cancel',
+            action: 'cancel'
+          },
+          {
+            text: 'כן, מחק',
+            icon: 'trash-icon',
+            type: 'primary',
+            action: 'confirm'
+          }
+        ]
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.debtService.delete(debt.id).subscribe({
+          next: () => {
+            this.loadDebts();
+          },
+          error: (error) => {
+            console.error('Error deleting debt:', error);
+          }
+        });
+      }
+    });
+  }
+
 }
