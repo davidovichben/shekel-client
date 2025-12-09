@@ -35,7 +35,7 @@ export class DebtsComponent implements OnInit {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(DebtFormComponent, {
-      width: '500px',
+      width: '900px',
       panelClass: 'debt-form-dialog',
       data: {}
     });
@@ -49,7 +49,7 @@ export class DebtsComponent implements OnInit {
 
   openEditDialog(debt: Debt): void {
     const dialogRef = this.dialog.open(DebtFormComponent, {
-      width: '500px',
+      width: '900px',
       panelClass: 'debt-form-dialog',
       data: { debt }
     });

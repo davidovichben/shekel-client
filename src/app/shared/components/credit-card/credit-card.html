@@ -1,0 +1,20 @@
+<div class="credit-card" [class.selected]="selected" (click)="onClick()">
+  <div class="card-header">
+    <div class="card-radio">
+      <span class="radio-inner" [class.active]="selected"></span>
+    </div>
+    <div class="card-type">
+      <img [src]="getCardLogoPath()" [alt]="card.type" class="card-logo">
+    </div>
+  </div>
+  <div class="card-number">
+    <span class="digit-group">••••</span>
+    <span class="digit-group">••••</span>
+    <span class="digit-group">••••</span>
+    <span class="digit-group last-digits">{{ card.lastFourDigits }}</span>
+  </div>
+  <div class="card-footer">
+    <span class="expiry-date">{{ card.expiryDate }}</span>
+    <span class="holder-name">{{ card.holderName }}</span>
+  </div>
+</div>

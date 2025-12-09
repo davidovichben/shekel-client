@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 export interface CreditCard {
   id: string;
-  type: 'visa' | 'mastercard';
+  type: 'visa' | 'mastercard' | 'amex' | 'diners';
   lastFourDigits: string;
   holderName: string;
   expiryDate: string;

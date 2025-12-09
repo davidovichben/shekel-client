@@ -65,8 +65,8 @@
         </td>
         <td class="col-fullname clickable" (click)="navigateToMember(member)">{{ member.fullName }}</td>
         <td>{{ getMemberTypeName(member.type) }}</td>
-        <td [class.negative]="+member.balance < 0">{{ member.balance }}₪</td>
-        <td>{{ member.mobile }}</td>
+        <td [class.negative]="+member.balance < 0"><span class="balance">₪{{ member.balance }}</span></td>
+        <td class="ltr">{{ member.mobile }}</td>
         <td>{{ member.lastMessageDate || '--' }}</td>
         <td>
           <div class="groups">

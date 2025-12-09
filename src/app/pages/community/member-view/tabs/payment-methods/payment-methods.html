@@ -5,36 +5,39 @@
       <!-- Standing Order Section -->
       <div class="method-card">
         <div class="method-header">
-          <h3>הרשאת מס"ב:</h3>
-          <span class="method-icon masav-icon">ש</span>
+          <div class="method-text">
+            <h3>הרשאת מס"ב:</h3>
+            <p class="method-description">אפשרות לחיוב בעזרת הרשאה קבועה לחיוב בחשבון הבנק</p>
+          </div>
         </div>
-        <p class="method-description">אפשרות לחיוב בעזרת הרשאה קבועה לחיוב בחשבון הבנק</p>
-        <button class="btn-primary" (click)="onCreateStandingOrder()">צור הרשאה</button>
+        <button class="btn-primary masav-btn" (click)="onCreateStandingOrder()">צור הרשאה</button>
       </div>
 
       <!-- Bit Section -->
       <div class="method-card">
         <div class="method-header">
-          <h3>ביט:</h3>
-          <span class="method-icon bit-icon">bit</span>
+          <img src="/assets/img/bit.png" alt="Bit" class="method-icon bit-icon">
+          <div class="method-text">
+            <h3>ביט:</h3>
+            <p class="method-description">אפשרות לחיוב דרך אפליקציית ביט</p>
+          </div>
         </div>
-        <p class="method-description">אפשרות לחיוב דרך אפליקציית ביט</p>
 
         <div class="bit-options">
           <label class="radio-option">
             <input type="radio" name="bitOption" value="none" [(ngModel)]="bitOption">
-            <span class="radio-custom"></span>
             <span class="radio-label">לחבר לא קיים חשבון ביט פעיל.</span>
+            <span class="radio-custom"></span>
           </label>
           <label class="radio-option">
             <input type="radio" name="bitOption" value="primary" [(ngModel)]="bitOption">
-            <span class="radio-custom"></span>
             <span class="radio-label">קיים חשבון ביט על מספר הנייד הראשי</span>
+            <span class="radio-custom"></span>
           </label>
           <label class="radio-option">
             <input type="radio" name="bitOption" value="other" [(ngModel)]="bitOption">
-            <span class="radio-custom"></span>
             <span class="radio-label">קיים חשבון ביט על מספר נייד אחר:</span>
+            <span class="radio-custom"></span>
           </label>
         </div>
 
@@ -55,33 +58,11 @@
         @if (creditCards.length > 0) {
           <div class="cards-grid">
             @for (card of creditCards; track card.id) {
-              <div
-                class="credit-card"
-                [class.selected]="selectedCardId === card.id"
-                (click)="selectCard(card)">
-                <div class="card-header">
-                  <span class="card-type" [class.visa]="card.type === 'visa'" [class.mastercard]="card.type === 'mastercard'">
-                    @if (card.type === 'visa') {
-                      <span class="visa-text">VISA</span>
-                    } @else {
-                      <span class="mastercard-dots"></span>
-                    }
-                  </span>
-                  <span class="card-radio">
-                    <span class="radio-inner" [class.active]="selectedCardId === card.id"></span>
-                  </span>
-                </div>
-                <div class="card-number">
-                  <span class="dots">****</span>
-                  <span class="dots">****</span>
-                  <span class="dots">****</span>
-                  <span class="last-digits">{{ card.lastFourDigits }}</span>
-                </div>
-                <div class="card-footer">
-                  <span class="holder-name">{{ card.holderName }}</span>
-                  <span class="expiry-date">{{ card.expiryDate }}</span>
-                </div>
-              </div>
+              <app-credit-card
+                [card]="card"
+                [selected]="selectedCardId === card.id"
+                (select)="selectCard($event)">
+              </app-credit-card>
             }
           </div>
         } @else {

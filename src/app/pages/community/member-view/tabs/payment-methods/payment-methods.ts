@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Member } from '../../../../../core/entities/member.entity';
 import { MemberCreditCardService, MemberCreditCard } from '../../../../../core/services/network/member-credit-card.service';
+import { CreditCardComponent, CreditCardData } from '../../../../../shared/components/credit-card/credit-card';
 
 @Component({
   selector: 'app-member-payment-methods',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CreditCardComponent],
   templateUrl: './payment-methods.html',
   styleUrl: './payment-methods.sass'
 })
@@ -35,14 +36,16 @@ export class MemberPaymentMethodsComponent implements OnInit {
 
     this.memberCreditCardService.getByMember(this.member.id).subscribe(cards => {
       this.creditCards = cards;
-      if (cards.length > 0) {
-        this.selectedCardId = cards[0].id;
-      }
+      const defaultCard = cards.find(card => card.isDefault);
+      this.selectedCardId = defaultCard?.id || (cards.length > 0 ? cards[0].id : '');
     });
   }
 
-  selectCard(card: MemberCreditCard): void {
+  selectCard(card: CreditCardData): void {
+    if (!this.member || this.selectedCardId === card.id) return;
+
     this.selectedCardId = card.id;
+    this.memberCreditCardService.setDefault(this.member.id, card.id).subscribe();
   }
 
   onAddCard(): void {

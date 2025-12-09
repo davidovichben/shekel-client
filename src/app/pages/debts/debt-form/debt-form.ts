@@ -20,6 +20,7 @@ export interface DebtFormDialogData {
     autoPaymentApproved: boolean;
     status: DebtStatus;
     debtType?: string;
+    lastReminder?: string | null;
   };
 }
 
@@ -49,7 +50,8 @@ export class DebtFormComponent implements OnInit {
     gregorianDate: '',
     autoPaymentApproved: false,
     status: DebtStatus.Active as DebtStatus,
-    debtType: ''
+    debtType: '',
+    lastReminder: null as string | null
   };
 
   debtTypeOptions = [
@@ -76,9 +78,53 @@ export class DebtFormComponent implements OnInit {
         gregorianDate: this.data.debt.gregorianDate || '',
         autoPaymentApproved: this.data.debt.autoPaymentApproved || false,
         status: this.data.debt.status || DebtStatus.Active,
-        debtType: this.data.debt.debtType || ''
+        debtType: this.data.debt.debtType || '',
+        lastReminder: this.data.debt.lastReminder || null
       };
     }
+  }
+
+  formatDate(dateString: string | null): string {
+    if (!dateString) return '';
+    
+    // Check if it's already in DD/MM/YYYY format
+    if (typeof dateString === 'string' && dateString.includes('/')) {
+      return dateString;
+    }
+    
+    // Try to parse as Date
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return dateString; // Return as-is if can't parse
+    }
+    
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  onSendReminder(): void {
+    // TODO: Implement send reminder API call
+    console.log('Send reminder for debt:', this.debtId);
+  }
+
+  onPay(): void {
+    // TODO: Implement pay debt API call
+    console.log('Pay debt:', this.debtId);
+  }
+
+  onDelete(): void {
+    if (!this.debtId) return;
+    
+    this.debtService.delete(this.debtId).subscribe({
+      next: () => {
+        this.dialogRef.close({ deleted: true });
+      },
+      error: (error) => {
+        console.error('Error deleting debt:', error);
+      }
+    });
   }
 
   onMemberSelected(member: Member): void {

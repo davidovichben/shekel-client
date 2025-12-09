@@ -1,86 +1,101 @@
 <div class="dialog-backdrop">
   <div class="dialog-container">
     <div class="dialog-header">
-      <h2>{{ isEditMode ? 'עריכת חוב' : 'יצירת חוב חדש' }}</h2>
       <button class="close-btn" (click)="onClose()">
         <img src="/assets/icons/close-icon.svg" alt="Close" />
       </button>
+      <img src="/assets/icons/document-icon.svg" alt="Document" class="document-icon" />
+      <h2>{{ isEditMode ? 'חוב - ' + debt.description : 'יצירת חוב חדש' }}</h2>
+      <div class="header-left">
+        @if (isEditMode && debt.lastReminder) {
+          <div class="info-message">
+            <img src="/assets/icons/info-icon.svg" alt="Info" class="info-icon" />
+            <span>נשלחה תזכורת לגבי חוב זה בתאריך: {{ formatDate(debt.lastReminder) }}</span>
+          </div>
+        }
+      </div>
     </div>
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-content">
         <div class="form-grid">
-          <!-- Row 1 -->
-          <div class="form-group">
-            <label class="required">סוג חייב:</label>
-            <div class="radio-group">
-              <label class="radio-option">
-                <input type="radio" name="debtorType" value="group" [(ngModel)]="debtorType">
-                <span class="radio-label">קבוצה</span>
-              </label>
-              <label class="radio-option">
-                <input type="radio" name="debtorType" value="individual" [(ngModel)]="debtorType">
-                <span class="radio-label">יחיד</span>
-              </label>
+          <!-- Right Column -->
+          <div class="form-column-right">
+            <div class="form-group">
+              <label class="required">סוג חייב:</label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="debtorType" value="group" [(ngModel)]="debtorType">
+                  <span class="radio-label">קבוצה</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="debtorType" value="individual" [(ngModel)]="debtorType">
+                  <span class="radio-label">יחיד</span>
+                </label>
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="required">חייב:</label>
-            <app-member-autocomplete
-              [memberName]="debt.fullName"
-              (memberSelected)="onMemberSelected($event)"
-              placeholder="חיפוש חייב..."
-            ></app-member-autocomplete>
-          </div>
-
-          <!-- Row 2 -->
-          <div class="form-group">
-            <label class="required">סוג חוב:</label>
-            <app-custom-select
-              [options]="debtTypeOptions"
-              [(value)]="debt.debtType"
-              placeholder="בחר סוג חוב"
-            ></app-custom-select>
-          </div>
-          <div class="form-group">
-            <label>סכום:</label>
-            <div class="amount-input">
-              <input type="number" [(ngModel)]="debt.amount" name="amount" placeholder="">
-              <span class="currency">ש"ח</span>
+            <div class="form-group">
+              <label>סכום:</label>
+              <div class="amount-input">
+                <input type="number" [(ngModel)]="debt.amount" name="amount" placeholder="">
+                <span class="currency">₪</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>תיאור חוב:</label>
+              <textarea [(ngModel)]="debt.description" name="description" placeholder="" rows="3"></textarea>
             </div>
           </div>
 
-          <!-- Row 3 -->
-          <div class="form-group">
-            <label class="required">תאריך:</label>
-            <input type="date" [(ngModel)]="debt.gregorianDate" name="gregorianDate">
-          </div>
-          <div class="form-group">
-            <label>תיאור חוב:</label>
-            <input type="text" [(ngModel)]="debt.description" name="description" placeholder="">
-          </div>
-
-          <!-- Row 4: Checkbox spanning right column -->
-          <div class="form-group checkbox-group">
-            <label class="checkbox-label">
-              <input type="checkbox" [(ngModel)]="sendReminderOnCreate" name="sendReminder">
-              <span>שלח הודעת תזכורת לתשלום מיד ביצירה</span>
-            </label>
+          <!-- Left Column -->
+          <div class="form-column-left">
+            <div class="form-group">
+              <label class="required">חייב:</label>
+              <app-member-autocomplete
+                [memberName]="debt.fullName"
+                (memberSelected)="onMemberSelected($event)"
+                placeholder="חיפוש חייב..."
+              ></app-member-autocomplete>
+            </div>
+            <div class="form-group">
+              <label class="required">סוג חוב:</label>
+              <app-custom-select
+                [options]="debtTypeOptions"
+                [(value)]="debt.debtType"
+                placeholder="בחר סוג חוב"
+              ></app-custom-select>
+            </div>
+            <div class="form-group">
+              <label class="required">תאריך:</label>
+              <input type="date" [(ngModel)]="debt.gregorianDate" name="gregorianDate">
+            </div>
           </div>
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn-primary" [disabled]="isSubmitting">
-          <span class="btn-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-              <polyline points="17 21 17 13 7 13 7 21"/>
-              <polyline points="7 3 7 8 15 8"/>
-            </svg>
-          </span>
-          {{ isSubmitting ? 'שומר...' : (isEditMode ? 'עדכן חוב' : 'צור חוב') }}
-        </button>
+        @if (isEditMode) {
+          <button type="button" class="btn-delete" (click)="onDelete()">
+            <img src="/assets/icons/trash-icon.svg" alt="Delete" class="btn-icon" />
+            מחק חוב
+          </button>
+        }
+        <div class="actions-right">
+          @if (isEditMode) {
+            <button type="button" class="btn-pay" (click)="onPay()">
+              <img src="/assets/icons/shekel-icon.svg" alt="Pay" class="btn-icon" />
+              שלם
+            </button>
+            <button type="button" class="btn-reminder" (click)="onSendReminder()">
+              <img src="/assets/icons/message-icon.svg" alt="Reminder" class="btn-icon" />
+              שלח תזכורת
+            </button>
+          }
+          <button type="submit" class="btn-save" [disabled]="isSubmitting">
+            <img src="/assets/icons/document-icon.svg" alt="Save" class="btn-icon" />
+            {{ isSubmitting ? 'שומר...' : 'שמור שינויים' }}
+          </button>
+        </div>
       </div>
     </form>
   </div>

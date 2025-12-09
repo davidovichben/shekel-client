@@ -27,9 +27,8 @@
   display: flex
   align-items: center
   gap: 12px
-  margin-bottom: 8px
-  flex-direction: row-reverse
-  justify-content: flex-end
+  margin-bottom: 20px
+  justify-content: flex-start
 
   h3
     margin: 0
@@ -37,6 +36,22 @@
     font-weight: 700
     color: $text-dark
     text-align: right
+
+.method-text
+  display: flex
+  flex-direction: column
+  text-align: right
+
+  h3
+    margin: 0
+    font-size: 18px
+    font-weight: 700
+    color: $text-dark
+
+  .method-description
+    margin: 4px 0 0
+    font-size: 14px
+    color: $text-muted
 
 .method-icon
   display: flex
@@ -48,15 +63,16 @@
   font-weight: 700
 
   &.masav-icon
-    background: #f0f0f0
-    color: $text-dark
+    background: #FFD700
+    color: #333
     font-size: 18px
 
   &.bit-icon
-    background: #00d4aa
-    color: white
-    font-size: 12px
-    font-weight: 700
+    width: 40px
+    height: 40px
+    object-fit: contain
+    background: transparent
+    border-radius: 0
 
 .method-description
   margin: 0 0 16px
@@ -79,10 +95,18 @@
   &:hover
     background: $btn-primary-hover
 
+  &.masav-btn,
+  &.add-card-btn
+    width: 150px
+    background: $header-bg
+
+    &:hover
+      background: $header-bg-hover
+
 // Bit options
 .bit-options
   display: flex
-  flex-direction: column
+  flex-wrap: wrap
   gap: 12px
   margin-bottom: 16px
 
@@ -92,7 +116,9 @@
   gap: 8px
   cursor: pointer
   flex-direction: row-reverse
-  justify-content: flex-start
+  justify-content: flex-end
+  width: calc(50% - 6px)
+  margin-bottom: 15px
 
   input[type="radio"]
     display: none
@@ -118,7 +144,7 @@
       opacity: 0
       transition: opacity 0.2s
 
-  input[type="radio"]:checked + .radio-custom
+  input[type="radio"]:checked ~ .radio-custom
     border-color: $btn-primary
 
     &:after
@@ -132,11 +158,12 @@
   width: 50%
   padding: 10px 14px
   border: 1px solid #e5e7eb
-  border-radius: 20px
+  border-radius: 4px
   font-size: 14px
   direction: ltr
   text-align: left
   margin-right: auto
+  background: white
 
   &:focus
     outline: none
@@ -154,102 +181,6 @@
   gap: 16px
   margin-bottom: 16px
   flex: 1
-
-.credit-card
-  background: linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 100%)
-  border-radius: 12px
-  padding: 16px
-  cursor: pointer
-  transition: all 0.2s
-  border: 2px solid transparent
-
-  &:hover
-    transform: translateY(-2px)
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
-
-  &.selected
-    border-color: $btn-primary
-
-.card-header
-  display: flex
-  justify-content: space-between
-  align-items: center
-  margin-bottom: 16px
-
-.card-type
-  font-weight: 700
-
-  &.visa .visa-text
-    color: #1a1f71
-    font-size: 16px
-    font-style: italic
-
-  &.mastercard .mastercard-dots
-    display: inline-flex
-    gap: 0
-
-    &::before
-      content: ''
-      display: inline-block
-      width: 16px
-      height: 16px
-      background: #eb001b
-      border-radius: 50%
-
-    &::after
-      content: ''
-      display: inline-block
-      width: 16px
-      height: 16px
-      background: #f79e1b
-      border-radius: 50%
-      margin-left: -6px
-
-.card-radio
-  width: 18px
-  height: 18px
-  border: 2px solid #ccc
-  border-radius: 50%
-  display: flex
-  align-items: center
-  justify-content: center
-  background: white
-
-  .radio-inner
-    width: 10px
-    height: 10px
-    border-radius: 50%
-    background: transparent
-    transition: background 0.2s
-
-    &.active
-      background: $btn-primary
-
-.card-number
-  display: flex
-  justify-content: center
-  gap: 8px
-  margin-bottom: 16px
-  font-size: 14px
-  color: #333
-
-  .dots
-    letter-spacing: 2px
-
-  .last-digits
-    font-weight: 600
-
-.card-footer
-  display: flex
-  justify-content: space-between
-  font-size: 12px
-  color: #666
-
-  .holder-name
-    text-transform: capitalize
-
-  .expiry-date
-    direction: ltr
 
 .add-card-btn
   margin-top: auto
