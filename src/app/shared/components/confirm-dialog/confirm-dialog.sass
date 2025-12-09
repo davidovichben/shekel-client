@@ -25,37 +25,53 @@
     font-size: 14px
     color: $gray-700
 
+.items-list
+  margin: 16px 0 0
+  padding: 12px
+  background: white
+  border-radius: 8px
+  list-style: none
+  max-height: 200px
+  overflow-y: auto
+  text-align: right
+
+  li
+    padding: 8px 12px
+    font-size: 14px
+    color: $text-dark
+    border-bottom: 1px solid $gray-300
+
+    &:last-child
+      border-bottom: none
+
 .dialog-actions
   display: flex
   justify-content: center
   gap: 12px
 
-.btn-confirm
+.btn-confirm,
+.btn-cancel
   display: flex
   align-items: center
+  justify-content: center
   gap: 8px
   padding: 10px 20px
-  background: $header-bg
-  color: white
+  min-width: 180px
   border: none
   border-radius: 25px
   font-size: 14px
   cursor: pointer
+
+.btn-confirm
+  background: $header-bg
+  color: white
 
   &:hover
     background: $header-bg-hover
 
 .btn-cancel
-  display: flex
-  align-items: center
-  gap: 8px
-  padding: 10px 20px
   background: $btn-cancel-light
   color: $btn-cancel
-  border: none
-  border-radius: 25px
-  font-size: 14px
-  cursor: pointer
 
   &:hover
     background: $btn-cancel-light-hover

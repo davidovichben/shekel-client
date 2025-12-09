@@ -7,6 +7,7 @@ export interface ConfirmDialogData {
   message: string;
   confirmText?: string;
   cancelText?: string;
+  items?: string[];
 }
 
 @Component({
@@ -18,6 +19,13 @@ export interface ConfirmDialogData {
       <div class="dialog-content">
         <h2>{{ data.title }}</h2>
         <p>{{ data.message }}</p>
+        @if (data.items && data.items.length > 0) {
+          <ul class="items-list">
+            @for (item of data.items; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        }
       </div>
       <div class="dialog-actions">
         <button class="btn-confirm" (click)="onConfirm()">

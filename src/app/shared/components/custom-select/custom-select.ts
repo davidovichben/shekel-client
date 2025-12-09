@@ -18,6 +18,7 @@ export class CustomSelectComponent {
   @Input() value: string = '';
   @Input() placeholder: string = '';
   @Input() prefix: string = '';
+  @Input() disabled: boolean = false;
   @Output() valueChange = new EventEmitter<string>();
 
   isOpen = false;
@@ -29,6 +30,7 @@ export class CustomSelectComponent {
   }
 
   toggle(): void {
+    if (this.disabled) return;
     this.isOpen = !this.isOpen;
   }
 

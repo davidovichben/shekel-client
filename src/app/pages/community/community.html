@@ -5,7 +5,7 @@
       <h1>קהילה</h1>
       <p>כאן תוכל לצפות, להוסיף, לערוך ולנהל את חברי הקהילה שלך</p>
     </div>
-    <button class="btn-primary" (click)="navigateToCreate()">
+    <button class="btn-primary" (click)="openCreateMemberDialog()">
       <span>⊕</span>
       הוסף חבר חדש
     </button>
@@ -53,7 +53,7 @@
 		    <button type="button" class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
 	    </div>
 	    <div class="export-action">
-		    <button class="btn-outline">ייצא לקובץ</button>
+		    <button class="btn-outline" (click)="openExportDialog()">ייצא לקובץ</button>
 	    </div>
     </div>
   </div>

@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CreditCardComponent, CreditCardData } from '../../../../../../shared/components/credit-card/credit-card';
 
 export interface CreditCard {
   id: string;
@@ -12,7 +13,7 @@ export interface CreditCard {
 @Component({
   selector: 'app-credit-cards',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CreditCardComponent],
   templateUrl: './credit-cards.html',
   styleUrl: './credit-cards.sass'
 })
@@ -21,7 +22,7 @@ export class CreditCardsComponent {
   @Input() selectedCardId: string = '';
   @Output() selectedCardIdChange = new EventEmitter<string>();
 
-  selectCard(card: CreditCard): void {
+  selectCard(card: CreditCardData): void {
     this.selectedCardId = card.id;
     this.selectedCardIdChange.emit(card.id);
   }

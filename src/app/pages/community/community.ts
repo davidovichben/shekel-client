@@ -9,6 +9,7 @@ import { CustomSelectComponent } from '../../shared/components/custom-select/cus
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { MemberViewComponent } from './member-view/member-view';
+import { MemberFormComponent } from './member-form/member-form';
 
 @Component({
   selector: 'app-community',
@@ -22,8 +23,18 @@ export class CommunityComponent implements OnInit {
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  navigateToCreate(): void {
-    this.router.navigate(['/community/new']);
+  openCreateMemberDialog(): void {
+    const dialogRef = this.dialog.open(MemberFormComponent, {
+      width: '900px',
+      panelClass: 'member-form-dialog-panel',
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadMembers();
+      }
+    });
   }
 
   navigateToEdit(member: Member): void {
@@ -31,20 +42,26 @@ export class CommunityComponent implements OnInit {
   }
 
   navigateToMember(member: Member): void {
-    const dialogRef = this.dialog.open(MemberViewComponent, {
-      width: '95vw',
-      maxWidth: '1400px',
-      height: '720px',
-      panelClass: 'member-view-dialog',
-      autoFocus: false,
-      enterAnimationDuration: '0ms',
-      exitAnimationDuration: '0ms',
-      data: { memberId: member.id }
-    });
+    // Pre-fetch member data before opening dialog
+    this.memberService.getOne(member.id).subscribe({
+      next: (fullMember: Member) => {
+        const dialogRef = this.dialog.open(MemberViewComponent, {
+          width: '95vw',
+          maxWidth: '1400px',
+          height: '720px',
+          panelClass: 'member-view-dialog',
+          autoFocus: false,
+          data: { memberId: member.id, member: fullMember }
+        });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadMembers();
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadMembers();
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error loading member:', error);
       }
     });
   }
@@ -198,8 +215,48 @@ export class CommunityComponent implements OnInit {
       return;
     }
 
-    // Handle bulk action based on type
-    console.log(`Bulk action: ${action}`, Array.from(this.selectedMembers));
+    if (action === 'delete') {
+      this.bulkDelete();
+    } else {
+      console.log(`Bulk action: ${action}`, Array.from(this.selectedMembers));
+    }
+  }
+
+  private bulkDelete(): void {
+    const selectedIds = Array.from(this.selectedMembers);
+    const selectedMemberNames = this.members
+      .filter(m => selectedIds.includes(m.id))
+      .map(m => m.fullName);
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        title: 'מחיקת חברים',
+        message: `האם אתה בטוח שברצונך למחוק ${selectedMemberNames.length} חברים?`,
+        confirmText: 'מחק',
+        cancelText: 'ביטול',
+        items: selectedMemberNames
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const ids = Array.from(this.selectedMembers);
+        this.memberService.deleteMany(ids).subscribe({
+          next: () => {
+            this.selectedMembers.clear();
+            this.loadMembers();
+          },
+          error: (error) => {
+            console.error('Error deleting members:', error);
+          }
+        });
+      }
+    });
   }
 
   // Delete functionality
@@ -235,5 +292,47 @@ export class CommunityComponent implements OnInit {
 
   sendMessage(member: Member): void {
     console.log('Send message to:', member.id);
+  }
+
+  openExportDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        title: 'ייצוא לקובץ',
+        message: 'בחר את סוג הייצוא:',
+        confirmText: 'ייצא את כל החברים',
+        cancelText: 'ייצא את החברים המוצגים'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Export all members
+        this.exportMembers();
+      } else if (result === false) {
+        // Export shown members
+        this.exportMembers(this.members.map(m => m.id));
+      }
+    });
+  }
+
+  private exportMembers(ids?: string[]): void {
+    this.memberService.export(ids).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'members.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Error exporting members:', error);
+      }
+    });
   }
 }

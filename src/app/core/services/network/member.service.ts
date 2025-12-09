@@ -41,4 +41,13 @@ export class MemberService {
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  deleteMany(ids: string[]): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/bulk`, { body: { ids } });
+  }
+
+  export(ids?: string[]): Observable<Blob> {
+    const body = ids ? { ids } : {};
+    return this.http.post(`${this.apiUrl}/export`, body, { responseType: 'blob' });
+  }
 }

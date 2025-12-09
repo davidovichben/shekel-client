@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 
 export interface MemberViewDialogData {
   memberId: string;
+  member: Member;
 }
 
 interface Tab {
@@ -57,10 +58,10 @@ export class MemberViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.memberId = this.data.memberId;
-    this.loadMember();
+    this.member = this.data.member;
   }
 
-  private loadMember(): void {
+  reloadMember(): void {
     this.memberService.getOne(this.memberId).subscribe({
       next: (member: Member) => {
         this.member = member;

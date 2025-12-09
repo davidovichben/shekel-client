@@ -4,19 +4,29 @@
   display: flex
   flex-direction: column
   gap: 24px
+  outline: none
+  height: 100%
 
 .settings-layout
   display: flex
   gap: 24px
-  flex-direction: row-reverse
+  direction: rtl
+  height: 100%
+
+  &.disabled
+    .payment-details-panel,
+    .payment-type-section,
+    .setting-row.vertical
+      opacity: 0.5
+      pointer-events: none
 
 // Right panel - Settings
 .settings-panel
   flex: 1
-  background: #f8fafc
+  background: white
   border-radius: 8px
   padding: 24px
-  border: 1px solid #e5e7eb
+  border: 1px solid $border-color
 
 .panel-header
   text-align: right
@@ -35,7 +45,7 @@
     color: $text-muted
 
 .panel-content
-  margin-bottom: 24px
+  margin-bottom: 12px
 
 .setting-row
   display: flex
@@ -43,7 +53,7 @@
   align-items: center
   gap: 12px
   padding: 12px 0
-  border-bottom: 1px solid #e5e7eb
+  border-bottom: 1px solid $border-color
   flex-direction: row-reverse
 
   &.vertical
@@ -69,7 +79,7 @@
 .day-input
   width: 150px
   padding: 8px 12px
-  border: 1px solid #e5e7eb
+  border: 1px solid $border-color
   border-radius: 20px
   font-size: 14px
   text-align: center
@@ -124,7 +134,7 @@
   background: white
   border-radius: 8px
   padding: 20px
-  border: 1px solid #e5e7eb
+  border: 1px solid $border-color
 
   h3
     margin: 0 0 8px
@@ -150,7 +160,7 @@
   align-items: center
   gap: 8px
   cursor: pointer
-  flex-direction: row-reverse
+  flex-direction: row
 
   input[type="radio"]
     display: none
@@ -190,34 +200,44 @@
     display: flex
     align-items: center
 
-.premium-notice
+.warning-notice
   display: flex
   align-items: center
   gap: 8px
   padding: 12px 16px
-  background: #FFEECF
+  background: #fef2f2
   border-radius: 8px
   font-size: 13px
-  color: #1e40af
+  color: #991b1b
   flex-direction: row-reverse
+  margin-bottom: 8px
 
-  svg
+  i
     flex-shrink: 0
+    font-size: 16px
 
-  a
-    color: #1e40af
-    text-decoration: underline
-    font-weight: 600
-
-    &:hover
-      text-decoration: none
+  &:last-child
+    margin-bottom: 0
 
 // Left panel - Payment details
 .payment-details-panel
   flex: 1.2
   background: white
   border-radius: 8px
-  padding: 24px
+  padding: 0 24px
+  height: 100%
+  overflow: hidden
+  border: 1px solid $border-color
+
+.spinner-container
+  display: flex
+  justify-content: center
+  align-items: center
+  min-height: 200px
+
+  i
+    font-size: 32px
+    color: $btn-primary
 
 .payment-form
   display: flex
@@ -255,7 +275,7 @@
   input
     width: 100%
     padding: 10px 14px
-    border: 1px solid #e5e7eb
+    border: 1px solid $border-color
     border-radius: 20px
     font-size: 14px
     box-sizing: border-box

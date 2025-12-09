@@ -115,7 +115,7 @@
   align-items: center
   gap: 8px
   cursor: pointer
-  flex-direction: row-reverse
+  flex-direction: row
   justify-content: flex-end
   width: calc(50% - 6px)
   margin-bottom: 15px
@@ -130,6 +130,7 @@
     border-radius: 50%
     position: relative
     flex-shrink: 0
+    order: 1
 
     &:after
       content: ""
@@ -153,6 +154,7 @@
   .radio-label
     font-size: 14px
     color: $text-dark
+    order: 0
 
 .bit-phone-input
   width: 50%

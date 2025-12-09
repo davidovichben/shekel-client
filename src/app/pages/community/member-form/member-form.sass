@@ -1,108 +1,146 @@
 @use '../../../../variables' as *
 
-.member-form
+.member-form-dialog
   background: white
-  border-radius: 8px
-  padding: 24px
-  width: 90%
-  margin: 10px auto 0
+  border-radius: 12px
+  direction: rtl
 
-  .form-header
-    margin-bottom: 24px
+.dialog-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 16px 24px
+  border-bottom: 1px solid $border-color
 
-    h2
-      margin: 0
-      font-size: 20px
-      font-weight: 600
+  h2
+    margin: 0
+    font-size: 18px
+    font-weight: 700
+    color: $text-dark
+    font-family: 'OpenSansBold', sans-serif
 
-  .form-section
-    margin-bottom: 24px
-    padding-bottom: 24px
-    border-bottom: 1px solid #eee
+  .close-btn
+    background: none
+    border: none
+    font-size: 18px
+    color: $gray-500
+    cursor: pointer
+    padding: 4px
+    display: flex
+    align-items: center
+    justify-content: center
 
-    &:last-of-type
-      border-bottom: none
-
-    h3
-      margin: 0 0 16px
-      font-size: 16px
-      font-weight: 600
+    &:hover
       color: $text-dark
 
-  .form-row
-    display: flex
-    gap: 16px
+.dialog-content
+  padding: 24px
 
-    .form-group
-      flex: 1
+.member-form
+  display: flex
+  flex-direction: column
+  gap: 24px
+
+.form-row
+  display: flex
+  gap: 16px
+  justify-content: flex-start
 
   .form-group
-    margin-bottom: 16px
+    flex: 1
 
-    label
-      display: block
-      margin-bottom: 8px
-      font-weight: 500
-      font-size: 14px
+    &.small
+      flex: 0.5
 
-    input
-      width: 100%
-      padding: 10px 12px
-      border: 1px solid #ddd
-      border-radius: 6px
-      font-size: 14px
-      box-sizing: border-box
+    &.empty
+      visibility: hidden
 
-    app-custom-select
-      display: block
-      width: 100%
+.form-group
+  display: flex
+  flex-direction: column
 
-      &:focus
-        outline: none
-        border-color: $btn-primary
+  label
+    display: block
+    margin-bottom: 8px
+    font-size: 14px
+    font-weight: 500
+    color: $text-dark
+    text-align: right
 
-      &::placeholder
-        color: #999
+    .required
+      color: $error
 
-    &.checkbox-group
-      label
-        display: flex
-        align-items: center
-        gap: 8px
-        cursor: pointer
+  input
+    width: 100%
+    padding: 10px 14px
+    border: 1px solid $gray-300
+    border-radius: 4px
+    font-size: 14px
+    box-sizing: border-box
+    direction: rtl
+    text-align: right
+    background: white
 
-        input[type="checkbox"]
-          width: auto
+    &.ltr-input
+      direction: ltr
+      text-align: left
 
-  .form-actions
+    &:focus
+      outline: none
+      border-color: $btn-primary
+
+    &::placeholder
+      color: $gray-500
+
+  app-custom-select
+    display: block
+    width: 100%
+
+.dialog-footer
+  display: flex
+  gap: 12px
+  padding: 16px 24px
+  border-top: 1px solid $border-color
+  justify-content: flex-end
+
+.btn-save
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  padding: 12px 20px
+  min-width: 120px
+  background: $header-bg
+  color: white
+  border: none
+  border-radius: 4px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  transition: background 0.2s
+
+  &:hover
+    background: $header-bg-hover
+
+  .btn-icon
     display: flex
-    gap: 12px
-    justify-content: flex-end
-    margin-top: 24px
+    align-items: center
 
-    .btn-outline
-      padding: 10px 20px
-      border: 1px solid #ddd
-      background: white
-      border-radius: 6px
-      cursor: pointer
-      font-size: 14px
+.btn-cancel
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  padding: 12px 20px
+  min-width: 120px
+  background: $btn-cancel
+  color: white
+  border: none
+  border-radius: 4px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  transition: background 0.2s
 
-      &:hover
-        background: #f5f5f5
-
-    .btn-primary
-      padding: 10px 20px
-      background: $btn-primary
-      color: white
-      border: none
-      border-radius: 6px
-      cursor: pointer
-      font-size: 14px
-
-      &:hover
-        background: $btn-primary-hover
-
-      &:disabled
-        opacity: 0.6
-        cursor: not-allowed
+  &:hover
+    background: $btn-cancel-hover

@@ -1,25 +1,5 @@
 <div class="billing-settings-tab">
-  <div class="settings-layout">
-    <!-- Left side: Payment details (toggles based on payment type) -->
-    <div class="payment-details-panel">
-      @if (paymentType === 'credit') {
-        <app-credit-cards
-          [cards]="creditCards"
-          [(selectedCardId)]="selectedCardId"
-        ></app-credit-cards>
-      } @else if (paymentType === 'standing_order') {
-        <app-bank-account
-          [(data)]="bankAccountData"
-        ></app-bank-account>
-      } @else if (paymentType === 'bit') {
-        <div class="bit-section">
-          <h3>תשלום באמצעות ביט</h3>
-          <p>בקרוב...</p>
-        </div>
-      }
-
-      <button type="button" class="btn-update" (click)="onUpdate()">עדכן</button>
-    </div>
+  <div class="settings-layout" [class.disabled]="!shouldBill">
 
     <!-- Right side: Billing settings -->
     <div class="settings-panel">
@@ -33,54 +13,88 @@
         <div class="setting-row">
           <label class="toggle-label">בצע חיוב אוטומטי חודשי</label>
           <label class="toggle-switch">
-            <input type="checkbox" [(ngModel)]="autoMonthlyCharge">
+            <input type="checkbox" [(ngModel)]="shouldBill" (ngModelChange)="onShouldBillChange()">
             <span class="toggle-slider"></span>
           </label>
         </div>
 
-        <!-- Auto charge day -->
-        <div class="setting-row vertical">
+        <!-- Billing day -->
+        <div class="setting-row vertical" [class.disabled]="!shouldBill">
           <label>יום לחיוב אוטומטי:</label>
           <app-custom-select
             [options]="chargeDayOptions"
-            [(value)]="autoChargeDay"
+            [(value)]="billingDate"
+            (valueChange)="onBillingDateChange()"
             placeholder="בחר יום"
+            [disabled]="!shouldBill"
           ></app-custom-select>
         </div>
       </div>
 
-      <!-- Payment type section -->
-      <div class="payment-type-section">
+      <!-- Billing type section -->
+      <div class="payment-type-section" [class.disabled]="!shouldBill">
         <h3>סוג תשלום:</h3>
         <p class="payment-type-description">בחר בסוג התשלום המועדף ממנו יבוצע החיוב האוטומטי פעם בחודש</p>
 
         <div class="payment-type-options">
           <label class="radio-option">
-            <input type="radio" name="paymentType" value="credit" [(ngModel)]="paymentType" (ngModelChange)="onPaymentTypeChange()">
+            <input type="radio" name="billingType" value="credit_card" [(ngModel)]="billingType" (ngModelChange)="onBillingTypeChange()" [disabled]="!shouldBill">
             <span class="radio-custom"></span>
             <span class="radio-label">כרטיסי אשראי</span>
           </label>
           <label class="radio-option">
-            <input type="radio" name="paymentType" value="standing_order" [(ngModel)]="paymentType" (ngModelChange)="onPaymentTypeChange()">
+            <input type="radio" name="billingType" value="bank" [(ngModel)]="billingType" (ngModelChange)="onBillingTypeChange()" [disabled]="!shouldBill">
             <span class="radio-custom"></span>
             <span class="radio-label">הוראה לחיוב מס"ב</span>
           </label>
           <label class="radio-option">
-            <input type="radio" name="paymentType" value="bit" [(ngModel)]="paymentType" (ngModelChange)="onPaymentTypeChange()">
+            <input type="radio" name="billingType" value="bit" [(ngModel)]="billingType" (ngModelChange)="onBillingTypeChange()" [disabled]="!shouldBill">
             <span class="radio-custom"></span>
             <span class="radio-label">ביט</span>
           </label>
         </div>
 
-        <div class="premium-notice">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-          </svg>
-          <span>רוצים לקבל תשלומים בהרשאת חשבון? הצטרפו לתכנית הפרימיום שלנו <a href="#">כאן</a></span>
-        </div>
+        @if (creditCardsLoaded && creditCards.length === 0) {
+          <div class="warning-notice">
+            <span>לחבר קהילה זה לא קיים כרטיס אשראי במערכת - להוספת כרטיס חדש עבור לטאב אמצעי תשלום</span>
+            <i class="fa-solid fa-exclamation-circle"></i>
+          </div>
+        }
+
+        @if (billingType === 'bit') {
+          <div class="warning-notice">
+            <span>בבחירת האפשרות לתשלום בביט התשלום לא מתבצע אוטומטית במועד אלא רק נשלחת דרישת תשלום.</span>
+            <i class="fa-solid fa-exclamation-circle"></i>
+          </div>
+        }
       </div>
     </div>
+
+    <!-- Left side: Payment details (toggles based on billing type) -->
+    <div class="payment-details-panel">
+      @if (billingType === 'credit_card') {
+        @if (!creditCardsLoaded) {
+          <div class="spinner-container">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          </div>
+        } @else {
+          <app-credit-cards
+            [cards]="creditCards"
+            [(selectedCardId)]="selectedCreditCard"
+            (selectedCardIdChange)="onSelectedCreditCardChange()"
+          ></app-credit-cards>
+        }
+      } @else if (billingType === 'bank') {
+        <app-bank-account
+          [(data)]="bankAccountData"
+        ></app-bank-account>
+      } @else if (billingType === 'bit') {
+        <div class="bit-section">
+          <h3>תשלום באמצעות ביט</h3>
+          <p>בקרוב...</p>
+        </div>
+      }
+    </div>
+
   </div>
 </div>

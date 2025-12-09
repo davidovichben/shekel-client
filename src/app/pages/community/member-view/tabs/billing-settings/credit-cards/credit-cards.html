@@ -6,33 +6,11 @@
 
   <div class="cards-grid">
     @for (card of cards; track card.id) {
-      <div
-        class="credit-card"
-        [class.selected]="selectedCardId === card.id"
-        (click)="selectCard(card)">
-        <div class="card-header">
-          <span class="card-type" [class.visa]="card.type === 'visa'" [class.mastercard]="card.type === 'mastercard'">
-            @if (card.type === 'visa') {
-              <span class="visa-text">VISA</span>
-            } @else {
-              <span class="mastercard-icon"></span>
-            }
-          </span>
-          <span class="card-radio">
-            <span class="radio-inner" [class.active]="selectedCardId === card.id"></span>
-          </span>
-        </div>
-        <div class="card-number">
-          <span class="dots">****</span>
-          <span class="dots">****</span>
-          <span class="dots">****</span>
-          <span class="last-digits">{{ card.lastFourDigits }}</span>
-        </div>
-        <div class="card-footer">
-          <span class="holder-name">{{ card.holderName }}</span>
-          <span class="expiry-date">{{ card.expiryDate }}</span>
-        </div>
-      </div>
+      <app-credit-card
+        [card]="card"
+        [selected]="selectedCardId === card.id"
+        (select)="selectCard($event)">
+      </app-credit-card>
     }
   </div>
 </div>
