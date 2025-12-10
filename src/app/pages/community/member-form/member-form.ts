@@ -5,7 +5,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MemberService } from '../../../core/services/network/member.service';
 import { Member } from '../../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../../shared/components/custom-select/custom-select';
-import { DialogHeaderComponent } from '../../../shared/components/dialog-header/dialog-header';
 import { environment } from '../../../../environments/environment';
 
 export interface MemberFormDialogData {
@@ -15,7 +14,7 @@ export interface MemberFormDialogData {
 @Component({
   selector: 'app-member-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, DialogHeaderComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent],
   templateUrl: './member-form.html',
   styleUrl: './member-form.sass'
 })

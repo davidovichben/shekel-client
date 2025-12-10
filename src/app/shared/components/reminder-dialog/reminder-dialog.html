@@ -1,0 +1,34 @@
+<div class="reminder-dialog">
+  <div class="flex mb-3">
+    <button class="close-btn me-3" (click)="onClose()">
+      <i class="fa-regular fa-circle-xmark"></i>
+    </button>
+    <h2>@if (data.memberName) {
+      שלח הודעת תזכורת ל- {{ data.memberName }}
+    } @else {
+      שלח הודעת תזכורת ל- {{ data.memberCount }} חברי הקהילה שנבחרו
+    }</h2>
+  </div>
+
+  <div class="dialog-content">
+    <div class="form-group">
+      <label class="required">תוכן ההודעה:</label>
+      <textarea [(ngModel)]="message" rows="6"></textarea>
+    </div>
+
+    @if (showWarning) {
+      <div class="warning-note">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>{{ warningMessage }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="dialog-actions">
+
+    <button class="btn-send" (click)="onSend()">
+      <img src="assets/img/icons/floppy.svg" alt="">
+      שלח הודעה
+    </button>
+  </div>
+</div>

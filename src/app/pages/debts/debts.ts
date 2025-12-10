@@ -383,6 +383,18 @@ export class DebtsComponent implements OnInit {
     return this.selectedDebts.has(debtId);
   }
 
+  areAllSelected(): boolean {
+    return this.debts.length > 0 && this.debts.every(d => this.selectedDebts.has(d.id));
+  }
+
+  onSelectAll(selected: boolean): void {
+    if (selected) {
+      this.debts.forEach(d => this.selectedDebts.add(d.id));
+    } else {
+      this.debts.forEach(d => this.selectedDebts.delete(d.id));
+    }
+  }
+
   onBulkAction(action: string): void {
     if (this.selectedDebts.size === 0) {
       this.dialog.open(ConfirmDialogComponent, {

@@ -76,7 +76,9 @@
     [currentPage]="currentPage"
     [itemsPerPage]="itemsPerPage"
     [totalPages]="totalPages"
-    (pageChange)="onPageChange($event)">
+    [allSelected]="areAllSelected()"
+    (pageChange)="onPageChange($event)"
+    (selectAll)="onSelectAll($event)">
     @for (debt of debts; track debt.id; let i = $index) {
       <tr>
         <td class="col-number">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>

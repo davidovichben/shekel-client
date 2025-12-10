@@ -1,9 +1,10 @@
 <div class="member-form-dialog">
-  <app-dialog-header
-    [title]="isEditMode ? 'עריכת חבר' : 'הוסף חבר חדש'"
-    variant="default"
-    (close)="onCancel()">
-  </app-dialog-header>
+  <div class="dialog-header">
+    <button class="close-btn" (click)="onCancel()" [disabled]="isSaving">
+      <i class="fa-regular fa-circle-xmark"></i>
+    </button>
+    <h2>{{ isEditMode ? 'עריכת חבר' : 'הוסף חבר חדש' }}</h2>
+  </div>
 
   <div class="dialog-content">
     @if (isLoading) {

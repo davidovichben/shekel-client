@@ -1,9 +1,11 @@
 <div class="dialog-backdrop">
   <div class="dialog-container">
-    <app-dialog-header
-      [title]="isEditMode ? 'עריכת חשבונית' : 'יצירת חשבונית חדשה'"
-      (close)="onClose()">
-    </app-dialog-header>
+    <div class="dialog-header">
+      <button class="close-btn" (click)="onClose()">
+        <i class="fa-regular fa-circle-xmark"></i>
+      </button>
+      <h2>{{ isEditMode ? 'עריכת חשבונית' : 'יצירת חשבונית חדשה' }}</h2>
+    </div>
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-content">

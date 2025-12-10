@@ -1,0 +1,201 @@
+@use '../../../../../variables' as *
+
+.payment-details-form
+  display: flex
+  flex-direction: column
+  gap: 20px
+
+.form-row
+  display: flex
+  gap: 16px
+
+  .form-group
+    flex: 1
+
+.form-group
+  display: flex
+  flex-direction: column
+
+  &.full-width
+    width: 100%
+
+  label
+    margin-bottom: 8px
+    font-size: 13px
+    color: $gray-700
+
+  input
+    padding: 12px 14px
+    border: 1px solid $gray-300
+    border-radius: 8px
+    font-size: 14px
+    background: white
+    text-align: right
+    direction: rtl
+
+    &:focus
+      outline: none
+      border-color: $header-bg
+
+    &::placeholder
+      color: $gray-500
+
+    &[type="number"]
+      -moz-appearance: textfield
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button
+        -webkit-appearance: none
+        margin: 0
+
+.amount-input
+  position: relative
+
+  input
+    width: 100%
+    padding-right: 30px
+    box-sizing: border-box
+
+  .currency
+    position: absolute
+    right: 12px
+    top: 50%
+    transform: translateY(-50%)
+    font-size: 14px
+    color: $gray-700
+    pointer-events: none
+
+.payment-method-section
+  display: flex
+  align-items: center
+  gap: 16px
+
+  .section-label
+    font-size: 13px
+    color: $gray-700
+
+.payment-method-options
+  display: flex
+  gap: 24px
+
+.radio-option
+  display: flex
+  align-items: center
+  gap: 8px
+  cursor: pointer
+  font-size: 14px
+  color: $text-dark
+
+  input[type="radio"]
+    width: 16px
+    height: 16px
+    accent-color: $header-bg
+
+.credit-card-section
+  margin-top: 8px
+
+.use-saved-card-toggle
+  display: flex
+  align-items: center
+  gap: 12px
+  margin-bottom: 16px
+  font-size: 14px
+  color: $text-dark
+  flex-direction: row-reverse
+  justify-content: flex-end
+
+.toggle
+  position: relative
+  display: inline-block
+  width: 44px
+  height: 24px
+
+  input
+    opacity: 0
+    width: 0
+    height: 0
+
+  .slider
+    position: absolute
+    cursor: pointer
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background-color: $gray-300
+    transition: 0.3s
+    border-radius: 24px
+
+    &::before
+      position: absolute
+      content: ""
+      height: 18px
+      width: 18px
+      left: 3px
+      bottom: 3px
+      background-color: white
+      transition: 0.3s
+      border-radius: 50%
+
+  input:checked + .slider
+    background-color: #28a745
+
+  input:checked + .slider::before
+    transform: translateX(20px)
+
+.saved-cards
+  display: flex
+  gap: 16px
+  flex-wrap: wrap
+
+.new-card-form
+  display: flex
+  flex-direction: column
+  gap: 16px
+
+.card-number-input
+  position: relative
+
+  i
+    position: absolute
+    right: 14px
+    top: 50%
+    transform: translateY(-50%)
+    color: $gray-500
+    font-size: 16px
+
+  input
+    width: 100%
+    padding-right: 44px
+    box-sizing: border-box
+    direction: ltr
+    text-align: left
+
+.save-card-section
+  margin-top: 8px
+  padding: 16px
+  background: $bg-dialog
+  border-radius: 8px
+
+.save-card-toggle
+  display: flex
+  align-items: center
+  gap: 12px
+  font-size: 14px
+  color: $text-dark
+  flex-direction: row-reverse
+  justify-content: flex-end
+
+.recommended-badge
+  background: #e8f5e9
+  color: #2e7d32
+  padding: 4px 8px
+  border-radius: 4px
+  font-size: 12px
+  font-weight: 600
+
+.save-card-note
+  margin: 12px 0 0
+  font-size: 12px
+  color: $gray-700
+  line-height: 1.5

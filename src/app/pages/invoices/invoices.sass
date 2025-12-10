@@ -1,7 +1,7 @@
 @use '../../../variables' as *
 
 .invoices
-  padding: 1.5rem
+  padding: 0 1.5rem
   display: flex
   flex-direction: column
   height: 100%
@@ -12,189 +12,13 @@
     display: flex
     flex-direction: column
 
-.page-header
-  display: flex
-  justify-content: space-between
-  align-items: flex-start
-  margin-bottom: 1.5rem
-
-  .page-header-text
-    h1
-      margin: 0 0 0.5rem
-      font-size: 1.5rem
-      font-weight: 600
-
-    p
-      margin: 0
-      color: $text-muted
-      font-size: 0.9rem
-
-  .header-actions
-    display: flex
-    gap: 0.75rem
-
-  .btn-primary,
-  .btn-secondary
-    display: flex
-    align-items: center
-    gap: 0.5rem
-    padding: 0.75rem 1.5rem
-    border: none
-    border-radius: 6px
-    font-size: 0.9rem
-    cursor: pointer
-
-  .btn-primary
-    background: $btn-primary
-    color: white
-
-    &:hover
-      background: $btn-primary-hover
-
-  .btn-secondary
-    background: white
-    color: $text-dark
-    border: 1px solid $gray-300
-
-    &:hover
-      background: $gray-100
-
-.tabs-container
-  display: flex
-  justify-content: space-between
-  align-items: center
-  margin-bottom: 1rem
-  border-bottom: 1px solid #e0e0e0
-
-  .tabs
-    display: flex
-    gap: 0
-
-    .tab
-      padding: 0.75rem 1.5rem
-      background: none
-      border: none
-      cursor: pointer
-      font-size: 0.9rem
-      color: $text-muted
-      border-bottom: 2px solid transparent
-      margin-bottom: -1px
-
-      &.active
-        color: $text-dark
-        border-bottom-color: $btn-primary
-        font-weight: 500
-
-      .count
-        margin-right: 0.25rem
-
-  .filter-btn
-    display: flex
-    align-items: center
-    gap: 0.5rem
-    padding: 0.5rem 1rem
-    background: none
-    border: 1px solid #e0e0e0
-    border-radius: 6px
-    font-size: 0.85rem
-    color: #666
-    cursor: pointer
-
-.filters-row
-  display: flex
-  justify-content: space-between
-  align-items: center
-  margin-bottom: 1rem
-  padding: 1rem
-  background: white
-  border-radius: 8px
-
-  .filter-dropdowns
-    display: flex
-    gap: 1rem
-
-.table-header
-  display: flex
-  justify-content: space-between
-  align-items: center
-  margin-bottom: 1rem
-
-  .bulk-actions
-    display: flex
-    align-items: center
-    gap: 0.75rem
-    font-size: 0.85rem
-    color: $text-muted
-
-    .action-icon
-      width: 32px
-      height: 32px
-      display: flex
-      align-items: center
-      justify-content: center
-      background: $bg-actions
-      border: none
-      border-radius: 4px
-      cursor: pointer
-      color: $icon-color
-
-      &:hover
-        background: $bg-actions-hover
-
-  .export-action
-    .btn-outline
-      padding: 0.5rem 1rem
-      background: white
-      border: 1px solid #e0e0e0
-      border-radius: 6px
-      font-size: 0.85rem
-      cursor: pointer
-
-      &:hover
-        background: #f5f5f5
-
-.status-badge
-  display: inline-block
-  padding: 0.25rem 0.75rem
-  border-radius: 4px
-  font-size: 0.75rem
-  font-weight: 500
-
-  &.pending
-    background: #fff3e0
-    color: #f57c00
-
-  &.paid
-    background: #e8f5e9
-    color: #43a047
-
-  &.cancelled
-    background: #ffebee
-    color: #e53935
-
-.row-action
-  width: 28px
-  height: 28px
-  display: inline-flex
-  align-items: center
-  justify-content: center
-  background: none
-  border: none
+.clickable
   cursor: pointer
-  color: $icon-color
-  border-radius: 4px
+  color: #1976d2
 
   &:hover
-    background: #f5f5f5
+    text-decoration: underline
 
-.table-footer
-  text-align: center
-  padding: 1rem
-  font-size: 0.85rem
-  color: $text-muted
-  background: #e3f2fd
-  border-radius: 0 0 8px 8px
-  margin-top: -8px
-
-  strong
-    color: $text-dark
+.amount
+  direction: ltr
+  display: inline-block

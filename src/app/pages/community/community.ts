@@ -8,6 +8,8 @@ import { Member } from '../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../shared/components/custom-select/custom-select';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { ExportDialogComponent, ExportDialogResult } from '../../shared/components/export-dialog/export-dialog';
+import { ReminderDialogComponent, ReminderDialogResult } from '../../shared/components/reminder-dialog/reminder-dialog';
+import { PaymentComponent } from '../payment/payment';
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { MemberViewComponent } from './member-view/member-view';
 import { MemberFormComponent } from './member-form/member-form';
@@ -288,6 +290,8 @@ export class CommunityComponent implements OnInit {
       this.bulkDelete();
     } else if (action === 'print') {
       this.bulkPrint();
+    } else if (action === 'email') {
+      this.openBulkReminderDialog();
     } else {
       console.log(`Bulk action: ${action}`, Array.from(this.selectedMembers));
     }
@@ -444,13 +448,100 @@ export class CommunityComponent implements OnInit {
     });
   }
 
-  copyToClipboard(member: Member): void {
-    const text = `${member.fullName} - ${member.mobile || ''} - ${member.email || ''}`;
-    navigator.clipboard.writeText(text);
+  openPaymentDialog(member: Member): void {
+    this.dialog.open(PaymentComponent, {
+      width: '80%',
+      panelClass: 'payment-dialog-panel',
+      autoFocus: false,
+      data: {
+        memberId: member.id,
+        memberName: member.fullName
+      }
+    });
   }
 
   sendMessage(member: Member): void {
-    console.log('Send message to:', member.id);
+    const memberBalance = parseFloat(member.balance) || 0;
+    const dialogRef = this.dialog.open(ReminderDialogComponent, {
+      width: '750px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        memberIds: [member.id],
+        memberCount: 1,
+        memberName: member.fullName,
+        memberBalance: memberBalance
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: ReminderDialogResult | undefined) => {
+      if (result) {
+        this.memberService.notify(member.id, result.message).subscribe({
+          next: () => {
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '400px',
+              panelClass: 'confirm-dialog-panel',
+              backdropClass: 'confirm-dialog-backdrop',
+              enterAnimationDuration: '0ms',
+              exitAnimationDuration: '0ms',
+              data: {
+                title: 'ההודעה נשלחה בהצלחה',
+                message: `הודעת תזכורת נשלחה ל-${member.fullName}`,
+                confirmText: 'סגור'
+              }
+            });
+          },
+          error: (error) => {
+            console.error('Error sending message:', error);
+          }
+        });
+      }
+    });
+  }
+
+  private openBulkReminderDialog(): void {
+    const selectedIds = Array.from(this.selectedMembers);
+    const selectedMembers = this.members.filter(m => selectedIds.includes(m.id));
+    const hasNonDebtors = selectedMembers.some(m => parseFloat(m.balance) >= 0);
+
+    const dialogRef = this.dialog.open(ReminderDialogComponent, {
+      width: '750px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        memberIds: selectedIds,
+        memberCount: selectedIds.length,
+        hasNonDebtors: hasNonDebtors
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: ReminderDialogResult | undefined) => {
+      if (result) {
+        this.memberService.notifyMany(selectedIds, result.message).subscribe({
+          next: () => {
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '400px',
+              panelClass: 'confirm-dialog-panel',
+              backdropClass: 'confirm-dialog-backdrop',
+              enterAnimationDuration: '0ms',
+              exitAnimationDuration: '0ms',
+              data: {
+                title: 'ההודעות נשלחו בהצלחה',
+                message: `הודעות תזכורת נשלחו ל-${selectedIds.length} חברים`,
+                confirmText: 'סגור'
+              }
+            });
+          },
+          error: (error) => {
+            console.error('Error sending messages:', error);
+          }
+        });
+      }
+    });
   }
 
   openExportDialog(): void {

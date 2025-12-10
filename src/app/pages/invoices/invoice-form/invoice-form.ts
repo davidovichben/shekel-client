@@ -27,7 +27,7 @@ export interface InvoiceFormDialogData {
 @Component({
   selector: 'app-invoice-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent, DialogHeaderComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent],
   templateUrl: './invoice-form.html',
   styleUrl: './invoice-form.sass'
 })

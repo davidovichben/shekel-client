@@ -1,0 +1,52 @@
+@use '../../../../variables' as *
+
+.network-error-dialog
+  direction: rtl
+  text-align: center
+  padding: 32px 24px
+  background: $bg-page
+  border-radius: 12px
+
+.dialog-icon
+  width: 64px
+  height: 64px
+  margin: 0 auto 16px
+  background: #ffebee
+  border-radius: 50%
+  display: flex
+  align-items: center
+  justify-content: center
+
+  i
+    font-size: 32px
+    color: #e53935
+
+h2
+  margin: 0 0 8px
+  font-size: 18px
+  font-weight: 700
+  color: $header-bg
+
+p
+  margin: 0 0 16px
+  font-size: 14px
+  color: $gray-700
+
+.error-code
+  display: block
+  margin-bottom: 20px
+  font-size: 12px
+  color: $gray-500
+
+.btn-close
+  padding: 12px 32px
+  background: $header-bg
+  color: white
+  border: none
+  border-radius: 8px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+
+  &:hover
+    background: $header-bg-hover

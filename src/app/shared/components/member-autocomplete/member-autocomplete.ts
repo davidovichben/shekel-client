@@ -1,8 +1,15 @@
 import { Component, Input, Output, EventEmitter, OnInit, HostListener, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MemberService } from '../../../core/services/network/member.service';
 import { Member } from '../../../core/entities/member.entity';
+
+interface MemberListItem {
+  id: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-member-autocomplete',
@@ -14,6 +21,7 @@ import { Member } from '../../../core/entities/member.entity';
 export class MemberAutocompleteComponent implements OnInit {
   private memberService = inject(MemberService);
   private elementRef = inject(ElementRef);
+  private searchSubject = new Subject<string>();
 
   @Input() placeholder = 'חיפוש...';
   @Input() memberId = '';
@@ -23,22 +31,29 @@ export class MemberAutocompleteComponent implements OnInit {
   @Output() memberSelected = new EventEmitter<Member>();
 
   searchQuery = '';
-  allMembers: Member[] = [];
-  filteredMembers: Member[] = [];
+  filteredMembers: MemberListItem[] = [];
   showDropdown = false;
   isLoading = false;
 
   ngOnInit(): void {
     this.searchQuery = this.memberName;
-    this.loadAllMembers();
+
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(query => {
+      this.searchMembers(query);
+    });
+
+    // Load initial list
+    this.searchMembers('');
   }
 
-  private loadAllMembers(): void {
+  private searchMembers(query: string): void {
     this.isLoading = true;
-    this.memberService.getAll({ limit: 10000 }).subscribe({
-      next: (response) => {
-        this.allMembers = response.rows;
-        this.filteredMembers = this.allMembers.slice(0, 10);
+    this.memberService.list(query).subscribe({
+      next: (members) => {
+        this.filteredMembers = members.slice(0, 10);
         this.isLoading = false;
       },
       error: (error) => {
@@ -49,38 +64,49 @@ export class MemberAutocompleteComponent implements OnInit {
   }
 
   onSearch(): void {
-    const query = this.searchQuery.toLowerCase().trim();
-    if (query.length > 0) {
-      this.filteredMembers = this.allMembers.filter(member =>
-        member.fullName?.toLowerCase().includes(query) ||
-        member.firstName?.toLowerCase().includes(query) ||
-        member.lastName?.toLowerCase().includes(query)
-      ).slice(0, 10);
-    } else {
-      this.filteredMembers = this.allMembers.slice(0, 10);
-    }
-    this.showDropdown = this.filteredMembers.length > 0;
+    this.searchSubject.next(this.searchQuery.trim());
+    this.showDropdown = true;
   }
 
-  selectMember(member: Member): void {
+  selectMember(member: MemberListItem): void {
     this.memberId = member.id;
-    this.memberName = member.fullName;
-    this.searchQuery = member.fullName;
+    this.memberName = member.name;
+    this.searchQuery = member.name;
     this.showDropdown = false;
     this.memberIdChange.emit(member.id);
-    this.memberNameChange.emit(member.fullName);
-    this.memberSelected.emit(member);
+    this.memberNameChange.emit(member.name);
+
+    // Fetch full member details
+    this.isLoading = true;
+    this.memberService.getOne(member.id).subscribe({
+      next: (fullMember) => {
+        this.isLoading = false;
+        this.memberSelected.emit(fullMember);
+      },
+      error: (error) => {
+        console.error('Error loading member details:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   onFocus(): void {
-    if (this.allMembers.length > 0) {
-      if (this.searchQuery.trim().length > 0) {
-        this.onSearch();
-      } else {
-        this.filteredMembers = this.allMembers.slice(0, 10);
-      }
-      this.showDropdown = this.filteredMembers.length > 0;
+    if (this.filteredMembers.length > 0) {
+      this.showDropdown = true;
+    } else {
+      this.searchMembers(this.searchQuery.trim());
+      this.showDropdown = true;
     }
+  }
+
+  onReset(): void {
+    this.searchQuery = '';
+    this.memberId = '';
+    this.memberName = '';
+    this.showDropdown = false;
+    this.memberIdChange.emit('');
+    this.memberNameChange.emit('');
+    this.searchMembers('');
   }
 
   @HostListener('document:click', ['$event'])
