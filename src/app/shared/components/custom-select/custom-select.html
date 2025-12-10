@@ -7,7 +7,7 @@
         {{ selectedLabel }}
       }
     </span>
-    <i class="fa-solid fa-chevron-down" [class.open]="isOpen"></i>
+    <i class="fa-solid" [class.fa-chevron-up]="sortOrder === 'asc'" [class.fa-chevron-down]="!sortOrder || sortOrder === 'desc'" [class.open]="isOpen && !sortOrder"></i>
   </button>
 
   @if (isOpen) {

@@ -19,6 +19,7 @@ export class CustomSelectComponent {
   @Input() placeholder: string = '';
   @Input() prefix: string = '';
   @Input() disabled: boolean = false;
+  @Input() sortOrder: 'asc' | 'desc' | null = null;
   @Output() valueChange = new EventEmitter<string>();
 
   isOpen = false;

@@ -7,6 +7,7 @@ export interface ConfirmDialogData {
   message: string;
   confirmText?: string;
   cancelText?: string;
+  cancelDisabled?: boolean;
   items?: string[];
 }
 
@@ -38,7 +39,7 @@ export interface ConfirmDialogData {
           {{ data.confirmText || 'כן, מחק' }}
         </button>
         @if (data.cancelText) {
-          <button class="btn-cancel" (click)="onCancel()">
+          <button class="btn-cancel" (click)="onCancel()" [disabled]="data.cancelDisabled">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="15" y1="9" x2="9" y2="15"></line>
