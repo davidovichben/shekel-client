@@ -241,7 +241,6 @@ input[type="radio"]
   background: none
   border: none
   cursor: pointer
-  font-size: 1rem
   padding: 0.25rem
   pointer-events: auto
   position: relative
@@ -307,7 +306,6 @@ input[type="radio"]
     cursor: pointer
     font-size: calc(0.9rem + 2px)
     padding: 0.25rem
-    margin-left: 8px
     color: $badge-pro
     pointer-events: auto
     position: relative
@@ -315,6 +313,11 @@ input[type="radio"]
 
     &:hover
       opacity: 0.8
+
+    .action-icon
+      width: 30px
+      height: 30px
+      object-fit: contain
 
   .negative
     color: #e53935
@@ -438,6 +441,11 @@ input[type="radio"]
     font-weight: 600
     color: white
 
+    .header-icon
+      width: 24px
+      height: 24px
+      object-fit: contain
+
   .close-btn
     background: none
     border: none
@@ -457,6 +465,11 @@ input[type="radio"]
 
     &:hover
       background: rgba(255, 255, 255, 0.2)
+
+    .close-icon
+      width: 24px
+      height: 24px
+      object-fit: contain
 
 .form-content
   padding: 16px 24px

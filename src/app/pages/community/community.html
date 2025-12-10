@@ -32,8 +32,8 @@
     <div class="table-actions">
 	    <div class="bulk-actions">
 		    <span>פעולות קולקטיביות:</span>
-		    <button type="button" class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
-		    <button type="button" class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
+		    <button type="button" class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print.svg" alt=""></button>
+		    <button type="button" class="action-icon" (click)="onBulkAction('delete')"><img src="assets/img/icons/trash.svg" alt=""></button>
 		    <button type="button" class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
 	    </div>
 	    <div class="export-action">
@@ -79,10 +79,10 @@
           </div>
         </td>
         <td class="col-actions">
-          <button type="button" class="row-action" (click)="navigateToEdit(member)"><i class="fa-regular fa-pen-to-square"></i></button>
-          <button type="button" class="row-action" (click)="openDeleteDialog(member)"><i class="fa-regular fa-trash-can"></i></button>
-          <button type="button" class="row-action" (click)="openPaymentDialog(member)"><i class="fa-regular fa-credit-card"></i></button>
-          <button type="button" class="row-action" (click)="sendMessage(member)"><i class="fa-regular fa-comment"></i></button>
+          <button type="button" class="row-action" (click)="navigateToEdit(member)"><img src="assets/img/icons/pencil.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action" (click)="openDeleteDialog(member)"><img src="assets/img/icons/trash.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action" (click)="openPaymentDialog(member)"><img src="assets/img/icons/credit_card.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action" (click)="sendMessage(member)"><img src="assets/img/icons/chat_bubble.svg" alt="" class="action-icon"></button>
         </td>
       </tr>
     }

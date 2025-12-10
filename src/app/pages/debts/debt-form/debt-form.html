@@ -1,23 +1,11 @@
 <div class="dialog-backdrop">
-  <div class="dialog-container" (click)="$event.stopPropagation()">
-    <app-dialog-header
-      [title]="isEditMode ? 'חוב - ' + debt.description : 'יצירת חוב חדש'"
-      [iconPath]="'/assets/icons/save-icon.svg'"
-      (close)="onClose()">
-      @if (isEditMode && debt.lastReminderSentAt) {
-        <div header-left>
-          <div class="reminder-banner">
-            <div class="reminder-left">
-              <img src="/assets/icons/info-icon.svg" alt="Info" class="info-icon" />
-              <div class="reminder-text">
-                <span class="reminder-label">נשלחה תזכורת לגבי חוב זה</span>
-                <span class="reminder-date">בתאריך: {{ formatDate(debt.lastReminderSentAt) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    </app-dialog-header>
+  <div class="dialog-container">
+    <div class="dialog-header">
+      <button class="close-btn" (click)="onClose()">
+        <img src="assets/img/icons/close.svg" alt="" class="close-icon">
+      </button>
+      <h2>{{ isEditMode ? 'עריכת חוב' : 'יצירת חוב חדש' }}</h2>
+    </div>
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-content">
@@ -94,26 +82,26 @@
       <div class="form-actions">
         @if (isEditMode) {
           <button type="button" class="btn-delete" (click)="onDelete()">
-            <img src="/assets/icons/trash-icon.svg" alt="Delete" class="btn-icon" />
+            <img src="assets/img/icons/trash.svg" alt="Delete" class="btn-icon" />
             מחק חוב
           </button>
           <div class="actions-right">
             <button type="button" class="btn-pay" (click)="onPay()">
-              <img src="/assets/icons/filter-icon.svg" alt="Pay" class="btn-icon" />
+              <img src="assets/img/icons/filter.svg" alt="Pay" class="btn-icon" />
               שלם
             </button>
             <button type="button" class="btn-reminder" (click)="onSendReminder()">
-              <img src="/assets/icons/chat-icon.svg" alt="Reminder" class="btn-icon" />
+              <img src="assets/img/icons/chat_bubble.svg" alt="Reminder" class="btn-icon" />
               שלח תזכורת
             </button>
           </div>
           <button type="submit" class="btn-save" [disabled]="isSubmitting">
-            <img src="/assets/icons/save-icon.svg" alt="Save" class="btn-icon" />
+            <img src="assets/img/icons/floppy.svg" alt="Save" class="btn-icon" />
             {{ isSubmitting ? 'שומר...' : 'שמור שינויים' }}
           </button>
         } @else {
           <button type="submit" class="btn-save" [disabled]="isSubmitting">
-            <img src="/assets/icons/document-create-icon.svg" alt="Create" class="btn-icon" />
+            <img src="assets/img/icons/document_create.svg" alt="Create" class="btn-icon" />
             {{ isSubmitting ? 'יוצר...' : 'צור חוב' }}
           </button>
         }
