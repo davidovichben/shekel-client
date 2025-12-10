@@ -1,0 +1,98 @@
+@use '../../../../variables' as *
+
+.export-dialog
+  padding: 0
+  background: white
+  border-radius: 12px
+  overflow: hidden
+  direction: rtl
+  position: relative
+
+.close-btn
+  position: absolute
+  top: 1rem
+  left: 1rem
+  background: transparent
+  border: none
+  cursor: pointer
+  padding: 0.5rem
+  display: flex
+  align-items: center
+  justify-content: center
+  width: 32px
+  height: 32px
+  border-radius: 50%
+  transition: background 0.2s
+  z-index: 10
+
+  &:hover
+    background: $gray-100
+
+  img
+    width: 20px
+    height: 20px
+
+.dialog-content
+  padding: 2.5rem 1.5rem 1.5rem
+  background-color: white
+  display: flex
+  flex-direction: column
+  align-items: center
+
+.dialog-title
+  margin: 0 0 0.5rem 0
+  font-size: 1.25rem
+  font-weight: 600
+  color: $gray-900
+  font-family: 'Heebo', sans-serif
+  text-align: center
+
+.subtitle
+  margin: 0 0 1.5rem 0
+  color: $gray-500
+  font-size: 0.9rem
+  font-family: 'Heebo', sans-serif
+  text-align: center
+
+.file-type-buttons
+  display: flex
+  gap: 1rem
+  justify-content: center
+  align-items: center
+
+.file-type-btn
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 19px
+  border: none
+  border-radius: 12px
+  cursor: pointer
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s
+  font-family: 'Heebo', sans-serif
+  width: 64px
+  height: 64px
+
+  &:hover
+    transform: translateY(-2px)
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+    opacity: 0.9
+
+  &:active
+    transform: translateY(0)
+    opacity: 0.8
+
+.csv-btn
+  background: $light-blue
+
+.xls-btn
+  background: $success-green
+
+.pdf-btn
+  background: $error-light
+
+.file-icon
+  width: 32px
+  height: 32px
+  flex-shrink: 0
+

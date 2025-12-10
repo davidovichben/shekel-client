@@ -22,10 +22,11 @@ export class DebtService {
       return dateString; // Return as-is if can't parse
     }
     
-    const year = String(date.getFullYear()).slice(-2); // Last 2 digits of year
+    // Format as MM/DD/YYYY
+    const year = String(date.getFullYear());
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${year}/${month}/${day}`;
+    return `${month}/${day}/${year}`;
   }
 
   private mapDebtFromApi(debt: any): Debt {
@@ -42,13 +43,23 @@ export class DebtService {
       description: debt.description || '',
       memberId: debt.memberId || '',
       autoPaymentApproved: debt.autoPaymentApproved || false,
+      shouldBill: debt.shouldBill !== undefined ? debt.shouldBill : (debt.should_bill !== undefined ? debt.should_bill : debt.autoPaymentApproved),
       hebrewDate: debt.hebrewDate || '',
       createdAt: debt.createdAt || '',
       updatedAt: debt.updatedAt || ''
     };
   }
 
-  getAll(params?: { status?: string; page?: number; limit?: number }): Observable<PaginationResponse<Debt>> {
+  getAll(params?: { 
+    status?: string; 
+    page?: number; 
+    limit?: number;
+    date_from?: string;
+    date_to?: string;
+    sort_by?: string;
+    sort_order?: 'asc' | 'desc';
+    should_bill?: boolean;
+  }): Observable<PaginationResponse<Debt>> {
     return this.http.get<PaginationResponse<Debt>>(this.apiUrl, { params: params as any }).pipe(
       map(response => ({
         ...response,
@@ -103,5 +114,13 @@ export class DebtService {
     return this.http.post<Debt[]>(`${this.apiUrl}/bulk`, debts).pipe(
       map(debts => debts.map(debt => this.mapDebtFromApi(debt)))
     );
+  }
+
+  export(status?: string, ids?: string[], fileType?: string): Observable<Blob> {
+    const body: { status?: string; ids?: string[]; file_type?: string } = {};
+    if (status) body.status = status;
+    if (ids) body.ids = ids;
+    if (fileType) body.file_type = fileType;
+    return this.http.post(`${this.apiUrl}/export`, body, { responseType: 'blob' });
   }
 }

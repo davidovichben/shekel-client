@@ -1,0 +1,21 @@
+<div class="export-dialog">
+  <button class="close-btn" (click)="onCancel()">
+    <img src="/assets/icons/close-icon.svg" alt="Close" />
+  </button>
+  <div class="dialog-content">
+    <h2 class="dialog-title">{{ data.title || 'ייצוא הנתונים לקובץ' }}</h2>
+    <p class="subtitle">{{ data.subtitle || 'להורדה - לחץ על סוג הקובץ המבוקש' }}</p>
+    <div class="file-type-buttons">
+      <button class="file-type-btn csv-btn" (click)="onFileTypeSelect('csv')">
+        <img src="/assets/icons/csv-icon.svg" alt="CSV" class="file-icon" />
+      </button>
+      <button class="file-type-btn xls-btn" (click)="onFileTypeSelect('xls')">
+        <img src="/assets/icons/xls-icon.svg" alt="XLS" class="file-icon" />
+      </button>
+      <button class="file-type-btn pdf-btn" (click)="onFileTypeSelect('pdf')">
+        <img src="/assets/icons/pdf-icon.svg" alt="PDF" class="file-icon" />
+      </button>
+    </div>
+  </div>
+</div>
+

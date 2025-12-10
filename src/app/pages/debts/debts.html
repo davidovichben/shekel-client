@@ -31,17 +31,19 @@
         <app-custom-select
           [options]="displayRangeOptions"
           [(value)]="displayRange"
-          prefix="הצג חובות:">
+          (valueChange)="onDisplayRangeChange()"
+          prefix="הצג חובות">
         </app-custom-select>
         <app-custom-select
           [options]="sortOptions"
           [(value)]="sortBy"
-          prefix="מיין לפי:">
+          (valueChange)="onSortChange()"
+          prefix="מיין לפי">
         </app-custom-select>
       </div>
       <div class="filter-checkbox">
         <label>
-          <input type="checkbox" [(ngModel)]="showAutoPaymentOnly">
+          <input type="checkbox" [(ngModel)]="showAutoPaymentOnly" (change)="onAutoPaymentFilterChange()">
           הצג חובות עם אפשרות לתשלום אוטומטי בלבד
         </label>
       </div>
@@ -59,7 +61,9 @@
           <img src="/assets/icons/clipboard-icon.svg" alt="Clipboard" />
         </button>
       </div>
-      <button class="btn-secondary">ייצא לקובץ</button>
+      <div class="export-action">
+        <button class="btn-outline" (click)="openExportDialog()">ייצא לקובץ</button>
+      </div>
     </div>
   </div>
 
@@ -82,17 +86,23 @@
                  (change)="toggleDebtSelection(debt.id, $event)">
         </td>
         <td>{{ debt.fullName }}</td>
+        <td>{{ debt.description }}</td>
+        <td>{{ debt.amount }}₪</td>
         <td>
-          <span class="approval-status" [class.approved]="debt.autoPaymentApproved" [class.not-approved]="!debt.autoPaymentApproved">
+          <span class="approval-status" [class.approved]="debt.shouldBill" [class.not-approved]="!debt.shouldBill">
             <i class="fa-solid fa-circle"></i>
-            {{ debt.autoPaymentApproved ? 'מאושר' : 'לא מאושר' }}
+            {{ debt.shouldBill ? 'מאושר' : 'לא מאושר' }}
           </span>
         </td>
-        <td>{{ debt.amount }}₪</td>
-        <td>{{ debt.hebrewDate }}</td>
+        <td>
+          <div class="hebrew-date-cell">
+            <div class="hebrew-date-top">{{ getHebrewDateTop(debt) }}</div>
+            <div class="hebrew-date-bottom">{{ getHebrewDateBottom(debt) }}</div>
+          </div>
+        </td>
         <td>{{ debt.gregorianDate }}</td>
-        <td>{{ debt.description }}</td>
         <td>{{ debt.lastReminderSentAt || '--' }}</td>
+        <td>{{ getDebtTypeLabel(debt.debtType) }}</td>
         <td>
           <app-chip 
             [variant]="getStatusChipVariant(debt.status)"

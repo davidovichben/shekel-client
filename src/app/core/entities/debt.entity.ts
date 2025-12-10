@@ -9,7 +9,8 @@ export interface Debt {
   id: string;
   memberId: string;
   fullName: string;
-  autoPaymentApproved: boolean;
+  autoPaymentApproved: boolean; // Deprecated - use shouldBill instead
+  shouldBill?: boolean; // From member payment settings
   amount: number;
   hebrewDate: string;
   gregorianDate: string;

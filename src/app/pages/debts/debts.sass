@@ -187,19 +187,41 @@
       background: #c4c9d0
 
 .approval-status
-  display: inline-flex
+  display: flex
   align-items: center
+  justify-content: center
   gap: 0.5rem
-  font-size: 0.85rem
+  font-size: 14px
+  font-family: 'Heebo', sans-serif
+  color: $text-primary
 
   i
-    font-size: 8px
+    font-size: 10px
+    flex-shrink: 0
 
   &.approved
-    color: #43a047
+    i
+      color: #4caf50
 
   &.not-approved
-    color: #e53935
+    i
+      color: #ff6b6b
+
+.hebrew-date-cell
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 2px
+  font-size: 14px
+  font-family: 'Heebo', sans-serif
+  color: $text-primary
+
+  .hebrew-date-top
+    line-height: 1.2
+
+  .hebrew-date-bottom
+    line-height: 1.2
+    font-size: 13px
 
 .status-badge
   display: inline-block

@@ -1,40 +1,48 @@
+@use '../../../../variables' as *
+
 .sidebar
   width: 220px
-  background-color: #ffffff
-  border-left: 1px solid #e0e0e0
+  background-color: $bg-light-grey
   display: flex
   flex-direction: column
   flex-shrink: 0
+  height: 100vh
 
 .logo
   padding: 1.5rem
   text-align: center
-  font-family: 'Heebo', sans-serif
-  font-weight: 700
-  font-size: 1.25rem
-  color: #2c3e50
   border-bottom: 1px solid #e0e0e0
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-shrink: 0
+
+  img
+    height: 29px
+    width: auto
+    max-width: 100%
 
 .sidebar-nav
   flex: 1
   padding: 1rem 0
+  overflow-y: auto
 
 .nav-item
   display: flex
   align-items: center
   padding: 0.75rem 1.5rem
-  color: #666
+  color: $btn-primary
   text-decoration: none
   transition: all 0.2s ease
   gap: 0.75rem
 
   &:hover
     background-color: #f5f5f5
-    color: #333
+    color: $btn-primary-hover
 
   &.active
     background-color: #e8f4fd
-    color: #1976d2
+    color: $btn-primary
     font-family: 'Heebo', sans-serif
     font-weight: 600
 
@@ -46,3 +54,5 @@
 .sidebar-footer
   border-top: 1px solid #e0e0e0
   padding: 0.5rem 0
+  flex-shrink: 0
+  margin-top: auto

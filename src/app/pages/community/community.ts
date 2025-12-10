@@ -454,9 +454,6 @@ export class CommunityComponent implements OnInit {
   }
 
   openExportDialog(): void {
-    const tabLabel = this.tabs.find(t => t.id === this.activeTab)?.label || 'כל החברים';
-    const selectionCount = this.selectedMembers.size;
-
     const dialogRef = this.dialog.open(ExportDialogComponent, {
       width: '600px',
       panelClass: 'confirm-dialog-panel',
@@ -464,24 +461,16 @@ export class CommunityComponent implements OnInit {
       enterAnimationDuration: '0ms',
       exitAnimationDuration: '0ms',
       data: {
-        title: 'ייצוא לקובץ',
-        message: 'בחר את סוג הייצוא:',
-        confirmText: `ייצא את כל הרשומות (${tabLabel})`,
-        cancelText: `ייצא ${selectionCount} פריטים שנבחרו`,
-        cancelDisabled: selectionCount === 0
+        title: 'ייצוא הנתונים לקובץ',
+        subtitle: 'להורדה - לחץ על סוג הקובץ המבוקש'
       }
     });
 
     dialogRef.afterClosed().subscribe((result: ExportDialogResult | undefined) => {
-      if (!result) return;
+      if (!result || !result.fileType) return;
 
-      if (result.exportAll) {
-        // Export all rows in current tab context
-        this.exportMembers(this.activeTab !== 'all' ? this.activeTab : undefined, undefined, result.fileType);
-      } else if (selectionCount > 0) {
-        // Export selected rows
-        this.exportMembers(undefined, Array.from(this.selectedMembers), result.fileType);
-      }
+      // Export all rows in current tab context
+      this.exportMembers(this.activeTab !== 'all' ? this.activeTab : undefined, undefined, result.fileType);
     });
   }
 
@@ -491,14 +480,26 @@ export class CommunityComponent implements OnInit {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
+        
+        // Determine file extension based on fileType
         let extension = fileType || 'xlsx';
-        if (extension === 'xls') extension = 'xlsx';
+        if (extension === 'xls') {
+          extension = 'xlsx'; // Convert xls to xlsx for download
+        } else if (extension === 'csv') {
+          extension = 'csv';
+        } else if (extension === 'pdf') {
+          extension = 'pdf';
+        }
+        
         a.download = `members.${extension}`;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
       },
       error: (error) => {
         console.error('Error exporting members:', error);
+        // TODO: Show error message to user
       }
     });
   }
