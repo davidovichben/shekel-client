@@ -7,6 +7,7 @@ import { VowItem, AliyahType } from '../../../core/entities/vow-set.entity';
 import { Member } from '../../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../../shared/components/custom-select/custom-select';
 import { MemberAutocompleteComponent } from '../../../shared/components/member-autocomplete/member-autocomplete';
+import { DialogHeaderComponent } from '../../../shared/components/dialog-header/dialog-header';
 
 export interface VowSetFormDialogData {
   vowSet?: {
@@ -29,7 +30,7 @@ interface VowItemForm {
 @Component({
   selector: 'app-vow-set-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent, DialogHeaderComponent],
   templateUrl: './vow-set-form.html',
   styleUrl: './vow-set-form.sass'
 })

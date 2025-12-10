@@ -4,95 +4,32 @@
 .checkbox-group
   margin-top: 8px
 
-.dialog-header
-  display: flex
-  justify-content: space-between
-  padding: 25px
-  background: $btn-primary
-  position: relative
-  direction: rtl
-
-  .close-btn
-    background: transparent
-    border: none
-    cursor: pointer
-    padding: 0
-    width: 36px
-    height: 36px
-    min-width: 36px
-    min-height: 36px
-    display: flex
-    align-items: center
-    justify-content: center
-    border-radius: 50%
-    transition: background 0.2s
-
-    img
-      width: 18px
-      height: 18px
-      display: block
-
-    &:hover
-      background: rgba(255, 255, 255, 0.1)
-
-  .document-icon
-    width: 24px
-    height: 24px
-    margin-right: 25px
-    margin-left: 20px
-
-  h2
-    margin: 0
-    font-size: 18px
-    font-weight: 600
-    color: white
-    text-align: right
-    font-family: 'Heebo', 'OpenSans', sans-serif
-
-  .header-left
-    display: flex
-    align-items: center
-    margin-right: auto
-
-    .info-message
-      display: flex
-      align-items: center
-      gap: 8px
-      color: $bg-light-yellow
-      font-size: 14px
-      font-family: 'Heebo', 'OpenSans', sans-serif
-
-      .info-icon
-        width: 20px
-        height: 20px
-        flex-shrink: 0
-
 .form-content
   padding: 24px
 
 .form-grid
+  display: flex
+  flex-direction: column
+  gap: 10px
+  direction: rtl
+
+.form-row
   display: grid
   grid-template-columns: 1fr 1fr
   gap: 24px
   direction: rtl
 
-.form-column-right,
-.form-column-left
-  display: flex
-  flex-direction: column
-  gap: 20px
-
 .form-group
   display: flex
   flex-direction: column
-  gap: 8px
+  gap: 12px
 
   label
     display: block
     font-size: 14px
     font-weight: 500
     color: $text-dark
-    font-family: 'Heebo', 'OpenSans', sans-serif
+    font-family: 'Heebo', sans-serif
 
     &.required::after
       content: ' *'
@@ -110,7 +47,7 @@
     box-sizing: border-box
     direction: rtl
     background: white
-    font-family: 'Heebo', 'OpenSans', sans-serif
+    font-family: 'Heebo', sans-serif
 
     &:focus
       outline: none
@@ -120,40 +57,22 @@
       color: $gray-500
 
   textarea
-    resize: vertical
-    min-height: 80px
+    resize: none
+    min-height: 40px
+    height: 40px
+    overflow-y: hidden
+    line-height: 1.5
 
   app-member-autocomplete,
   app-custom-select
     width: 100%
 
-  .radio-group
-    display: flex
-    gap: 24px
-    direction: rtl
-
-    .radio-option
-      display: flex
-      align-items: center
-      gap: 8px
-      cursor: pointer
-
-      input[type="radio"]
-        width: 18px
-        height: 18px
-        cursor: pointer
-        accent-color: $btn-primary
-
-      .radio-label
-        font-size: 14px
-        color: $text-dark
-        font-family: 'Heebo', 'OpenSans', sans-serif
 
   .amount-input
     position: relative
 
     input
-      padding-left: 40px !important
+      padding-left: 50px !important
 
     .currency
       position: absolute
@@ -161,23 +80,32 @@
       top: 50%
       transform: translateY(-50%)
       font-size: 14px
-      color: $gray-500
-      font-family: 'Heebo', 'OpenSans', sans-serif
+      color: $text-dark
+      font-family: 'Heebo', sans-serif
+
+  .reminder-toggle
+    margin-top: 24px
+
+    app-toggle-switch
+      margin-top: 24px
 
 .form-actions
   display: flex
   gap: 12px
   padding: 16px 24px
-  background: #f5f5f5
-  border-top: 1px solid $gray-300
   direction: rtl
-  justify-content: space-between
+  justify-content: flex-end
   align-items: center
+  border: none
 
   .actions-right
     display: flex
     gap: 12px
     direction: rtl
+    margin-right: auto
+
+  .btn-save
+    margin-right: 0
 
   button
     display: flex
@@ -190,7 +118,7 @@
     font-weight: 500
     cursor: pointer
     transition: background 0.2s
-    font-family: 'Heebo', 'OpenSans', sans-serif
+    font-family: 'Heebo', sans-serif
     white-space: nowrap
 
     .btn-icon

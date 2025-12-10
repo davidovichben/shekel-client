@@ -1,17 +1,5 @@
 @use 'variables' as *
 
-@font-face
-  font-family: 'OpenSans'
-  src: url('/assets/fonts/OpenSans-Regular.ttf') format('truetype')
-
-@font-face
-  font-family: 'OpenSansSemi'
-  src: url('/assets/fonts/OpenSans-SemiBold.ttf') format('truetype')
-
-@font-face
-  font-family: 'OpenSansBold'
-  src: url('/assets/fonts/OpenSans-Bold.ttf') format('truetype')
-
 html, body
   margin: 0
   padding: 0
@@ -20,10 +8,10 @@ html, body
   overflow-x: hidden
 
 *
-  font-family: 'Heebo', 'OpenSans', sans-serif
+  font-family: 'Heebo', sans-serif
 
 body
-  font-family: 'Heebo', 'OpenSans', sans-serif
+  font-family: 'Heebo', sans-serif
   direction: rtl
 
 // Global checkbox and radio styling
@@ -48,10 +36,12 @@ input[type="radio"]
     line-height: 18px
 
 .semi-bold
-  font-family: 'OpenSansSemi', sans-serif
+  font-family: 'Heebo', sans-serif
+  font-weight: 600
 
 .bold
-  font-family: 'OpenSansBold', sans-serif
+  font-family: 'Heebo', sans-serif
+  font-weight: 700
 
 // Shared Page Styles
 .page-container
@@ -70,7 +60,7 @@ input[type="radio"]
     margin: 0 0 0.25rem
     font-size: 1.5rem
     color: #0b1a51
-    font-family: 'Heebo', 'OpenSansBold', sans-serif
+    font-family: 'Heebo', sans-serif
     font-weight: 700
 
   p
@@ -90,7 +80,7 @@ input[type="radio"]
   border-radius: 8px
   font-size: 0.9rem
   cursor: pointer
-  font-family: 'Heebo', 'OpenSans', sans-serif
+  font-family: 'Heebo', sans-serif
 
   &:hover
     background: $btn-primary-hover
@@ -108,9 +98,7 @@ input[type="radio"]
   border-radius: 6px
   font-size: 0.85rem
   cursor: pointer
-
-  &:hover
-    background: rgba(0, 0, 0, 0.05)
+  outline: none
 
 // Shared Tabs
 .tabs-container
@@ -144,7 +132,8 @@ input[type="radio"]
   &.active
     color: $btn-primary
     border-bottom-color: $btn-primary
-    font-family: 'OpenSansSemi', sans-serif
+    font-family: 'Heebo', sans-serif
+    font-weight: 600
 
   .count
     color: #999
@@ -172,9 +161,9 @@ input[type="radio"]
   align-items: center
   justify-content: center
   padding: 0 1rem
-  background: transparent
-  border-radius: 25px
-    
+  background: $bg-actions
+  border-radius: 8px
+
 .search-box
   display: flex
   align-items: center
@@ -203,7 +192,7 @@ input[type="radio"]
   height: 40px
   padding: 0 1rem
   background: $bg-actions
-  border-radius: 25px
+  border-radius: 8px
   font-size: 0.85rem
   color: $text-dark
 
@@ -240,7 +229,8 @@ input[type="radio"]
     background: #fafafa
     color: #666
     font-weight: bold
-    font-family: 'OpenSansBold', sans-serif
+    font-family: 'Heebo', sans-serif
+    font-weight: 700
 
   .col-number
     width: 40px
@@ -305,7 +295,8 @@ input[type="radio"]
   padding: 48px !important
   color: $text-dark
   font-size: 1.1rem
-  font-family: 'OpenSansBold', sans-serif
+  font-family: 'Heebo', sans-serif
+  font-weight: 700
 
 // Shared Tags
 .tag
@@ -402,7 +393,6 @@ input[type="radio"]
 .form-group
   label
     display: block
-    margin-bottom: 6px
     font-size: 14px
     font-weight: 500
     color: $text-dark
@@ -559,11 +549,15 @@ app-custom-select
   .mdc-dialog__surface
     border-radius: 12px !important
     overflow: hidden
+    animation: dialogScaleIn 0.25s ease-out
 
-  // Disable close animation
-  &.ng-animating .mdc-dialog__surface
-    opacity: 1 !important
-    transform: none !important
+@keyframes dialogScaleIn
+  0%
+    opacity: 0
+    transform: scale(0.85)
+  100%
+    opacity: 1
+    transform: scale(1)
 
 // Confirm Dialog
 .confirm-dialog-panel
@@ -585,3 +579,17 @@ app-custom-select
 
 .confirm-dialog-backdrop
   background: rgba(0, 0, 0, 0.3)
+
+// Member Form Dialog
+.member-form-dialog-panel
+  .mat-mdc-dialog-container
+    padding: 0
+    border-radius: 12px
+    overflow: hidden
+
+  .mdc-dialog__surface
+    border-radius: 12px !important
+    overflow: hidden
+    background: transparent !important
+    box-shadow: none !important
+    animation: dialogScaleIn 0.25s ease-out

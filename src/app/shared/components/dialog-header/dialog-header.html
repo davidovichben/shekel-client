@@ -1,0 +1,17 @@
+<div class="dialog-header" [class.variant-primary]="variant === 'primary'" [class.variant-default]="variant === 'default'">
+  @if (showCloseButton) {
+    <button class="close-btn" (click)="onClose()" type="button">
+      <img [src]="closeIconPath" alt="Close" />
+    </button>
+  }
+  <div class="header-right">
+    @if (iconPath) {
+      <img [src]="iconPath" alt="Action" class="action-icon" />
+    }
+    <h2>{{ title }}</h2>
+  </div>
+  <div class="header-left">
+    <ng-content select="[header-left]"></ng-content>
+  </div>
+</div>
+

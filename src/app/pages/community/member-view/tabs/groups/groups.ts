@@ -1,14 +1,9 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { Member } from '../../../../../core/entities/member.entity';
-import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog';
-
-interface Group {
-  id: string;
-  name: string;
-}
+import { MemberGroupService } from '../../../../../core/services/network/member-group.service';
+import { GroupService, Group } from '../../../../../core/services/network/group.service';
 
 @Component({
   selector: 'app-member-groups',
@@ -17,72 +12,153 @@ interface Group {
   templateUrl: './groups.html',
   styleUrl: './groups.sass'
 })
-export class MemberGroupsComponent {
-  private dialog = inject(MatDialog);
+export class MemberGroupsComponent implements OnInit {
+  private memberGroupService = inject(MemberGroupService);
+  private groupService = inject(GroupService);
 
   @Input() member: Member | null = null;
-  @Output() save = new EventEmitter<string[]>();
-  @Output() closeDialog = new EventEmitter<void>();
 
   searchText = '';
+  memberGroups: Group[] = [];
+  availableGroups: Group[] = [];
+  showDropdown = false;
+  isLoading = true;
+  showCreateGroupInput = false;
+  newGroupName = '';
+  isCreating = false;
+  removingGroupIds: Set<string> = new Set();
+  private closeTimeout: any = null;
 
-  // Mock data for member's current groups
-  memberGroups: Group[] = [
-    { id: '1', name: 'משפחת לוי המורחבת' },
-    { id: '2', name: 'מנין נץ' },
-    { id: '3', name: 'שבת חתן יהודה לוי' },
-    { id: '4', name: 'שבת חתן ראובן שמחוני' }
-  ];
+  ngOnInit(): void {
+    if (this.member) {
+      this.loadMemberGroups();
+      this.loadAvailableGroups();
+    }
+  }
 
-  // Mock data for available groups to search
-  availableGroups: Group[] = [
-    { id: '5', name: 'שיעור דף יומי' },
-    { id: '6', name: 'ועד בית הכנסת' },
-    { id: '7', name: 'קבוצת נוער' }
-  ];
+  private loadMemberGroups(): void {
+    if (!this.member) return;
+
+    this.isLoading = true;
+    this.memberGroupService.getByMember(this.member.id).subscribe({
+      next: (groups) => {
+        this.memberGroups = groups;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private loadAvailableGroups(): void {
+    if (!this.member) return;
+
+    this.groupService.getAvailableGroups(this.member.id).subscribe(groups => {
+      this.availableGroups = groups;
+    });
+  }
 
   get filteredGroups(): Group[] {
-    if (!this.searchText) return [];
+    const notInMember = this.availableGroups.filter(g => !this.memberGroups.find(mg => mg.id === g.id));
+    if (!this.searchText) return notInMember;
     const search = this.searchText.toLowerCase();
-    return this.availableGroups.filter(g =>
-      g.name.includes(search) && !this.memberGroups.find(mg => mg.id === g.id)
-    );
+    return notInMember.filter(g => g.name.includes(search));
+  }
+
+  onInputFocus(): void {
+    this.showDropdown = true;
+  }
+
+  onInputBlur(): void {
+    this.scheduleClose();
+  }
+
+  onCreateInputFocus(): void {
+    this.cancelClose();
+  }
+
+  onCreateInputBlur(): void {
+    this.scheduleClose();
+  }
+
+  private scheduleClose(): void {
+    this.closeTimeout = setTimeout(() => {
+      this.showDropdown = false;
+      this.showCreateGroupInput = false;
+      this.newGroupName = '';
+    }, 200);
+  }
+
+  private cancelClose(): void {
+    if (this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
+      this.closeTimeout = null;
+    }
+  }
+
+  toggleCreateGroup(): void {
+    this.showCreateGroupInput = !this.showCreateGroupInput;
+    if (!this.showCreateGroupInput) {
+      this.newGroupName = '';
+    }
+  }
+
+  createGroupAndAdd(): void {
+    if (!this.member || !this.newGroupName.trim() || this.isCreating) return;
+
+    this.isCreating = true;
+    const groupName = this.newGroupName.trim();
+
+    this.groupService.create({ name: groupName }).subscribe({
+      next: (newGroup) => {
+        this.memberGroupService.addToMember(this.member!.id, newGroup.id).subscribe({
+          next: () => {
+            this.memberGroups = [...this.memberGroups, newGroup];
+            this.availableGroups = [...this.availableGroups, newGroup];
+            this.newGroupName = '';
+            this.showCreateGroupInput = false;
+            this.showDropdown = false;
+            this.searchText = '';
+            this.isCreating = false;
+          },
+          error: () => {
+            this.isCreating = false;
+          }
+        });
+      },
+      error: () => {
+        this.isCreating = false;
+      }
+    });
   }
 
   addGroup(group: Group): void {
-    if (!this.memberGroups.find(g => g.id === group.id)) {
+    if (!this.member) return;
+    if (this.memberGroups.find(g => g.id === group.id)) return;
+
+    this.memberGroupService.addToMember(this.member.id, group.id).subscribe(() => {
       this.memberGroups = [...this.memberGroups, group];
-    }
-    this.searchText = '';
+      this.searchText = '';
+    });
   }
 
   removeGroup(group: Group): void {
-    this.memberGroups = this.memberGroups.filter(g => g.id !== group.id);
-  }
+    if (!this.member || this.removingGroupIds.has(group.id)) return;
 
-  onSave(): void {
-    this.save.emit(this.memberGroups.map(g => g.id));
-  }
-
-  onCancel(): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      panelClass: 'confirm-dialog-panel',
-      backdropClass: 'confirm-dialog-backdrop',
-      enterAnimationDuration: '0ms',
-      exitAnimationDuration: '0ms',
-      data: {
-        title: 'ביטול שינויים',
-        message: 'האם אתה בטוח שברצונך לבטל את השינויים ולסגור?',
-        confirmText: 'כן, סגור',
-        cancelText: 'המשך עריכה'
+    this.removingGroupIds.add(group.id);
+    this.memberGroupService.removeFromMember(this.member.id, group.id).subscribe({
+      next: () => {
+        this.removingGroupIds.delete(group.id);
+        this.memberGroups = this.memberGroups.filter(g => g.id !== group.id);
+      },
+      error: () => {
+        this.removingGroupIds.delete(group.id);
       }
     });
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.closeDialog.emit();
-      }
-    });
+  isRemoving(groupId: string): boolean {
+    return this.removingGroupIds.has(groupId);
   }
 }

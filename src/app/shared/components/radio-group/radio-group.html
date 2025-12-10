@@ -1,0 +1,16 @@
+<div class="radio-group-wrapper" [class.disabled]="disabled">
+  @for (option of options; track option.value) {
+    <label class="radio-option" [class.selected]="value === option.value">
+      <input
+        type="radio"
+        [name]="name"
+        [value]="option.value"
+        [checked]="value === option.value"
+        [disabled]="disabled"
+        (change)="onValueChange(option.value)">
+      <span class="radio-custom"></span>
+      <span class="radio-label">{{ option.label }}</span>
+    </label>
+  }
+</div>
+

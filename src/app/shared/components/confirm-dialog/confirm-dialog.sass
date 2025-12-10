@@ -60,6 +60,25 @@
     text-align: center
     font-weight: 500
 
+.items-list
+  margin: 16px 0 0
+  padding: 12px
+  background: white
+  border-radius: 8px
+  list-style: none
+  max-height: 200px
+  overflow-y: auto
+  text-align: right
+
+  li
+    padding: 8px 12px
+    font-size: 14px
+    color: $text-dark
+    border-bottom: 1px solid $gray-300
+
+    &:last-child
+      border-bottom: none
+
 .dialog-actions
   display: flex
   justify-content: center
@@ -67,19 +86,24 @@
   flex-direction: row-reverse
 
 .btn-confirm,
-.btn-primary
+
+.btn-cancel
   display: flex
   align-items: center
+  justify-content: center
   gap: 8px
   padding: 10px 20px
-  background: $btn-primary
-  color: white
+  min-width: 180px
   border: none
   border-radius: 8px
   font-size: 14px
   font-weight: 500
   cursor: pointer
   transition: background 0.2s
+
+.btn-confirm
+  background: $header-bg
+  color: white
 
   &:hover
     background: $btn-primary-hover
@@ -89,18 +113,8 @@
     height: 16px
 
 .btn-cancel
-  display: flex
-  align-items: center
-  gap: 8px
-  padding: 10px 20px
-  background: #f48c8c
-  color: white
-  border: none
-  border-radius: 8px
-  font-size: 14px
-  font-weight: 500
-  cursor: pointer
-  transition: background 0.2s
+  background: $btn-cancel-light
+  color: $btn-cancel
 
   &:hover
     background: #e57373

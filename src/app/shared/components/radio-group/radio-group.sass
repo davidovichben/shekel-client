@@ -1,0 +1,68 @@
+@use '../../../../variables' as *
+
+.radio-group-wrapper
+  display: flex
+  margin-top: 15px
+  flex-direction: row
+  align-items: center
+  gap: 24px
+  direction: rtl
+  font-family: 'Heebo', sans-serif
+
+  &.disabled
+    opacity: 0.6
+    pointer-events: none
+
+.radio-option
+  display: flex
+  align-items: center
+  gap: 8px
+  cursor: pointer
+  user-select: none
+  flex-direction: row
+
+  input[type="radio"]
+    position: absolute
+    opacity: 0
+    width: 0
+    height: 0
+    pointer-events: none
+
+  .radio-custom
+    position: relative
+    width: 18px
+    height: 18px
+    border: 2px solid $gray-300
+    border-radius: 50%
+    background: white
+    flex-shrink: 0
+    transition: all 0.2s ease
+
+  .radio-label
+    font-size: 14px
+    color: $text-dark
+    font-family: 'Heebo', sans-serif
+
+  // Selected state - dark gray inner circle with same light gray outer ring
+  &.selected .radio-custom
+    background: white
+    border-color: $gray-300
+
+    &::after
+      content: ''
+      position: absolute
+      top: 50%
+      left: 50%
+      transform: translate(-50%, -50%)
+      width: 10px
+      height: 10px
+      border-radius: 50%
+      background: $text-dark
+
+  // Hover state
+  &:hover:not(.disabled) .radio-custom
+    border-color: $gray-500
+
+  input[type="radio"]:focus + .radio-custom
+    outline: none
+

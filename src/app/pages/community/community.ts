@@ -9,12 +9,12 @@ import { CustomSelectComponent } from '../../shared/components/custom-select/cus
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { MemberViewComponent } from './member-view/member-view';
-import { AdditionalFiltersComponent, FilterField } from '../../shared/components/additional-filters/additional-filters';
+import { MemberFormComponent } from './member-form/member-form';
 
 @Component({
   selector: 'app-community',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent, AdditionalFiltersComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent],
   templateUrl: './community.html',
   styleUrl: './community.sass'
 })
@@ -23,8 +23,18 @@ export class CommunityComponent implements OnInit {
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  navigateToCreate(): void {
-    this.router.navigate(['/community/new']);
+  openCreateMemberDialog(): void {
+    const dialogRef = this.dialog.open(MemberFormComponent, {
+      width: '900px',
+      panelClass: 'member-form-dialog-panel',
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadMembers();
+      }
+    });
   }
 
   navigateToEdit(member: Member): void {
@@ -32,20 +42,26 @@ export class CommunityComponent implements OnInit {
   }
 
   navigateToMember(member: Member): void {
-    const dialogRef = this.dialog.open(MemberViewComponent, {
-      width: '95vw',
-      maxWidth: '1400px',
-      height: '720px',
-      panelClass: 'member-view-dialog',
-      autoFocus: false,
-      enterAnimationDuration: '0ms',
-      exitAnimationDuration: '0ms',
-      data: { memberId: member.id }
-    });
+    // Pre-fetch member data before opening dialog
+    this.memberService.getOne(member.id).subscribe({
+      next: (fullMember: Member) => {
+        const dialogRef = this.dialog.open(MemberViewComponent, {
+          width: '95vw',
+          maxWidth: '1400px',
+          height: '720px',
+          panelClass: 'member-view-dialog',
+          autoFocus: false,
+          data: { memberId: member.id, member: fullMember }
+        });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadMembers();
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadMembers();
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error loading member:', error);
       }
     });
   }
@@ -59,32 +75,6 @@ export class CommunityComponent implements OnInit {
   totalPages = 1;
   isLoading = false;
   selectedMembers: Set<string> = new Set();
-
-  // Filter fields configuration
-  filterFields: FilterField[] = [
-    {
-      key: 'memberType',
-      label: 'סוג חבר',
-      type: 'text',
-      placeholder: 'זבולון'
-    },
-    {
-      key: 'group',
-      label: 'נמצא בקבוצה',
-      type: 'text',
-      placeholder: 'זבולון'
-    },
-    {
-      key: 'hasDebt',
-      label: 'בעל חוב',
-      type: 'select',
-      placeholder: 'כן',
-      options: [
-        { value: 'yes', label: 'כן' },
-        { value: 'no', label: 'לא' }
-      ]
-    }
-  ];
 
   sortBy = 'fullName';
   sortOptions = [
@@ -126,10 +116,17 @@ export class CommunityComponent implements OnInit {
     this.loadMembers();
   }
 
+  onSortChange(value: string): void {
+    this.sortBy = value;
+    this.currentPage = 1;
+    this.loadMembers();
+  }
+
   loadMembers(): void {
     const params: any = {
       page: this.currentPage,
-      limit: this.itemsPerPage
+      limit: this.itemsPerPage,
+      sortBy: this.sortBy
     };
 
     if (this.activeTab !== 'all') {
@@ -225,8 +222,48 @@ export class CommunityComponent implements OnInit {
       return;
     }
 
-    // Handle bulk action based on type
-    console.log(`Bulk action: ${action}`, Array.from(this.selectedMembers));
+    if (action === 'delete') {
+      this.bulkDelete();
+    } else {
+      console.log(`Bulk action: ${action}`, Array.from(this.selectedMembers));
+    }
+  }
+
+  private bulkDelete(): void {
+    const selectedIds = Array.from(this.selectedMembers);
+    const selectedMemberNames = this.members
+      .filter(m => selectedIds.includes(m.id))
+      .map(m => m.fullName);
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        title: 'מחיקת חברים',
+        message: `האם אתה בטוח שברצונך למחוק ${selectedMemberNames.length} חברים?`,
+        confirmText: 'מחק',
+        cancelText: 'ביטול',
+        items: selectedMemberNames
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const ids = Array.from(this.selectedMembers);
+        this.memberService.deleteMany(ids).subscribe({
+          next: () => {
+            this.selectedMembers.clear();
+            this.loadMembers();
+          },
+          error: (error) => {
+            console.error('Error deleting members:', error);
+          }
+        });
+      }
+    });
   }
 
   // Delete functionality
@@ -280,15 +317,45 @@ export class CommunityComponent implements OnInit {
     console.log('Send message to:', member.id);
   }
 
-  onSaveFilters(filters: Record<string, string>): void {
-    // Apply filters and reload members
-    this.currentPage = 1;
-    // You can use the filters object here to filter the data
-    this.loadMembers();
+  openExportDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        title: 'ייצוא לקובץ',
+        message: 'בחר את סוג הייצוא:',
+        confirmText: 'ייצא את כל החברים',
+        cancelText: 'ייצא את החברים המוצגים'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Export all members
+        this.exportMembers();
+      } else if (result === false) {
+        // Export shown members
+        this.exportMembers(this.members.map(m => m.id));
+      }
+    });
   }
 
-  onClearFilters(): void {
-    this.currentPage = 1;
-    this.loadMembers();
+  private exportMembers(ids?: string[]): void {
+    this.memberService.export(ids).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'members.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Error exporting members:', error);
+      }
+    });
   }
 }

@@ -7,6 +7,7 @@ import { InvoiceStatus } from '../../../core/entities/invoice.entity';
 import { Member } from '../../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../../shared/components/custom-select/custom-select';
 import { MemberAutocompleteComponent } from '../../../shared/components/member-autocomplete/member-autocomplete';
+import { DialogHeaderComponent } from '../../../shared/components/dialog-header/dialog-header';
 
 export interface InvoiceFormDialogData {
   invoice?: {
@@ -26,7 +27,7 @@ export interface InvoiceFormDialogData {
 @Component({
   selector: 'app-invoice-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent, DialogHeaderComponent],
   templateUrl: './invoice-form.html',
   styleUrl: './invoice-form.sass'
 })

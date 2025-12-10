@@ -87,15 +87,12 @@
         <td>{{ debt.hebrewDate }}</td>
         <td>{{ debt.gregorianDate }}</td>
         <td>{{ debt.description }}</td>
-        <td>{{ debt.lastReminder || '--' }}</td>
+        <td>{{ debt.lastReminderSentAt || '--' }}</td>
         <td>
-          <span class="status-badge" 
-                [class.pending]="isStatusPending(debt.status)" 
-                [class.overdue]="isStatusOverdue(debt.status)"
-                [class.paid]="isStatusPaid(debt.status)"
-                [class.cancelled]="isStatusCancelled(debt.status)">
-            {{ getStatusLabel(debt.status) }}
-          </span>
+          <app-chip 
+            [variant]="getStatusChipVariant(debt.status)"
+            [label]="getStatusLabel(debt.status)">
+          </app-chip>
         </td>
         <td class="col-actions">
           <button class="row-action"><i class="fa-regular fa-comment"></i></button>
@@ -109,6 +106,6 @@
 
   <!-- Footer -->
   <div class="table-footer">
-    <span>(נמצאו {{ totalDebts }} רשומות, סה"כ סכום החובות בהן הוא: <strong>{{ getTotalAmount() }}₪</strong>)</span>
+    <span>(נמצאו {{ totalDebts }} רשומות, סה"כ סכום החובות בהן הוא: <span class="bold">{{ getTotalAmount() }}₪</span>)</span>
   </div>
 </div>

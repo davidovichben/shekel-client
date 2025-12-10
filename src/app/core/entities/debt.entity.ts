@@ -14,7 +14,9 @@ export interface Debt {
   hebrewDate: string;
   gregorianDate: string;
   description: string;
+  debtType?: string;
   lastReminder: string | null;
+  lastReminderSentAt?: string | null;
   status: DebtStatus;
   createdAt: string;
   updatedAt: string;

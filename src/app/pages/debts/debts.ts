@@ -10,11 +10,12 @@ import { DebtFormComponent } from './debt-form/debt-form';
 import { VowSetFormComponent } from './vow-set-form/vow-set-form';
 import { DebtService } from '../../core/services/network/debt.service';
 import { Debt, DebtStatus } from '../../core/entities/debt.entity';
+import { ChipComponent, ChipVariant } from '../../shared/components/chip/chip';
 
 @Component({
   selector: 'app-debts',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent, AdditionalFiltersComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent, AdditionalFiltersComponent, ChipComponent],
   templateUrl: './debts.html',
   styleUrl: './debts.sass'
 })
@@ -26,6 +27,8 @@ export class DebtsComponent implements OnInit {
     const dialogRef = this.dialog.open(DebtFormComponent, {
       width: '900px',
       panelClass: 'debt-form-dialog',
+      disableClose: false,
+      hasBackdrop: true,
       data: {}
     });
 
@@ -40,6 +43,8 @@ export class DebtsComponent implements OnInit {
     const dialogRef = this.dialog.open(DebtFormComponent, {
       width: '900px',
       panelClass: 'debt-form-dialog',
+      disableClose: false,
+      hasBackdrop: true,
       data: { debt }
     });
 
@@ -185,6 +190,21 @@ export class DebtsComponent implements OnInit {
 
   isStatusCancelled(status: DebtStatus): boolean {
     return status === DebtStatus.Cancelled;
+  }
+
+  getStatusChipVariant(status: DebtStatus): ChipVariant {
+    switch (status) {
+      case DebtStatus.Pending:
+        return 'pending';
+      case DebtStatus.Paid:
+        return 'paid';
+      case DebtStatus.Overdue:
+        return 'overdue';
+      case DebtStatus.Cancelled:
+        return 'cancelled';
+      default:
+        return 'default';
+    }
   }
 
   // Selection functionality

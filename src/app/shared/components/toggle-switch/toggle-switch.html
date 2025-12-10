@@ -1,0 +1,9 @@
+<div class="toggle-switch-wrapper" [class.disabled]="disabled">
+  @if (label) {
+    <span class="toggle-label">{{ label }}</span>
+  }
+  <label class="toggle-switch" (click)="toggle()">
+    <input type="checkbox" [checked]="value" [disabled]="disabled">
+    <span class="toggle-slider"></span>
+  </label>
+</div>

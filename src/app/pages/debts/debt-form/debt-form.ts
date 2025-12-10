@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -7,6 +7,9 @@ import { DebtStatus } from '../../../core/entities/debt.entity';
 import { Member } from '../../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../../shared/components/custom-select/custom-select';
 import { MemberAutocompleteComponent } from '../../../shared/components/member-autocomplete/member-autocomplete';
+import { DialogHeaderComponent } from '../../../shared/components/dialog-header/dialog-header';
+import { ToggleSwitchComponent } from '../../../shared/components/toggle-switch/toggle-switch';
+import { RadioGroupComponent } from '../../../shared/components/radio-group/radio-group';
 
 export interface DebtFormDialogData {
   debt?: {
@@ -21,17 +24,18 @@ export interface DebtFormDialogData {
     status: DebtStatus;
     debtType?: string;
     lastReminder?: string | null;
+    lastReminderSentAt?: string | null;
   };
 }
 
 @Component({
   selector: 'app-debt-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent, DialogHeaderComponent, ToggleSwitchComponent, RadioGroupComponent],
   templateUrl: './debt-form.html',
   styleUrl: './debt-form.sass'
 })
-export class DebtFormComponent implements OnInit {
+export class DebtFormComponent implements OnInit, AfterViewInit {
   private debtService = inject(DebtService);
   private dialogRef = inject(MatDialogRef<DebtFormComponent>);
   private data: DebtFormDialogData = inject(MAT_DIALOG_DATA);
@@ -40,6 +44,11 @@ export class DebtFormComponent implements OnInit {
   debtId = '';
 
   debtorType: 'individual' | 'group' = 'individual';
+
+  debtorTypeOptions = [
+    { value: 'individual', label: 'יחיד' },
+    { value: 'group', label: 'קבוצה' }
+  ];
 
   debt = {
     memberId: '',
@@ -51,7 +60,8 @@ export class DebtFormComponent implements OnInit {
     autoPaymentApproved: false,
     status: DebtStatus.Pending as DebtStatus,
     debtType: '',
-    lastReminder: null as string | null
+    lastReminder: null as string | null,
+    lastReminderSentAt: null as string | null
   };
 
   debtTypeOptions = [
@@ -65,6 +75,34 @@ export class DebtFormComponent implements OnInit {
   sendReminderOnCreate = false;
   isSubmitting = false;
 
+  private convertDateToInputFormat(dateString: string): string {
+    if (!dateString) return '';
+    // Convert from yy/mm/dd to yyyy-mm-dd for HTML date input
+    const parts = dateString.split('/');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+      // Convert 2-digit year to 4-digit (assuming 20xx)
+      const fullYear = year.length === 2 ? `20${year}` : year;
+      return `${fullYear}-${month}-${day}`;
+    }
+    return dateString;
+  }
+
+  private convertDateToApiFormat(dateString: string): string {
+    if (!dateString) return '';
+    // Convert from yyyy-mm-dd to DD/MM/YYYY for API (as per API docs)
+    const parts = dateString.split('-');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+      return `${day}/${month}/${year}`;
+    }
+    return dateString;
+  }
+
   ngOnInit(): void {
     if (this.data?.debt) {
       this.isEditMode = true;
@@ -75,13 +113,25 @@ export class DebtFormComponent implements OnInit {
         amount: this.data.debt.amount || 0,
         description: this.data.debt.description || '',
         hebrewDate: this.data.debt.hebrewDate || '',
-        gregorianDate: this.data.debt.gregorianDate || '',
+        gregorianDate: this.convertDateToInputFormat(this.data.debt.gregorianDate || ''),
         autoPaymentApproved: this.data.debt.autoPaymentApproved || false,
         status: this.data.debt.status || DebtStatus.Pending,
         debtType: this.data.debt.debtType || '',
-        lastReminder: this.data.debt.lastReminder || null
+        lastReminder: this.data.debt.lastReminder || null,
+        lastReminderSentAt: this.data.debt.lastReminderSentAt || null
       };
     }
+  }
+
+  ngAfterViewInit(): void {
+    // Auto-resize textarea if it has initial content
+    setTimeout(() => {
+      const textarea = document.querySelector('textarea[name="description"]') as HTMLTextAreaElement;
+      if (textarea && this.debt.description) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+      }
+    }, 0);
   }
 
   formatDate(dateString: string | null): string {
@@ -105,13 +155,43 @@ export class DebtFormComponent implements OnInit {
   }
 
   onSendReminder(): void {
-    // TODO: Implement send reminder API call
-    console.log('Send reminder for debt:', this.debtId);
+    if (!this.debtId) return;
+    
+    this.isSubmitting = true;
+    
+    this.debtService.sendReminder(this.debtId).subscribe({
+      next: (result) => {
+        this.isSubmitting = false;
+        // Update the local debt object with the updated reminder date
+        this.debt.lastReminderSentAt = result.lastReminderSentAt || null;
+        // Optionally close the dialog or show a success message
+        // For now, we'll just update the local state
+      },
+      error: (error) => {
+        console.error('Error sending reminder:', error);
+        this.isSubmitting = false;
+      }
+    });
   }
 
   onPay(): void {
-    // TODO: Implement pay debt API call
-    console.log('Pay debt:', this.debtId);
+    if (!this.debtId) return;
+    
+    this.isSubmitting = true;
+    
+    this.debtService.update(this.debtId, {
+      ...this.debt,
+      status: DebtStatus.Paid
+    }).subscribe({
+      next: (result) => {
+        this.isSubmitting = false;
+        this.dialogRef.close(result);
+      },
+      error: (error) => {
+        console.error('Error paying debt:', error);
+        this.isSubmitting = false;
+      }
+    });
   }
 
   onDelete(): void {
@@ -133,15 +213,30 @@ export class DebtFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.debt.fullName || !this.debt.amount) {
+    if (!this.debt.fullName || !this.debt.amount || !this.debt.gregorianDate) {
       return;
     }
 
     this.isSubmitting = true;
 
+    // Convert date back to API format (DD/MM/YYYY)
+    const debtToSave: any = {
+      memberId: this.debt.memberId,
+      debtType: this.debt.debtType || 'other',
+      amount: this.debt.amount,
+      description: this.debt.description || '',
+      gregorianDate: this.convertDateToApiFormat(this.debt.gregorianDate),
+      status: this.debt.status
+    };
+
+    // For create, add sendImmediateReminder if toggle is on
+    if (!this.isEditMode && this.sendReminderOnCreate) {
+      debtToSave.sendImmediateReminder = true;
+    }
+
     const request = this.isEditMode
-      ? this.debtService.update(this.debtId, this.debt)
-      : this.debtService.create(this.debt);
+      ? this.debtService.update(this.debtId, debtToSave)
+      : this.debtService.create(debtToSave);
 
     request.subscribe({
       next: (result) => {
@@ -157,5 +252,11 @@ export class DebtFormComponent implements OnInit {
 
   onClose(): void {
     this.dialogRef.close();
+  }
+
+  onDescriptionInput(event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
   }
 }

@@ -1,54 +1,32 @@
 <div class="dialog-backdrop">
-  <div class="dialog-container">
-    <div class="dialog-header">
-      <button class="close-btn" (click)="onClose()">
-        <img src="/assets/icons/close-icon.svg" alt="Close" />
-      </button>
-      <img src="/assets/icons/document-icon.svg" alt="Document" class="document-icon" />
-      <h2>{{ isEditMode ? 'חוב - ' + debt.description : 'יצירת חוב חדש' }}</h2>
-      <div class="header-left">
-        @if (isEditMode && debt.lastReminder) {
+  <div class="dialog-container" (click)="$event.stopPropagation()">
+    <app-dialog-header
+      [title]="isEditMode ? 'חוב - ' + debt.description : 'יצירת חוב חדש'"
+      [iconPath]="'/assets/icons/save-icon.svg'"
+      (close)="onClose()">
+      @if (isEditMode && debt.lastReminderSentAt) {
+        <div header-left>
           <div class="info-message">
             <img src="/assets/icons/info-icon.svg" alt="Info" class="info-icon" />
-            <span>נשלחה תזכורת לגבי חוב זה בתאריך: {{ formatDate(debt.lastReminder) }}</span>
+            <span>נשלחה תזכורת לגבי חוב זה בתאריך: {{ formatDate(debt.lastReminderSentAt) }}</span>
           </div>
-        }
-      </div>
-    </div>
+        </div>
+      }
+    </app-dialog-header>
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-content">
         <div class="form-grid">
-          <!-- Right Column -->
-          <div class="form-column-right">
+          <!-- Row 1 -->
+          <div class="form-row">
             <div class="form-group">
-              <label class="required">סוג חייב:</label>
-              <div class="radio-group">
-                <label class="radio-option">
-                  <input type="radio" name="debtorType" value="group" [(ngModel)]="debtorType">
-                  <span class="radio-label">קבוצה</span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="debtorType" value="individual" [(ngModel)]="debtorType">
-                  <span class="radio-label">יחיד</span>
-                </label>
-              </div>
+              <label>סוג חייב:</label>
+              <app-radio-group
+                [options]="debtorTypeOptions"
+                [(ngModel)]="debtorType"
+                name="debtorType">
+              </app-radio-group>
             </div>
-            <div class="form-group">
-              <label>סכום:</label>
-              <div class="amount-input">
-                <input type="number" [(ngModel)]="debt.amount" name="amount" placeholder="">
-                <span class="currency">₪</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>תיאור חוב:</label>
-              <textarea [(ngModel)]="debt.description" name="description" placeholder="" rows="3"></textarea>
-            </div>
-          </div>
-
-          <!-- Left Column -->
-          <div class="form-column-left">
             <div class="form-group">
               <label class="required">חייב:</label>
               <app-member-autocomplete
@@ -56,6 +34,17 @@
                 (memberSelected)="onMemberSelected($event)"
                 placeholder="חיפוש חייב..."
               ></app-member-autocomplete>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="required">סכום:</label>
+              <div class="amount-input">
+                <input type="number" [(ngModel)]="debt.amount" name="amount" placeholder="">
+                <span class="currency">₪</span>
+              </div>
             </div>
             <div class="form-group">
               <label class="required">סוג חוב:</label>
@@ -65,12 +54,36 @@
                 placeholder="בחר סוג חוב"
               ></app-custom-select>
             </div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>תיאור חוב:</label>
+              <textarea
+                [(ngModel)]="debt.description"
+                name="description"
+                placeholder=""
+                rows="1"
+                (input)="onDescriptionInput($event)">
+              </textarea>
+            </div>
             <div class="form-group">
               <label class="required">תאריך:</label>
               <input type="date" [(ngModel)]="debt.gregorianDate" name="gregorianDate">
             </div>
           </div>
         </div>
+
+        @if (!isEditMode) {
+          <div class="form-group reminder-toggle">
+            <app-toggle-switch
+              [(ngModel)]="sendReminderOnCreate"
+              name="sendReminderOnCreate"
+              label="שלח הודעת תזכורת לתשלום מיד ביצירה">
+            </app-toggle-switch>
+          </div>
+        }
       </div>
 
       <div class="form-actions">
@@ -79,23 +92,26 @@
             <img src="/assets/icons/trash-icon.svg" alt="Delete" class="btn-icon" />
             מחק חוב
           </button>
-        }
-        <div class="actions-right">
-          @if (isEditMode) {
+          <div class="actions-right">
             <button type="button" class="btn-pay" (click)="onPay()">
-              <img src="/assets/icons/shekel-icon.svg" alt="Pay" class="btn-icon" />
+              <img src="/assets/icons/filter-icon.svg" alt="Pay" class="btn-icon" />
               שלם
             </button>
             <button type="button" class="btn-reminder" (click)="onSendReminder()">
-              <img src="/assets/icons/message-icon.svg" alt="Reminder" class="btn-icon" />
+              <img src="/assets/icons/chat-icon.svg" alt="Reminder" class="btn-icon" />
               שלח תזכורת
             </button>
-          }
+          </div>
           <button type="submit" class="btn-save" [disabled]="isSubmitting">
-            <img src="/assets/icons/document-icon.svg" alt="Save" class="btn-icon" />
+            <img src="/assets/icons/save-icon.svg" alt="Save" class="btn-icon" />
             {{ isSubmitting ? 'שומר...' : 'שמור שינויים' }}
           </button>
-        </div>
+        } @else {
+          <button type="submit" class="btn-save" [disabled]="isSubmitting">
+            <img src="/assets/icons/document-create-icon.svg" alt="Create" class="btn-icon" />
+            {{ isSubmitting ? 'יוצר...' : 'צור חוב' }}
+          </button>
+        }
       </div>
     </form>
   </div>

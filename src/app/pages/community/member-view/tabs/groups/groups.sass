@@ -1,8 +1,8 @@
 @use '../../../../../../variables' as *
+@use '../tabs-shared.sass'
 
 .groups-tab
-  padding: 24px
-  direction: rtl
+  @include tabs-shared.tab-container
   display: flex
   flex-direction: column
   height: 100%
@@ -17,18 +17,19 @@
     font-size: 18px
     font-weight: 700
     color: $text-dark
-    font-family: 'OpenSansBold', sans-serif
+    font-family: 'Heebo', sans-serif
+    font-weight: 700
 
 .search-box
   position: relative
-  width: 300px
+  width: 400px
 
   input
     width: 100%
-    padding: 10px 14px
+    padding: 6px 14px
     padding-left: 40px
-    border: 1px solid $gray-300
-    border-radius: 4px
+    border: none
+    border-radius: 0
     font-size: 14px
     box-sizing: border-box
     direction: rtl
@@ -37,7 +38,7 @@
     outline: none
 
     &:focus
-      border-color: $btn-primary
+      outline: none
 
     &::placeholder
       color: $gray-500
@@ -53,7 +54,7 @@
   position: absolute
   top: 100%
   right: 0
-  width: 300px
+  left: 0
   background: white
   border: 1px solid $gray-300
   border-radius: 4px
@@ -61,19 +62,82 @@
   z-index: 10
   margin-top: 4px
 
+.search-results-list
+  max-height: 200px
+  overflow-y: auto
+
 .search-result-item
-  display: block
+  display: flex
+  align-items: center
+  gap: 8px
   width: 100%
   padding: 10px 14px
   text-align: right
   background: none
   border: none
+  border-bottom: 1px solid $gray-300
   cursor: pointer
   font-size: 14px
   color: $text-dark
 
+  &:last-child
+    border-bottom: none
+
   &:hover
     background: $gray-100
+
+  &.add-group-option
+    color: $header-bg
+    font-weight: 500
+
+    svg
+      color: $header-bg
+
+.create-group-input
+  display: flex
+  align-items: center
+  gap: 8px
+  padding: 10px 14px
+  border-top: 1px solid $gray-300
+
+  input
+    flex: 1
+    padding: 8px 12px
+    border: 1px solid $gray-300
+    border-radius: 4px
+    font-size: 14px
+    outline: none
+
+    &:focus
+      border-color: $header-bg
+
+  .create-btn
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 32px
+    height: 32px
+    background: $header-bg
+    color: white
+    border: none
+    border-radius: 4px
+    cursor: pointer
+    transition: background 0.2s, opacity 0.2s
+
+    &:hover:not(:disabled)
+      background: $header-bg-hover
+
+    &:disabled
+      opacity: 0.6
+      cursor: not-allowed
+
+    .btn-spinner
+      width: 14px
+      height: 14px
+      border: 2px solid rgba(255, 255, 255, 0.3)
+      border-top-color: white
+      border-radius: 50%
+      animation: spin 0.6s linear infinite
 
 // Groups Section
 .groups-section
@@ -85,7 +149,8 @@
     font-size: 16px
     font-weight: 700
     color: $text-dark
-    font-family: 'OpenSansBold', sans-serif
+    font-family: 'Heebo', sans-serif
+    font-weight: 700
 
 .groups-description
   margin: 0 0 16px
@@ -101,6 +166,7 @@
 .group-tag
   display: flex
   align-items: center
+  animation: fadeIn 0.3s ease-out
   gap: 8px
   padding: 8px 16px
   background: white
@@ -108,6 +174,10 @@
   border-radius: 20px
   font-size: 14px
   color: $text-dark
+  transition: opacity 0.2s
+
+  &.removing
+    opacity: 0.5
 
   .remove-btn
     display: flex
@@ -118,57 +188,19 @@
     cursor: pointer
     padding: 0
     color: $gray-500
+    width: 14px
+    height: 14px
 
-    &:hover
+    &:hover:not(:disabled)
       color: $text-dark
 
-// Footer Buttons
-.form-footer
-  display: flex
-  gap: 12px
-  margin-top: auto
-  padding-top: 24px
-  justify-content: flex-end
+    &:disabled
+      cursor: not-allowed
 
-.btn-save
-  display: flex
-  align-items: center
-  justify-content: center
-  gap: 8px
-  padding: 12px 20px
-  min-width: 140px
-  background: $header-bg
-  color: white
-  border: none
-  border-radius: 4px
-  font-size: 14px
-  font-weight: 500
-  cursor: pointer
-  transition: background 0.2s
-
-  &:hover
-    background: $header-bg-hover
-
-  .btn-icon
-    display: flex
-    align-items: center
-
-.btn-cancel
-  display: flex
-  align-items: center
-  justify-content: center
-  gap: 8px
-  padding: 12px 20px
-  min-width: 140px
-  background: $btn-cancel
-  color: white
-  border: none
-  border-radius: 4px
-  font-size: 14px
-  font-weight: 500
-  cursor: pointer
-  transition: background 0.2s
-  opacity: 1
-
-  &:hover
-    background: $btn-cancel-hover
+    .remove-spinner
+      width: 12px
+      height: 12px
+      border: 2px solid $gray-300
+      border-top-color: $gray-500
+      border-radius: 50%
+      animation: spin 0.6s linear infinite

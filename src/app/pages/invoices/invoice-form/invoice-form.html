@@ -1,11 +1,9 @@
 <div class="dialog-backdrop">
   <div class="dialog-container">
-    <div class="dialog-header">
-      <h2>{{ isEditMode ? 'עריכת חשבונית' : 'יצירת חשבונית חדשה' }}</h2>
-      <button class="close-btn" (click)="onClose()">
-        <img src="/assets/icons/close-icon.svg" alt="Close" />
-      </button>
-    </div>
+    <app-dialog-header
+      [title]="isEditMode ? 'עריכת חשבונית' : 'יצירת חשבונית חדשה'"
+      (close)="onClose()">
+    </app-dialog-header>
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-content">
@@ -52,11 +50,7 @@
       <div class="form-actions">
         <button type="submit" class="btn-primary" [disabled]="isSubmitting">
           <span class="btn-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-              <polyline points="17 21 17 13 7 13 7 21"/>
-              <polyline points="7 3 7 8 15 8"/>
-            </svg>
+            <img src="/assets/icons/save-icon.svg" alt="Save" />
           </span>
           {{ isSubmitting ? 'שומר...' : (isEditMode ? 'עדכן חשבונית' : 'צור חשבונית') }}
         </button>

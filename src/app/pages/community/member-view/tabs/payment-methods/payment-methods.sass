@@ -1,4 +1,5 @@
 @use '../../../../../../variables' as *
+@use '../tabs-shared.sass'
 
 .payment-methods-tab
   padding: 24px 0
@@ -110,49 +111,10 @@
   gap: 12px
   margin-bottom: 16px
 
-.radio-option
-  display: flex
-  align-items: center
-  gap: 8px
-  cursor: pointer
-  flex-direction: row-reverse
-  justify-content: flex-end
-  width: calc(50% - 6px)
-  margin-bottom: 15px
-
-  input[type="radio"]
-    display: none
-
-  .radio-custom
-    width: 18px
-    height: 18px
-    border: 2px solid #ccc
-    border-radius: 50%
-    position: relative
-    flex-shrink: 0
-
-    &:after
-      content: ""
-      position: absolute
-      width: 10px
-      height: 10px
-      background: $btn-primary
-      border-radius: 50%
-      top: 50%
-      left: 50%
-      transform: translate(-50%, -50%)
-      opacity: 0
-      transition: opacity 0.2s
-
-  input[type="radio"]:checked ~ .radio-custom
-    border-color: $btn-primary
-
-    &:after
-      opacity: 1
-
-  .radio-label
-    font-size: 14px
-    color: $text-dark
+  .radio-option
+    width: calc(50% - 6px)
+    flex-direction: row-reverse
+    justify-content: flex-end
 
 .bit-phone-input
   width: 50%

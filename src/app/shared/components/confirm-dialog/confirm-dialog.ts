@@ -16,7 +16,7 @@ export interface ConfirmDialogData {
   buttons?: DialogButton[];
   confirmText?: string;
   cancelText?: string;
-  showCloseButton?: boolean;
+  items?: string[];
 }
 
 @Component({
@@ -25,18 +25,15 @@ export interface ConfirmDialogData {
   imports: [CommonModule, MatDialogModule],
   template: `
     <div class="confirm-dialog">
-      @if (data.showCloseButton !== false) {
-        <button class="close-btn" (click)="onCancel()" type="button">
-          <img src="/assets/icons/close-icon.svg" alt="X" />
-        </button>
-      }
       <div class="dialog-content">
         <h2>{{ data.title }}</h2>
-        @if (data.message) {
-          <p class="message">{{ data.message }}</p>
-        }
-        @if (data.description) {
-          <p class="description">{{ data.description }}</p>
+        <p>{{ data.message }}</p>
+        @if (data.items && data.items.length > 0) {
+          <ul class="items-list">
+            @for (item of data.items; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
         }
       </div>
       <div class="dialog-actions">

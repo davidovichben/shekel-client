@@ -1,0 +1,90 @@
+@use '../../../../variables' as *
+
+.dialog-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 25px
+  position: relative
+  direction: rtl
+
+  &.variant-primary
+    background: $btn-primary
+
+  &.variant-default
+    background: $bg-white
+    border-bottom: 1px solid $border-color
+
+  .close-btn
+    background: transparent
+    border: none
+    cursor: pointer
+    padding: 0
+    width: 36px
+    height: 36px
+    margin-left: 15px
+    min-width: 36px
+    min-height: 36px
+    display: flex
+    align-items: center
+    justify-content: center
+    border-radius: 50%
+    transition: background 0.2s
+
+    img
+      width: 18px
+      height: 18px
+      display: block
+
+    &:hover
+      background: rgba(255, 255, 255, 0.1)
+
+  &.variant-default .close-btn:hover
+    background: rgba(0, 0, 0, 0.05)
+
+  .header-right
+    display: flex
+    align-items: center
+    gap: 18px
+    flex: 1
+    justify-content: flex-start
+
+  .action-icon
+    width: 30px
+    height: 30px
+    flex-shrink: 0
+
+  h2
+    margin: 0
+    font-size: 20px
+    font-weight: 600
+    text-align: right
+    font-family: 'Heebo', sans-serif
+
+  &.variant-primary h2
+    color: white
+
+  &.variant-default h2
+    color: $text-dark
+    font-weight: 700
+    font-family: 'Heebo', sans-serif
+    font-weight: 700
+
+  .header-left
+    display: flex
+    align-items: center
+    margin-right: auto
+
+    .info-message
+      display: flex
+      align-items: center
+      gap: 8px
+      color: $bg-light-yellow
+      font-size: 14px
+      font-family: 'Heebo', sans-serif
+
+      .info-icon
+        width: 20px
+        height: 20px
+        flex-shrink: 0
+

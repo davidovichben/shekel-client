@@ -34,7 +34,17 @@ export class DebtService {
       id: debt.id || debt._id,
       fullName: debt.memberName || debt.fullName || '',
       gregorianDate: this.formatDate(debt.gregorianDate),
-      lastReminder: debt.lastReminder ? this.formatDate(debt.lastReminder) : null
+      debtType: debt.debtType || debt.type || debt.debt_type || '',
+      lastReminder: debt.lastReminder ? this.formatDate(debt.lastReminder) : null,
+      lastReminderSentAt: debt.lastReminderSentAt ? this.formatDate(debt.lastReminderSentAt) : null,
+      status: debt.status || 'pending',
+      amount: debt.amount ? parseFloat(debt.amount) : 0,
+      description: debt.description || '',
+      memberId: debt.memberId || '',
+      autoPaymentApproved: debt.autoPaymentApproved || false,
+      hebrewDate: debt.hebrewDate || '',
+      createdAt: debt.createdAt || '',
+      updatedAt: debt.updatedAt || ''
     };
   }
 
@@ -81,5 +91,11 @@ export class DebtService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  sendReminder(id: string): Observable<Debt> {
+    return this.http.post<Debt>(`${this.apiUrl}/${id}/reminder`, {}).pipe(
+      map(debt => this.mapDebtFromApi(debt))
+    );
   }
 }

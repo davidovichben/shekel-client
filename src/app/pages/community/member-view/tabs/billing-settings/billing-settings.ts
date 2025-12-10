@@ -6,6 +6,7 @@ import { CustomSelectComponent, SelectOption } from '../../../../../shared/compo
 import { CreditCardsComponent, CreditCard } from './credit-cards/credit-cards';
 import { BankAccountComponent, BankAccountData } from './bank-account/bank-account';
 import { MemberCreditCardService } from '../../../../../core/services/network/member-credit-card.service';
+import { MemberBillingSettingsService } from '../../../../../core/services/network/member-billing-settings.service';
 
 @Component({
   selector: 'app-member-billing-settings',
@@ -16,17 +17,18 @@ import { MemberCreditCardService } from '../../../../../core/services/network/me
 })
 export class MemberBillingSettingsComponent implements OnInit {
   private memberCreditCardService = inject(MemberCreditCardService);
+  private memberBillingSettingsService = inject(MemberBillingSettingsService);
 
   @Input() member: Member | null = null;
 
   // Billing settings
-  autoMonthlyCharge = true;
-  autoChargeDay = '';
-  paymentType: 'credit' | 'standing_order' | 'bit' = 'credit';
+  shouldBill = true;
+  billingDate = '10';
+  billingType: 'credit_card' | 'bank' | 'bit' = 'credit_card';
+  selectedCreditCard = '';
 
   // Credit cards
   creditCards: CreditCard[] = [];
-  selectedCardId = '';
   creditCardsLoaded = false;
 
   // Bank account data
@@ -52,10 +54,34 @@ export class MemberBillingSettingsComponent implements OnInit {
     }
   }
 
-  onPaymentTypeChange(): void {
-    if (this.paymentType === 'credit' && !this.creditCardsLoaded && this.member) {
+  onShouldBillChange(): void {
+    this.saveBillingSettings();
+  }
+
+  onBillingDateChange(): void {
+    this.saveBillingSettings();
+  }
+
+  onBillingTypeChange(): void {
+    if (this.billingType === 'credit_card' && !this.creditCardsLoaded && this.member) {
       this.loadCreditCards();
     }
+    this.saveBillingSettings();
+  }
+
+  onSelectedCreditCardChange(): void {
+    this.saveBillingSettings();
+  }
+
+  private saveBillingSettings(): void {
+    if (!this.member) return;
+
+    this.memberBillingSettingsService.put(this.member.id, {
+      shouldBill: this.shouldBill,
+      billingDate: this.billingDate,
+      billingType: this.billingType,
+      selectedCreditCard: this.selectedCreditCard
+    }).subscribe();
   }
 
   private loadCreditCards(): void {
@@ -68,14 +94,19 @@ export class MemberBillingSettingsComponent implements OnInit {
   }
 
   private loadBillingSettings(): void {
-    // Load billing settings from member or API
-    // For now, using placeholder data
-    this.autoChargeDay = '10';
+    if (!this.member) return;
 
-    // Load credit cards if credit is the default payment type
-    if (this.paymentType === 'credit') {
-      this.loadCreditCards();
-    }
+    this.memberBillingSettingsService.get(this.member.id).subscribe(settings => {
+      this.shouldBill = settings.shouldBill;
+      this.billingDate = settings.billingDate || '10';
+      this.billingType = settings.billingType || 'credit_card';
+      this.selectedCreditCard = settings.selectedCreditCard || '';
+
+      // Load credit cards if credit_card is the default billing type
+      if (this.billingType === 'credit_card') {
+        this.loadCreditCards();
+      }
+    });
 
     // Sample bank account data
     this.bankAccountData = {
@@ -88,9 +119,5 @@ export class MemberBillingSettingsComponent implements OnInit {
       authorizationExpiry: '16/08/2027',
       chargeLimit: '1000'
     };
-  }
-
-  onUpdate(): void {
-    console.log('Update billing settings');
   }
 }
