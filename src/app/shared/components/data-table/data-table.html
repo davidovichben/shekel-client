@@ -18,7 +18,9 @@
         @if (isLoading) {
           <tr>
             <td [attr.colspan]="colSpan" class="loading-cell">
-              <div class="spinner"></div>
+              <div class="spinner-wrapper">
+                <div class="spinner"></div>
+              </div>
             </td>
           </tr>
         } @else {

@@ -116,10 +116,17 @@ export class CommunityComponent implements OnInit {
     this.loadMembers();
   }
 
+  onSortChange(value: string): void {
+    this.sortBy = value;
+    this.currentPage = 1;
+    this.loadMembers();
+  }
+
   loadMembers(): void {
     const params: any = {
       page: this.currentPage,
-      limit: this.itemsPerPage
+      limit: this.itemsPerPage,
+      sortBy: this.sortBy
     };
 
     if (this.activeTab !== 'all') {

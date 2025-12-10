@@ -54,14 +54,14 @@
           </label>
         </div>
 
-        @if (creditCardsLoaded && creditCards.length === 0) {
+        @if (shouldBill && creditCardsLoaded && creditCards.length === 0 && billingType === 'credit_card') {
           <div class="warning-notice">
             <span>לחבר קהילה זה לא קיים כרטיס אשראי במערכת - להוספת כרטיס חדש עבור לטאב אמצעי תשלום</span>
             <i class="fa-solid fa-exclamation-circle"></i>
           </div>
         }
 
-        @if (billingType === 'bit') {
+        @if (shouldBill && billingType === 'bit') {
           <div class="warning-notice">
             <span>בבחירת האפשרות לתשלום בביט התשלום לא מתבצע אוטומטית במועד אלא רק נשלחת דרישת תשלום.</span>
             <i class="fa-solid fa-exclamation-circle"></i>
@@ -76,6 +76,17 @@
         @if (!creditCardsLoaded) {
           <div class="spinner-container">
             <i class="fa-solid fa-spinner fa-spin"></i>
+          </div>
+        } @else if (creditCards.length === 0) {
+          <div class="no-cards-placeholder">
+            <div class="placeholder-icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+            </div>
+            <p>אין כרטיסי אשראי</p>
+            <span class="placeholder-hint">להוספת כרטיס חדש עבור לטאב אמצעי תשלום</span>
           </div>
         } @else {
           <app-credit-cards

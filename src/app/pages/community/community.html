@@ -41,7 +41,8 @@
 		  </div>
 		  <app-custom-select
 			  [options]="sortOptions"
-			  [(value)]="sortBy"
+			  [value]="sortBy"
+			  (valueChange)="onSortChange($event)"
 			  prefix="מיין לפי">
 		  </app-custom-select>
 	  </div>
@@ -100,6 +101,6 @@
 
   <!-- Footer -->
   <div class="table-footer">
-    <span>(נמצאו {{ totalMembers }} רשומות, סה"כ יתרות החשבון בהן הוא: <strong>{{ getTotalBalance() }}₪</strong>)</span>
+    <span>(נמצאו {{ totalMembers }} רשומות, סה"כ יתרות החשבון בהן הוא: <span class="bold">{{ getTotalBalance() }}₪</span>)</span>
   </div>
 </div>

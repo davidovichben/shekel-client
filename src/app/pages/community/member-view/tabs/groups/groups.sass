@@ -1,8 +1,8 @@
 @use '../../../../../../variables' as *
+@use '../tabs-shared'
 
 .groups-tab
-  padding: 24px
-  direction: rtl
+  @include tabs-shared.tab-container
   display: flex
   flex-direction: column
   height: 100%
@@ -155,32 +155,6 @@
   font-size: 14px
   color: $text-muted
 
-.loading-spinner
-  display: flex
-  justify-content: center
-  align-items: center
-  padding: 24px
-
-  .spinner
-    width: 32px
-    height: 32px
-    border: 3px solid $gray-300
-    border-top-color: $header-bg
-    border-radius: 50%
-    animation: spin 0.8s linear infinite
-
-@keyframes spin
-  to
-    transform: rotate(360deg)
-
-@keyframes fadeIn
-  from
-    opacity: 0
-    transform: scale(0.9)
-  to
-    opacity: 1
-    transform: scale(1)
-
 .groups-list
   display: flex
   flex-wrap: wrap
@@ -228,54 +202,3 @@
       border-top-color: $gray-500
       border-radius: 50%
       animation: spin 0.6s linear infinite
-
-// Footer Buttons
-.form-footer
-  display: flex
-  gap: 12px
-  margin-top: auto
-  padding-top: 24px
-  justify-content: flex-end
-
-.btn-save
-  display: flex
-  align-items: center
-  justify-content: center
-  gap: 8px
-  padding: 12px 20px
-  min-width: 140px
-  background: $header-bg
-  color: white
-  border: none
-  border-radius: 4px
-  font-size: 14px
-  font-weight: 500
-  cursor: pointer
-  transition: background 0.2s
-
-  &:hover
-    background: $header-bg-hover
-
-  .btn-icon
-    display: flex
-    align-items: center
-
-.btn-cancel
-  display: flex
-  align-items: center
-  justify-content: center
-  gap: 8px
-  padding: 12px 20px
-  min-width: 140px
-  background: $btn-cancel
-  color: white
-  border: none
-  border-radius: 4px
-  font-size: 14px
-  font-weight: 500
-  cursor: pointer
-  transition: background 0.2s
-  opacity: 1
-
-  &:hover
-    background: $btn-cancel-hover

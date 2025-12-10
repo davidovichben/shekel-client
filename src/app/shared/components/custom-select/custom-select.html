@@ -2,7 +2,7 @@
   <button class="select-trigger" (click)="toggle()" [disabled]="disabled">
     <span>
       @if (prefix) {
-        {{ prefix }}: <strong>{{ selectedLabel }}</strong>
+        {{ prefix }}: <span class="selected-value">{{ selectedLabel }}</span>
       } @else {
         {{ selectedLabel }}
       }
