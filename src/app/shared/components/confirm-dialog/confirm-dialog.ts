@@ -16,6 +16,7 @@ export interface ConfirmDialogData {
   buttons?: DialogButton[];
   confirmText?: string;
   cancelText?: string;
+  cancelDisabled?: boolean;
   items?: string[];
 }
 

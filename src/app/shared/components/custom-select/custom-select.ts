@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, HostListener, ElementRef, OnChanges, SimpleChanges, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener, ElementRef, OnChanges, SimpleChanges, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface SelectOption {
@@ -13,16 +13,20 @@ export interface SelectOption {
   templateUrl: './custom-select.html',
   styleUrl: './custom-select.sass'
 })
-export class CustomSelectComponent implements OnChanges, OnInit {
+export class CustomSelectComponent implements OnChanges, OnInit, AfterViewInit {
   @Input() options: SelectOption[] = [];
   @Input() value: string = '';
   @Input() placeholder: string = '';
   @Input() prefix: string = '';
   @Input() disabled: boolean = false;
+  @Input() sortOrder: 'asc' | 'desc' | null = null;
   @Output() valueChange = new EventEmitter<string>();
+
+  @ViewChild('selectMenu', { static: false }) selectMenu?: ElementRef<HTMLDivElement>;
 
   isOpen = false;
   internalValue: string = '';
+  menuStyle: { top?: string; right?: string; width?: string } = {};
 
   constructor(private elementRef: ElementRef) {}
 
@@ -40,6 +44,10 @@ export class CustomSelectComponent implements OnChanges, OnInit {
     this.internalValue = this.value;
   }
 
+  ngAfterViewInit(): void {
+    // Position menu when opened
+  }
+
   get selectedLabel(): string {
     // Use the value directly, as it's bound via [(value)]
     const currentValue = this.value;
@@ -51,6 +59,21 @@ export class CustomSelectComponent implements OnChanges, OnInit {
   toggle(): void {
     if (this.disabled) return;
     this.isOpen = !this.isOpen;
+    if (this.isOpen) {
+      setTimeout(() => this.updateMenuPosition(), 0);
+    }
+  }
+
+  private updateMenuPosition(): void {
+    const trigger = this.elementRef.nativeElement.querySelector('.select-trigger') as HTMLElement;
+    if (!trigger) return;
+
+    const rect = trigger.getBoundingClientRect();
+    this.menuStyle = {
+      top: `${rect.bottom + 4}px`,
+      right: `${window.innerWidth - rect.right}px`,
+      width: `${rect.width}px`
+    };
   }
 
   select(option: SelectOption): void {
@@ -62,8 +85,30 @@ export class CustomSelectComponent implements OnChanges, OnInit {
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event): void {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
+    const target = event.target as HTMLElement;
+    const trigger = this.elementRef.nativeElement.querySelector('.select-trigger');
+    const menu = this.selectMenu?.nativeElement;
+    
+    if (trigger && menu) {
+      if (!trigger.contains(target) && !menu.contains(target)) {
+        this.isOpen = false;
+      }
+    } else if (!this.elementRef.nativeElement.contains(target)) {
       this.isOpen = false;
+    }
+  }
+
+  @HostListener('window:scroll')
+  onScroll(): void {
+    if (this.isOpen) {
+      this.updateMenuPosition();
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (this.isOpen) {
+      this.updateMenuPosition();
     }
   }
 }

@@ -164,8 +164,8 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
         this.isSubmitting = false;
         // Update the local debt object with the updated reminder date
         this.debt.lastReminderSentAt = result.lastReminderSentAt || null;
-        // Optionally close the dialog or show a success message
-        // For now, we'll just update the local state
+        // Close dialog and refresh table
+        this.dialogRef.close(result);
       },
       error: (error) => {
         console.error('Error sending reminder:', error);

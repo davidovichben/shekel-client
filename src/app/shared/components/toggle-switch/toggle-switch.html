@@ -2,8 +2,8 @@
   @if (label) {
     <span class="toggle-label">{{ label }}</span>
   }
-  <label class="toggle-switch" (click)="toggle()">
-    <input type="checkbox" [checked]="value" [disabled]="disabled">
+  <label class="toggle-switch" (click)="toggle(); $event.preventDefault(); $event.stopPropagation()">
+    <input type="checkbox" [checked]="value" [disabled]="disabled" (click)="$event.stopPropagation()">
     <span class="toggle-slider"></span>
   </label>
 </div>

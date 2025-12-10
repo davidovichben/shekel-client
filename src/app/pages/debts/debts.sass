@@ -51,6 +51,10 @@
     &:hover
       background: $btn-primary-hover
 
+    .btn-icon-small
+      width: 14px
+      height: 14px
+
   .btn-secondary
     background: white
     color: $text-dark
@@ -137,7 +141,6 @@
   .bulk-actions
     display: flex
     align-items: center
-    gap: 0.5rem
     padding: 0.5rem 1rem
     background: $bg-actions
     border-radius: 6px
@@ -149,8 +152,8 @@
       color: $text-primary
 
     .action-icon
-      width: 32px
-      height: 32px
+      width: 28px
+      height: 28px
       display: flex
       align-items: center
       justify-content: center
@@ -159,6 +162,12 @@
       border-radius: 4px
       cursor: pointer
       color: $text-primary
+      padding: 0
+
+      img
+        width: 17px
+        height: 17px
+        display: block
 
       &:hover
         background: rgba(11, 26, 81, 0.1)
@@ -208,28 +217,70 @@
     color: #43a047
 
 .row-action
-  width: 28px
-  height: 28px
-  display: inline-flex
-  align-items: center
-  justify-content: center
   background: none
   border: none
   cursor: pointer
-  color: $icon-color
-  border-radius: 4px
+  font-size: calc(0.9rem + 2px)
+  padding: 0.25rem
+  margin-left: 8px
+  color: $badge-pro
+  pointer-events: auto
+  position: relative
+  z-index: 1
 
   &:hover
-    background: #f5f5f5
+    opacity: 0.8
 
 .table-footer
   text-align: center
   padding: 1rem
   font-size: 0.85rem
-  color: $text-muted
-  background: #e3f2fd
+  color: #666
+  background: white
+  border-top: 1px solid #f0f0f0
   border-radius: 0 0 8px 8px
-  margin-top: -8px
 
-  strong
-    color: $text-dark
+  .footer-message
+    display: inline-block
+    background: #dfe5ef
+    padding: 4px 12px
+    border-radius: 20px
+    margin-bottom: 0.5rem
+    color: #666
+    font-size: 0.85rem
+
+    .bold
+      color: #333
+      font-weight: 600
+
+  .pagination
+    display: flex
+    justify-content: center
+    align-items: center
+    gap: 8px
+
+    .page-btn
+      width: 32px
+      height: 32px
+      display: flex
+      align-items: center
+      justify-content: center
+      border: 1px solid #e0e0e0
+      background: white
+      border-radius: 4px
+      cursor: pointer
+      font-size: 14px
+      font-family: 'Heebo', sans-serif
+
+      &:hover:not(:disabled):not(.active)
+        background: #f5f5f5
+
+      &.active
+        background: $header-bg
+        color: white
+        border-color: $header-bg
+        cursor: default
+
+      &:disabled
+        opacity: 0.5
+        cursor: not-allowed

@@ -1,73 +1,188 @@
 @use '../../../../variables' as *
+@use 'sass:color'
 
-// Component-specific styles
-.vows-section
+.form-content
+  padding: 24px
+
+.form-layout
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: 32px
+  direction: rtl
+
+.form-left,
+.form-right
   display: flex
   flex-direction: column
-  gap: 16px
+  gap: 24px
 
-.vow-item
+.form-fields-container
+  background: $bg-light-grey
+  padding: 20px
+  border-radius: 8px
+  display: flex
+  flex-direction: column
+  gap: 20px
+  overflow: visible
   position: relative
-  background: $gray-100
-  border-radius: 12px
-  padding: 16px
 
-  .vow-row
-    display: grid
-    grid-template-columns: 1fr 1fr
-    gap: 16px 32px
-    margin-bottom: 12px
+.form-group
+  display: flex
+  flex-direction: column
+  gap: 8px
+
+  label
+    font-size: 14px
+    font-weight: 500
+    color: $text-dark
+    font-family: 'Heebo', sans-serif
+
+    &.required::after
+      content: ' *'
+      color: $error
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"]
+    width: 100%
+    padding: 10px 12px
+    border: 1px solid $gray-300
+    border-radius: 6px
+    font-size: 14px
+    box-sizing: border-box
+    direction: rtl
+    background: white
+    font-family: 'Heebo', sans-serif
+    min-height: 40px
+
+    &:focus
+      outline: none
+      border-color: $btn-primary
+
+    &::placeholder
+      color: $gray-500
+
+  app-member-autocomplete,
+  app-custom-select
+    width: 100%
+    display: block
+    position: relative
+    z-index: 1
+
+    &:focus-within
+      z-index: 2
+
+  .reminder-toggle
+    margin-top: 8px
+
+.vows-section
+  flex: 1
+  display: flex
+  flex-direction: column
+  gap: 12px
+
+  .vows-heading
+    font-size: 16px
+    font-weight: 700
+    color: $text-dark
+    margin: 0
+    font-family: 'Heebo', sans-serif
+
+  .empty-vows
+    padding: 24px
+    text-align: center
+    color: $text-muted
+    font-size: 14px
+    font-family: 'Heebo', sans-serif
+
+  .vow-item
+    position: relative
+    background: $bg-light-grey
+    padding: 12px 16px
+    border-radius: 3px
+    display: flex
+    flex-direction: column
+    gap: 3px
+    margin-bottom: 8px
 
     &:last-child
       margin-bottom: 0
 
-  .remove-vow-btn
-    position: absolute
-    top: 8px
-    left: 8px
-    width: 24px
-    height: 24px
-    background: white
-    border: 1px solid $gray-300
-    border-radius: 50%
-    display: flex
-    align-items: center
-    justify-content: center
-    cursor: pointer
-    color: $gray-500
-    font-size: 16px
-    line-height: 1
+    .vow-content
+      display: flex
+      align-items: center
+      gap: 12px
 
-    &:hover
-      background: $error
-      border-color: $error
-      color: white
+      .remove-vow-btn
+        width: 20px
+        height: 20px
+        background: transparent
+        border: none
+        display: flex
+        align-items: center
+        justify-content: center
+        cursor: pointer
+        color: $gray-500
+        font-size: 18px
+        line-height: 1
+        padding: 0
+        flex-shrink: 0
 
-.checkbox-group
-  align-items: flex-end
-  height: 100%
-  padding-bottom: 10px
+        &:hover
+          color: $error
 
-.add-vow-btn
+      .vow-main
+        display: flex
+        align-items: center
+        gap: 8px
+        flex-wrap: wrap
+        font-size: 14px
+        font-family: 'Heebo', sans-serif
+        flex: 1
+
+        .vow-label
+          color: $text-dark
+          font-weight: 500
+
+        .vow-value
+          color: $text-dark
+          font-weight: 400
+
+        .vow-separator
+          color: $gray-500
+          margin: 0 4px
+
+    .vow-reminder
+      font-size: 12px
+      font-family: 'Heebo', sans-serif
+      padding-right: 32px
+
+      .reminder-sent
+        color: $success-green
+        display: flex
+        align-items: center
+        gap: 4px
+
+        .checkmark
+          font-weight: 700
+
+      .reminder-not-sent
+        color: $text-muted
+
+.form-actions-left,
+.form-actions-right
+  margin-top: auto
   display: flex
-  align-items: center
-  justify-content: center
-  gap: 8px
-  width: 100%
-  padding: 12px
-  margin-top: 16px
-  background: white
-  border: 1px dashed $gray-300
-  border-radius: 25px
-  color: $text-dark
-  font-size: 14px
-  cursor: pointer
+  justify-content: end
 
-  &:hover
-    background: $gray-100
-    border-color: $btn-primary
-    color: $btn-primary
+  .btn-primary
+    &.btn-add-vow
+      background: $success-green
+      width: 100%
 
-  .add-icon
-    font-size: 18px
-    font-weight: 600
+      &:hover:not(:disabled)
+        background: color.scale($success-green, $lightness: -10%)
+
+    &.btn-create-debts
+      width: auto
+      padding: 10px 20px

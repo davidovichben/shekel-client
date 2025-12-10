@@ -7,6 +7,30 @@
 
 .dialog-content
   padding: 24px
+  min-height: 200px
+
+.loading-state
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  gap: 16px
+  padding: 48px
+  color: $gray-500
+
+  .spinner
+    width: 40px
+    height: 40px
+    border: 3px solid #f3f3f3
+    border-top: 3px solid $header-bg
+    border-radius: 50%
+    animation: spin 1s linear infinite
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
 
 .member-form
   display: flex
@@ -64,9 +88,24 @@
     &::placeholder
       color: $gray-500
 
+    &.invalid
+      border-color: $error
+
+  .error-message
+    color: $error
+    font-size: 12px
+    margin-top: 4px
+
   app-custom-select
     display: block
     width: 100%
+
+  ::ng-deep
+    .custom-select
+      width: 100%
+
+    .select-trigger
+      width: 100%
 
 .dialog-footer
   display: flex
@@ -91,12 +130,24 @@
   cursor: pointer
   transition: background 0.2s
 
-  &:hover
+  &:hover:not(:disabled)
     background: $header-bg-hover
+
+  &:disabled
+    opacity: 0.7
+    cursor: not-allowed
 
   .btn-icon
     display: flex
     align-items: center
+
+  .btn-spinner
+    width: 16px
+    height: 16px
+    border: 2px solid rgba(255, 255, 255, 0.3)
+    border-top: 2px solid white
+    border-radius: 50%
+    animation: spin 1s linear infinite
 
 .btn-cancel
   display: flex
@@ -114,5 +165,29 @@
   cursor: pointer
   transition: background 0.2s
 
-  &:hover
+  &:hover:not(:disabled)
     background: $btn-cancel-hover
+
+  &:disabled
+    opacity: 0.7
+    cursor: not-allowed
+
+.btn-dev
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  padding: 12px 20px
+  min-width: 120px
+  background: #ff9800
+  color: white
+  border: none
+  border-radius: 4px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  transition: background 0.2s
+  margin-left: auto
+
+  &:hover
+    background: #f57c00

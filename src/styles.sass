@@ -72,9 +72,11 @@ input[type="radio"]
 .btn-primary
   display: flex
   align-items: center
+  justify-content: center
   gap: 0.5rem
+  width: 208px
   padding: 0.75rem 1.25rem
-  background: $btn-primary
+  background: $header-bg
   color: white
   border: none
   border-radius: 8px
@@ -83,7 +85,7 @@ input[type="radio"]
   font-family: 'Heebo', sans-serif
 
   &:hover
-    background: $btn-primary-hover
+    background: $header-bg-hover
 
   .btn-icon
     display: block
@@ -106,20 +108,20 @@ input[type="radio"]
   justify-content: space-between
   align-items: center
   margin-bottom: 1rem
-  border-bottom: 1px solid #e0e0e0
+  border-bottom: 1px solid $text-dark
 
 .tabs
   display: flex
   gap: 0.5rem
 
 .tab
-  padding: 0.75rem 1rem
+  padding: 0.5rem 0.75rem
   background: none
   border: none
-  font-size: 0.85rem
+  font-size: 0.9rem
   color: #666
   cursor: pointer
-  border-bottom: 2px solid transparent
+  border-bottom: 4px solid transparent
   transition: all 0.2s
   white-space: nowrap
   display: flex
@@ -137,6 +139,32 @@ input[type="radio"]
 
   .count
     color: #999
+
+.filter-btn
+  display: flex
+  align-items: center
+  gap: 0.5rem
+  padding: 0.25rem 0.75rem
+  background: none
+  border: 1px solid $filter-border
+  border-radius: 20px
+  font-size: 0.75rem
+  color: $text-dark
+  cursor: pointer
+  font-family: 'OpenSansBold', sans-serif
+
+  i
+    position: relative
+
+    &::after
+      content: ''
+      position: absolute
+      top: -2px
+      right: -2px
+      width: 6px
+      height: 6px
+      background: $filter-badge
+      border-radius: 50%
 
 // Shared Table Header
 .table-header
@@ -167,16 +195,27 @@ input[type="radio"]
 .search-box
   display: flex
   align-items: center
-  flex-direction: row-reverse
   background: white
   border: 1px solid #e0e0e0
-  border-radius: 25px
+  border-radius: 4px
   padding: 0.5rem 1rem
-  width: 300px
+  width: 600px
 
   .search-icon
     margin-right: 0.5rem
     color: #999
+    cursor: pointer
+
+    &:hover
+      color: #666
+
+  .reset-icon
+    color: #999
+    cursor: pointer
+    font-size: 1.1rem
+
+    &:hover
+      color: #666
 
   input
     border: none
@@ -195,6 +234,7 @@ input[type="radio"]
   border-radius: 8px
   font-size: 0.85rem
   color: $text-dark
+  font-family: 'OpenSansBold', sans-serif
 
 .action-icon
   background: none
@@ -221,12 +261,12 @@ input[type="radio"]
 
   th, td
     padding: 0.75rem
-    text-align: right
+    text-align: center
     font-size: 0.85rem
-    border-bottom: 1px solid #f0f0f0
+    border-bottom: 1px solid $table-border-color
 
   th
-    background: #fafafa
+    background: $bg-table-header
     color: #666
     font-weight: bold
     font-family: 'Heebo', sans-serif
@@ -261,15 +301,16 @@ input[type="radio"]
     background: none
     border: none
     cursor: pointer
-    font-size: 0.9rem
+    font-size: calc(0.9rem + 2px)
     padding: 0.25rem
-    color: #666
+    margin-left: 8px
+    color: $badge-pro
     pointer-events: auto
     position: relative
     z-index: 1
 
     &:hover
-      color: #333
+      opacity: 0.8
 
   .negative
     color: #e53935
@@ -285,9 +326,48 @@ input[type="radio"]
   color: #666
   background: white
   border-top: 1px solid #f0f0f0
+  border-radius: 0 0 8px 8px
 
   strong
     color: #333
+
+  .footer-message
+    display: inline-block
+    background: #dfe5ef
+    padding: 4px 12px
+    border-radius: 20px
+    margin-bottom: 0.5rem
+
+  .pagination
+    display: flex
+    justify-content: center
+    align-items: center
+    gap: 8px
+
+  .page-btn
+    width: 32px
+    height: 32px
+    display: flex
+    align-items: center
+    justify-content: center
+    border: 1px solid #e0e0e0
+    background: white
+    border-radius: 4px
+    cursor: pointer
+    font-size: 14px
+
+    &:hover:not(:disabled):not(.active)
+      background: #f5f5f5
+
+    &.active
+      background: $header-bg
+      color: white
+      border-color: $header-bg
+      cursor: default
+
+    &:disabled
+      opacity: 0.5
+      cursor: not-allowed
 
 // Empty state for tables
 .empty-cell
@@ -335,6 +415,7 @@ input[type="radio"]
   max-width: 850px
   max-height: 90vh
   overflow-y: auto
+  overflow-x: visible
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15)
   direction: rtl
 
@@ -527,13 +608,14 @@ app-custom-select
   align-items: center
   justify-content: center
 
-  &:hover:not(:disabled)
+  &:hover:not(:disabled):not(.active)
     background: #f5f5f5
 
   &.active
     background: $btn-primary
     color: white
     border-color: $btn-primary
+    cursor: default
 
   &:disabled
     opacity: 0.5
@@ -581,6 +663,9 @@ app-custom-select
   background: rgba(0, 0, 0, 0.3)
 
 // Member Form Dialog
+.cdk-overlay-pane.mat-mdc-dialog-panel
+  max-width: none !important
+
 .member-form-dialog-panel
   .mat-mdc-dialog-container
     padding: 0
@@ -593,3 +678,15 @@ app-custom-select
     background: transparent !important
     box-shadow: none !important
     animation: dialogScaleIn 0.25s ease-out
+
+// Vow Set Form Dialog - allow overflow for dropdowns
+.vow-set-form-dialog
+  .mat-mdc-dialog-container
+    overflow: visible !important
+
+  .mdc-dialog__surface
+    overflow: visible !important
+
+  .dialog-container
+    overflow-y: auto
+    overflow-x: visible

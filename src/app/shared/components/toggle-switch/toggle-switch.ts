@@ -25,8 +25,9 @@ export class ToggleSwitchComponent implements ControlValueAccessor {
   onChange: any = () => {};
   onTouched: any = () => {};
 
-  writeValue(value: boolean): void {
-    this.value = value;
+  writeValue(value: boolean | null | undefined): void {
+    // Handle null/undefined values - default to false
+    this.value = value === true;
   }
 
   registerOnChange(fn: any): void {
@@ -41,8 +42,12 @@ export class ToggleSwitchComponent implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 
-  toggle(): void {
+  toggle(event?: Event): void {
     if (this.disabled) return;
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     
     this.value = !this.value;
     this.onChange(this.value);

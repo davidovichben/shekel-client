@@ -1,84 +1,116 @@
 <div class="dialog-backdrop">
   <div class="dialog-container">
     <app-dialog-header
-      [title]="isEditMode ? 'עריכת סט נדרים' : 'יצירת סט נדרים חדש'"
+      title="יצירת סט נדרים חדש"
       (close)="onClose()">
     </app-dialog-header>
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-content">
-        <!-- Row 1: Date and Description -->
-        <div class="form-row two-columns">
-          <div class="form-group">
-            <label class="required">תאריך:</label>
-            <input type="date" [(ngModel)]="vowSet.gregorianDate" name="gregorianDate">
-          </div>
-          <div class="form-group">
-            <label>תיאור כולל לנדרים בסט:</label>
-            <input type="text" [(ngModel)]="vowSet.description" name="description" placeholder="נדר שבת שובה">
-          </div>
-        </div>
+        <div class="form-layout">
+          <!-- Right Section (Form Fields) -->
+          <div class="form-right">
+            <div class="form-group">
+              <label class="required">תאריך:</label>
+              <input type="date" [(ngModel)]="vowSet.gregorianDate" name="gregorianDate">
+            </div>
 
-        <!-- Vows List -->
-        <div class="vows-section">
-          @for (vow of vows; track $index) {
-            <div class="vow-item">
-              <div class="vow-row">
-                <div class="form-group">
-                  <label class="required">חייב:</label>
-                  <app-member-autocomplete
-                    [memberName]="vow.fullName"
-                    (memberSelected)="onMemberSelected($event, $index)"
-                    placeholder="חיפוש חייב..."
-                  ></app-member-autocomplete>
-                </div>
-                <div class="form-group">
-                  <label>עליה:</label>
-                  <app-custom-select
-                    [options]="aliyahOptions"
-                    [(value)]="vow.aliyahType"
-                    placeholder="בחר עליה"
-                  ></app-custom-select>
-                </div>
+            <div class="form-fields-container">
+              <div class="form-group">
+                <label class="required">חייב:</label>
+                <app-member-autocomplete
+                  [memberName]="newVow.fullName"
+                  (memberSelected)="onMemberSelected($event)"
+                  placeholder="חיפוש חייב...">
+                </app-member-autocomplete>
               </div>
-              <div class="vow-row">
-                <div class="form-group checkbox-group">
-                  <label class="checkbox-label">
-                    <input type="checkbox" [(ngModel)]="vow.sendReminder" [name]="'sendReminder_' + $index">
-                    <span>שלח הודעת תזכורת לתשלום מיד ביצירה</span>
-                  </label>
-                </div>
-                <div class="form-group">
-                  <label class="required">סכום:</label>
-                  <div class="amount-input">
-                    <input type="number" [(ngModel)]="vow.amount" [name]="'amount_' + $index">
-                    <span class="currency">ש"ח</span>
-                  </div>
-                </div>
+
+              <div class="form-group">
+                <label class="required">סכום:</label>
+                <input type="number" [(ngModel)]="newVow.amount" name="amount" placeholder="" min="0" step="0.01">
               </div>
-              @if (vows.length > 1) {
-                <button type="button" class="remove-vow-btn" (click)="removeVow($index)">
-                  <span>&times;</span>
+
+              <div class="form-group">
+                <label>עליה:</label>
+                <app-custom-select
+                  [options]="aliyahOptions"
+                  [(value)]="newVow.aliyahType"
+                  placeholder="בחר עליה">
+                </app-custom-select>
+              </div>
+
+              <div class="form-group reminder-toggle">
+                <app-toggle-switch
+                  [ngModel]="newVow.sendReminder"
+                  [ngModelOptions]="{standalone: true}"
+                  (toggleChange)="onReminderToggleChange($event)"
+                  label="שלח הודעת תזכורת מיד ביצירה">
+                </app-toggle-switch>
+              </div>
+
+              <div class="form-actions-right">
+                <button type="button" class="btn-primary btn-add-vow" (click)="addVow()">
+                  <img src="/assets/icons/plus-icon.svg" alt="Add" class="btn-icon" />
+                  הוסף נדר לסט
                 </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Left Section (Vows List) -->
+          <div class="form-left">
+            <div class="form-group">
+              <label>תיאור כולל לנדרים בסט:</label>
+              <input type="text" [(ngModel)]="vowSet.description" name="description" placeholder="נדר שבת שובה">
+            </div>
+
+            <div class="vows-section">
+              <h3 class="vows-heading">רשימת נדרים</h3>
+              @if (hasNoValidVows()) {
+                <div class="empty-vows">
+                  <span>הוסף נדר לסט כדי להתחיל</span>
+                </div>
+              } @else {
+                @for (vow of vows; track vow.memberId + vow.amount + $index; let i = $index) {
+                  @if (vow.memberId && vow.amount > 0) {
+                    <div class="vow-item">
+                      <div class="vow-content">
+                        <button type="button" class="remove-vow-btn" (click)="removeVow(i)">
+                          <span>&times;</span>
+                        </button>
+                        <div class="vow-main">
+                          <span class="vow-label">חייב:</span>
+                          <span class="vow-value">{{ vow.fullName }}</span>
+                          <span class="vow-separator">|</span>
+                          <span class="vow-label">עליה:</span>
+                          <span class="vow-value">{{ getAliyahLabel(vow.aliyahType) }}</span>
+                          <span class="vow-separator">|</span>
+                          <span class="vow-label">סכום:</span>
+                          <span class="vow-value">{{ vow.amount }}₪</span>
+                        </div>
+                      </div>
+                      <div class="vow-reminder">
+                        @if (vow.sendReminder) {
+                          <span class="reminder-sent">
+                            <span class="checkmark">✓</span>
+                            תישלח הודעת תזכורת ביצירה
+                          </span>
+                        }
+                      </div>
+                    </div>
+                  }
+                }
               }
             </div>
-          }
+
+            <div class="form-actions-left">
+              <button type="submit" class="btn-primary btn-create-debts" [disabled]="isSubmitting">
+                <img src="/assets/icons/document-create-icon.svg" alt="Create" class="btn-icon" />
+                {{ isSubmitting ? 'יוצר...' : 'צור חובות נדרים' }}
+              </button>
+            </div>
+          </div>
         </div>
-
-        <!-- Add Vow Button -->
-        <button type="button" class="add-vow-btn" (click)="addVow()">
-          <span class="add-icon">+</span>
-          הוסף נדר לסט
-        </button>
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn-primary" [disabled]="isSubmitting">
-          <span class="btn-icon">
-            <img src="/assets/icons/save-icon.svg" alt="Save" />
-          </span>
-          {{ isSubmitting ? 'שומר...' : 'צור חובות' }}
-        </button>
       </div>
     </form>
   </div>

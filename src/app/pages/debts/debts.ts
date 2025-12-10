@@ -74,6 +74,7 @@ export class DebtsComponent implements OnInit {
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
+  totalSum = 0;
   isLoading = false;
   selectedDebts: Set<string> = new Set();
 
@@ -147,6 +148,8 @@ export class DebtsComponent implements OnInit {
         this.debts = response.rows;
         this.totalDebts = response.counts?.totalRows || response.rows.length;
         this.totalPages = response.counts?.totalPages || Math.ceil(this.totalDebts / this.itemsPerPage);
+        // Extract totalSum from API response (can be string or number)
+        this.totalSum = response.totalSum ? parseFloat(String(response.totalSum)) : 0;
         this.isLoading = false;
       },
       error: (error) => {
@@ -163,7 +166,17 @@ export class DebtsComponent implements OnInit {
   }
 
   getTotalAmount(): number {
-    return this.debts.reduce((sum, debt) => sum + debt.amount, 0);
+    return this.totalSum;
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const start = Math.max(1, this.currentPage - 2);
+    const end = Math.min(this.totalPages, this.currentPage + 2);
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 
   getStatusLabel(status: DebtStatus): string {

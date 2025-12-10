@@ -6,9 +6,9 @@
       <p>כאן תמצא את החובות והנדרים</p>
     </div>
     <div class="header-actions">
-      <button class="btn-secondary" (click)="openVowSetDialog()">
-        <img src="/assets/icons/plus-icon.svg" alt="+" class="btn-icon" />
-        צור סט נדרים
+      <button class="btn-primary" (click)="openVowSetDialog()">
+        <img src="/assets/icons/grid-icon.svg" alt="Grid" class="btn-icon btn-icon-small" />
+        הכנס סט נדרים
       </button>
       <button class="btn-primary" (click)="openCreateDialog()">
         <img src="/assets/icons/plus-icon.svg" alt="+" class="btn-icon" />
@@ -49,10 +49,15 @@
     <div class="actions-section">
       <div class="bulk-actions">
         <span>פעולות קולקטיביות:</span>
-        <button class="action-icon" (click)="onBulkAction('message')"><i class="fa-regular fa-comment"></i></button>
-        <button class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
-        <button class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
-        <button class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
+        <button class="action-icon" (click)="onBulkAction('message')">
+          <img src="/assets/icons/chat-bubble-icon.svg" alt="Message" />
+        </button>
+        <button class="action-icon" (click)="onBulkAction('document')">
+          <img src="/assets/icons/document-icon-blue.svg" alt="Document" />
+        </button>
+        <button class="action-icon" (click)="onBulkAction('copy')">
+          <img src="/assets/icons/clipboard-icon.svg" alt="Clipboard" />
+        </button>
       </div>
       <button class="btn-secondary">ייצא לקובץ</button>
     </div>
@@ -95,10 +100,10 @@
           </app-chip>
         </td>
         <td class="col-actions">
-          <button class="row-action"><i class="fa-regular fa-comment"></i></button>
-          <button class="row-action"><i class="fa-regular fa-envelope"></i></button>
-          <button class="row-action" (click)="openDeleteDialog(debt)"><i class="fa-regular fa-trash-can"></i></button>
-          <button class="row-action" (click)="openEditDialog(debt)"><i class="fa-solid fa-pencil"></i></button>
+          <button type="button" class="row-action" (click)="openEditDialog(debt)"><i class="fa-regular fa-pen-to-square"></i></button>
+          <button type="button" class="row-action" (click)="openDeleteDialog(debt)"><i class="fa-regular fa-trash-can"></i></button>
+          <button type="button" class="row-action"><i class="fa-regular fa-credit-card"></i></button>
+          <button type="button" class="row-action"><i class="fa-regular fa-comment"></i></button>
         </td>
       </tr>
     }
@@ -106,6 +111,31 @@
 
   <!-- Footer -->
   <div class="table-footer">
-    <span>(נמצאו {{ totalDebts }} רשומות, סה"כ סכום החובות בהן הוא: <span class="bold">{{ getTotalAmount() }}₪</span>)</span>
+    <span class="footer-message">(נמצאו {{ totalDebts }} רשומות, סה"כ סכום החובות בהן הוא: <span class="bold">{{ getTotalAmount() }}₪</span>)</span>
+    <!-- Pagination -->
+    <div class="pagination">
+      <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">
+        <i class="fa-solid fa-angles-right"></i>
+      </button>
+      <button class="page-btn" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+        <i class="fa-solid fa-angle-right"></i>
+      </button>
+
+      @for (page of getPageNumbers(); track page) {
+        <button
+          class="page-btn"
+          [class.active]="page === currentPage"
+          (click)="onPageChange(page)">
+          {{ page }}
+        </button>
+      }
+
+      <button class="page-btn" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
+        <i class="fa-solid fa-angle-left"></i>
+      </button>
+      <button class="page-btn" (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">
+        <i class="fa-solid fa-angles-left"></i>
+      </button>
+    </div>
   </div>
 </div>

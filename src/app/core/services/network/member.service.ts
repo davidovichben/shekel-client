@@ -46,8 +46,11 @@ export class MemberService {
     return this.http.delete<void>(`${this.apiUrl}/bulk`, { body: { ids } });
   }
 
-  export(ids?: string[]): Observable<Blob> {
-    const body = ids ? { ids } : {};
+  export(type?: string, ids?: string[], fileType?: string): Observable<Blob> {
+    const body: { type?: string; ids?: string[]; file_type?: string } = {};
+    if (type) body.type = type;
+    if (ids) body.ids = ids;
+    if (fileType) body.file_type = fileType;
     return this.http.post(`${this.apiUrl}/export`, body, { responseType: 'blob' });
   }
 }

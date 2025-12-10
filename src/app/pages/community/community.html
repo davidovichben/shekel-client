@@ -15,12 +15,16 @@
   <div class="table-header">
 	  <div class="filters">
 		  <div class="search-box">
-			  <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-			  <input type="text" placeholder="חפש חברי קהילה" [(ngModel)]="searchText">
+			  <input type="text" placeholder="חפש חברי קהילה" [(ngModel)]="searchText" (keyup.enter)="onSearch()">
+			  @if (searchText) {
+			    <span class="reset-icon" (click)="onResetSearch()"><i class="fa-solid fa-times"></i></span>
+			  }
+			  <span class="search-icon" (click)="onSearch()"><i class="fa-solid fa-magnifying-glass"></i></span>
 		  </div>
 		  <app-custom-select
 			  [options]="sortOptions"
 			  [value]="sortBy"
+			  [sortOrder]="sortOrder"
 			  (valueChange)="onSortChange($event)"
 			  prefix="מיין לפי">
 		  </app-custom-select>
@@ -47,10 +51,12 @@
     [currentPage]="currentPage"
     [itemsPerPage]="itemsPerPage"
     [totalPages]="totalPages"
-    (pageChange)="onPageChange($event)">
-    @for (member of members; track member.id; let i = $index) {
+    [allSelected]="areAllSelected()"
+    (pageChange)="onPageChange($event)"
+    (selectAll)="onSelectAll($event)">
+    @for (member of members; track member.id) {
       <tr>
-        <td class="col-number">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+        <td class="col-number">{{ member.id }}</td>
         <td class="col-checkbox">
           <input type="checkbox"
                  [checked]="isMemberSelected(member.id)"
@@ -63,15 +69,19 @@
         <td>{{ member.lastMessageDate || '--' }}</td>
         <td>
           <div class="groups">
-            @for (group of member.groups; track group) {
-              <span class="group-tag">{{ group }}</span>
+            @if (member.groups && member.groups.length > 0) {
+              @for (group of member.groups; track group) {
+                <span class="group-tag">{{ group }}</span>
+              }
+            } @else {
+              <span class="no-groups">לא משויך לקבוצות</span>
             }
           </div>
         </td>
         <td class="col-actions">
-          <button type="button" class="row-action" (click)="navigateToEdit(member)"><i class="fa-solid fa-pencil"></i></button>
+          <button type="button" class="row-action" (click)="navigateToEdit(member)"><i class="fa-regular fa-pen-to-square"></i></button>
           <button type="button" class="row-action" (click)="openDeleteDialog(member)"><i class="fa-regular fa-trash-can"></i></button>
-          <button type="button" class="row-action" (click)="copyToClipboard(member)"><i class="fa-regular fa-clipboard"></i></button>
+          <button type="button" class="row-action" (click)="copyToClipboard(member)"><i class="fa-regular fa-credit-card"></i></button>
           <button type="button" class="row-action" (click)="sendMessage(member)"><i class="fa-regular fa-comment"></i></button>
         </td>
       </tr>
@@ -80,6 +90,31 @@
 
   <!-- Footer -->
   <div class="table-footer">
-    <span>(נמצאו {{ totalMembers }} רשומות, סה"כ יתרות החשבון בהן הוא: <span class="bold">{{ getTotalBalance() }}₪</span>)</span>
+    <span class="footer-message">(נמצאו {{ totalMembers }} רשומות, סה"כ יתרות החשבון בהן הוא: <span class="bold">{{ getTotalBalance() }}₪</span>)</span>
+    <!-- Pagination -->
+    <div class="pagination">
+      <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">
+        <i class="fa-solid fa-angles-right"></i>
+      </button>
+      <button class="page-btn" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+        <i class="fa-solid fa-angle-right"></i>
+      </button>
+
+      @for (page of getPageNumbers(); track page) {
+        <button
+          class="page-btn"
+          [class.active]="page === currentPage"
+          (click)="onPageChange(page)">
+          {{ page }}
+        </button>
+      }
+
+      <button class="page-btn" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
+        <i class="fa-solid fa-angle-left"></i>
+      </button>
+      <button class="page-btn" (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">
+        <i class="fa-solid fa-angles-left"></i>
+      </button>
+    </div>
   </div>
 </div>

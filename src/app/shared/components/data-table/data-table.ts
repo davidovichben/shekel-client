@@ -18,8 +18,15 @@ export class DataTableComponent {
   @Input() totalPages = 1;
   @Input() showCheckbox = true;
   @Input() showRowNumber = true;
+  @Input() allSelected = false;
 
   @Output() pageChange = new EventEmitter<number>();
+  @Output() selectAll = new EventEmitter<boolean>();
+
+  onSelectAllChange(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.selectAll.emit(checked);
+  }
 
   get colSpan(): number {
     let span = this.columns.length;

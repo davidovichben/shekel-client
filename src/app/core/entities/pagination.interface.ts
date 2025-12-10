@@ -7,4 +7,5 @@ export interface PaginationCounts {
 export interface PaginationResponse<T> {
   rows: T[];
   counts: PaginationCounts;
+  totalSum?: string | number;
 }

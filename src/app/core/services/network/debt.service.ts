@@ -98,4 +98,10 @@ export class DebtService {
       map(debt => this.mapDebtFromApi(debt))
     );
   }
+
+  bulkCreate(debts: Partial<Debt>[]): Observable<Debt[]> {
+    return this.http.post<Debt[]>(`${this.apiUrl}/bulk`, debts).pipe(
+      map(debts => debts.map(debt => this.mapDebtFromApi(debt)))
+    );
+  }
 }

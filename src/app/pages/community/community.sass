@@ -51,19 +51,19 @@
 
 .groups
   display: flex
+  justify-content: center
   gap: 0.5rem
   flex-wrap: wrap
 
 .group-tag
   padding: 0.25rem 0.5rem
-  background: #e8f4fd
-  color: #1976d2
+  background: $bg-tag-alt
+  color: $text-dark
   border-radius: 4px
   font-size: 0.75rem
 
-  &.extra
-    background: #f5f5f5
-    color: #666
+  &:nth-child(odd)
+    background: $bg-table-header
 
 .clickable
   cursor: pointer
@@ -206,3 +206,7 @@
 .balance
   direction: ltr
   display: inline-block
+
+.no-groups
+  color: #999
+  font-size: 0.8rem

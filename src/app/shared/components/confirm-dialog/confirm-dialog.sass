@@ -185,3 +185,10 @@
   .btn-icon
     width: 16px
     height: 16px
+
+  &:hover:not(:disabled)
+    background: $btn-cancel-light-hover
+
+  &:disabled
+    opacity: 0.5
+    cursor: not-allowed
