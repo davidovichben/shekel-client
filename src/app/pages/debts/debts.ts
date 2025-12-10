@@ -9,18 +9,7 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { DebtFormComponent } from './debt-form/debt-form';
 import { VowSetFormComponent } from './vow-set-form/vow-set-form';
 import { DebtService } from '../../core/services/network/debt.service';
-
-interface Debt {
-  id: string;
-  fullName: string;
-  autoPaymentApproved: boolean;
-  amount: number;
-  hebrewDate: string;
-  gregorianDate: string;
-  description: string;
-  lastReminder: string | null;
-  status: 'active' | 'paid';
-}
+import { Debt, DebtStatus } from '../../core/entities/debt.entity';
 
 @Component({
   selector: 'app-debts',
@@ -131,24 +120,36 @@ export class DebtsComponent implements OnInit {
   loadDebts(): void {
     this.isLoading = true;
 
-    // Simulated data - replace with actual service call
-    setTimeout(() => {
-      this.debts = [
-        { id: '1', fullName: 'מיכאל כהן', autoPaymentApproved: true, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'נדר שבת', lastReminder: '14/08/2025', status: 'active' },
-        { id: '2', fullName: 'מיכאל כהן', autoPaymentApproved: true, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'דמי חבר', lastReminder: null, status: 'active' },
-        { id: '3', fullName: 'מיכאל כהן', autoPaymentApproved: true, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'נדר שבת', lastReminder: '14/08/2025', status: 'active' },
-        { id: '4', fullName: 'מיכאל כהן', autoPaymentApproved: true, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'נדר שבת', lastReminder: null, status: 'paid' },
-        { id: '5', fullName: 'מיכאל כהן', autoPaymentApproved: false, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'מעודת הודיה', lastReminder: '14/08/2025', status: 'active' },
-        { id: '6', fullName: 'מיכאל כהן', autoPaymentApproved: true, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'נדר שבת', lastReminder: '14/08/2025', status: 'active' },
-        { id: '7', fullName: 'מיכאל כהן', autoPaymentApproved: false, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'נדר שבת', lastReminder: '14/08/2025', status: 'active' },
-        { id: '8', fullName: 'מיכאל כהן', autoPaymentApproved: false, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'קידוש שבת בבוקר', lastReminder: null, status: 'paid' },
-        { id: '9', fullName: 'מיכאל כהן', autoPaymentApproved: true, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'נדר שבת', lastReminder: '14/08/2025', status: 'active' },
-        { id: '10', fullName: 'מיכאל כהן', autoPaymentApproved: true, amount: 280, hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', description: 'נדר שמחת תורה', lastReminder: '14/08/2025', status: 'active' },
-      ];
-      this.totalDebts = 234;
-      this.totalPages = Math.ceil(this.totalDebts / this.itemsPerPage);
-      this.isLoading = false;
-    }, 500);
+    // Build query params based on active tab and filters
+    const params: { status?: string; page?: number; limit?: number } = {
+      page: this.currentPage,
+      limit: this.itemsPerPage
+    };
+
+    // Map tab to status filter
+    if (this.activeTab === 'active') {
+      // For active debts, we might need to filter for pending and overdue
+      // This depends on your API - if it doesn't support multiple statuses,
+      // you might need to make separate calls or use a different approach
+      params.status = 'pending'; // or 'active' if your API uses that
+    } else if (this.activeTab === 'paid') {
+      params.status = 'paid';
+    }
+    // 'all' tab doesn't need a status filter
+
+    this.debtService.getAll(params).subscribe({
+      next: (response) => {
+        this.debts = response.rows;
+        this.totalDebts = response.counts?.totalRows || response.rows.length;
+        this.totalPages = response.counts?.totalPages || Math.ceil(this.totalDebts / this.itemsPerPage);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading debts:', error);
+        this.isLoading = false;
+        // Optionally show error message to user
+      }
+    });
   }
 
   onPageChange(page: number): void {
@@ -157,7 +158,33 @@ export class DebtsComponent implements OnInit {
   }
 
   getTotalAmount(): number {
-    return 873; // From design
+    return this.debts.reduce((sum, debt) => sum + debt.amount, 0);
+  }
+
+  getStatusLabel(status: DebtStatus): string {
+    const labels: Record<DebtStatus, string> = {
+      [DebtStatus.Pending]: 'ממתין',
+      [DebtStatus.Paid]: 'שולם',
+      [DebtStatus.Overdue]: 'איחור תשלום',
+      [DebtStatus.Cancelled]: 'בוטל'
+    };
+    return labels[status] || status;
+  }
+
+  isStatusPending(status: DebtStatus): boolean {
+    return status === DebtStatus.Pending;
+  }
+
+  isStatusOverdue(status: DebtStatus): boolean {
+    return status === DebtStatus.Overdue;
+  }
+
+  isStatusPaid(status: DebtStatus): boolean {
+    return status === DebtStatus.Paid;
+  }
+
+  isStatusCancelled(status: DebtStatus): boolean {
+    return status === DebtStatus.Cancelled;
   }
 
   // Selection functionality

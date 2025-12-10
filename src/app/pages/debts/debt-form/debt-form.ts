@@ -49,7 +49,7 @@ export class DebtFormComponent implements OnInit {
     hebrewDate: '',
     gregorianDate: '',
     autoPaymentApproved: false,
-    status: DebtStatus.Active as DebtStatus,
+    status: DebtStatus.Pending as DebtStatus,
     debtType: '',
     lastReminder: null as string | null
   };
@@ -77,7 +77,7 @@ export class DebtFormComponent implements OnInit {
         hebrewDate: this.data.debt.hebrewDate || '',
         gregorianDate: this.data.debt.gregorianDate || '',
         autoPaymentApproved: this.data.debt.autoPaymentApproved || false,
-        status: this.data.debt.status || DebtStatus.Active,
+        status: this.data.debt.status || DebtStatus.Pending,
         debtType: this.data.debt.debtType || '',
         lastReminder: this.data.debt.lastReminder || null
       };

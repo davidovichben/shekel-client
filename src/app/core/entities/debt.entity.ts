@@ -1,6 +1,7 @@
 export enum DebtStatus {
-  Active = 'active',
+  Pending = 'pending',
   Paid = 'paid',
+  Overdue = 'overdue',
   Cancelled = 'cancelled'
 }
 

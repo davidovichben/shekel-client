@@ -53,8 +53,9 @@ export class MemberOpenDebtsComponent implements OnInit {
 
   getStatusLabel(status: DebtStatus): string {
     const labels: Record<string, string> = {
-      [DebtStatus.Active]: 'לא שולם',
+      [DebtStatus.Pending]: 'ממתין',
       [DebtStatus.Paid]: 'שולם',
+      [DebtStatus.Overdue]: 'איחור תשלום',
       [DebtStatus.Cancelled]: 'בוטל'
     };
     return labels[status] || status;

@@ -14,14 +14,35 @@ export class DebtService {
 
   constructor(private http: HttpClient) {}
 
+  private formatDate(dateString: string | null | undefined): string {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return dateString; // Return as-is if can't parse
+    }
+    
+    const year = String(date.getFullYear()).slice(-2); // Last 2 digits of year
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}/${month}/${day}`;
+  }
+
+  private mapDebtFromApi(debt: any): Debt {
+    return {
+      ...debt,
+      id: debt.id || debt._id,
+      fullName: debt.memberName || debt.fullName || '',
+      gregorianDate: this.formatDate(debt.gregorianDate),
+      lastReminder: debt.lastReminder ? this.formatDate(debt.lastReminder) : null
+    };
+  }
+
   getAll(params?: { status?: string; page?: number; limit?: number }): Observable<PaginationResponse<Debt>> {
     return this.http.get<PaginationResponse<Debt>>(this.apiUrl, { params: params as any }).pipe(
       map(response => ({
         ...response,
-        rows: response.rows.map((debt: any) => ({
-          ...debt,
-          id: debt.id || debt._id
-        }))
+        rows: response.rows.map((debt: any) => this.mapDebtFromApi(debt))
       }))
     );
   }
@@ -30,10 +51,7 @@ export class DebtService {
     return this.http.get<PaginationResponse<Debt>>(`${environment.apiUrl}/members/${memberId}/debts/open`).pipe(
       map(response => ({
         ...response,
-        rows: response.rows.map((debt: any) => ({
-          ...debt,
-          id: debt.id || debt._id
-        }))
+        rows: response.rows.map((debt: any) => this.mapDebtFromApi(debt))
       }))
     );
   }
@@ -42,16 +60,15 @@ export class DebtService {
     return this.http.get<PaginationResponse<Debt>>(`${environment.apiUrl}/members/${memberId}/debts/closed`).pipe(
       map(response => ({
         ...response,
-        rows: response.rows.map((debt: any) => ({
-          ...debt,
-          id: debt.id || debt._id
-        }))
+        rows: response.rows.map((debt: any) => this.mapDebtFromApi(debt))
       }))
     );
   }
 
   getOne(id: string): Observable<Debt> {
-    return this.http.get<Debt>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map(debt => this.mapDebtFromApi(debt))
+    );
   }
 
   create(debt: Partial<Debt>): Observable<Debt> {

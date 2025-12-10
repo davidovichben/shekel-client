@@ -89,8 +89,12 @@
         <td>{{ debt.description }}</td>
         <td>{{ debt.lastReminder || '--' }}</td>
         <td>
-          <span class="status-badge" [class.active]="debt.status === 'active'" [class.paid]="debt.status === 'paid'">
-            {{ debt.status === 'active' ? 'חוב פעיל' : 'שולם' }}
+          <span class="status-badge" 
+                [class.pending]="isStatusPending(debt.status)" 
+                [class.overdue]="isStatusOverdue(debt.status)"
+                [class.paid]="isStatusPaid(debt.status)"
+                [class.cancelled]="isStatusCancelled(debt.status)">
+            {{ getStatusLabel(debt.status) }}
           </span>
         </td>
         <td class="col-actions">

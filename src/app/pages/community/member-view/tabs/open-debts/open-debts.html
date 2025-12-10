@@ -86,7 +86,7 @@
               <td>{{ getDebtTypeLabel(debt.description) }}</td>
               <td>{{ debt.amount }}ש"ח</td>
               <td>
-                <span class="status-badge" [class.unpaid]="debt.status === 'active'">
+                <span class="status-badge" [class.unpaid]="debt.status === 'pending' || debt.status === 'overdue'">
                   {{ getStatusLabel(debt.status) }}
                 </span>
               </td>
