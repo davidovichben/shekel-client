@@ -1,5 +1,6 @@
 .sidebar
   width: 220px
+  height: 100%
   background-color: #ffffff
   border-left: 1px solid #e0e0e0
   display: flex
@@ -41,6 +42,36 @@
   width: 24px
   text-align: center
 
+.nav-divider
+  height: 1px
+  background-color: #bfc8da
+  margin: 25px 1.5rem
+
+.quick-payment-btn
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 10px
+  width: 186px
+  height: 44px
+  margin: 0 auto
+  padding: 10px
+  background-color: #40c7a0
+  color: white
+  border: none
+  border-radius: 50px
+  font-family: 'OpenSansBold', sans-serif
+  font-size: 0.85rem
+  cursor: pointer
+  box-sizing: border-box
+
+  &:hover
+    background-color: darken(#40c7a0, 10%)
+
+  i
+    font-size: 1.1rem
+
 .sidebar-footer
+  margin-top: auto
   border-top: 1px solid #e0e0e0
   padding: 0.5rem 0

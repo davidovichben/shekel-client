@@ -26,6 +26,12 @@ export class MemberService {
     );
   }
 
+  list(search?: string): Observable<{ id: string; name: string }[]> {
+    const params: { search?: string } = {};
+    if (search) params.search = search;
+    return this.http.get<{ id: string; name: string }[]>(`${this.apiUrl}/list`, { params: params as any });
+  }
+
   getOne(id: string): Observable<Member> {
     return this.http.get<Member>(`${this.apiUrl}/${id}`);
   }
@@ -52,5 +58,13 @@ export class MemberService {
     if (ids) body.ids = ids;
     if (fileType) body.file_type = fileType;
     return this.http.post(`${this.apiUrl}/export`, body, { responseType: 'blob' });
+  }
+
+  notify(memberId: string, message: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${memberId}/notify`, { message });
+  }
+
+  notifyMany(memberIds: string[], message: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/notify`, { ids: memberIds, message });
   }
 }

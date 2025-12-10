@@ -1,0 +1,11 @@
+<div class="network-error-dialog">
+  <div class="dialog-icon">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+  </div>
+  <h2>שגיאת תקשורת</h2>
+  <p>אירעה שגיאה בתקשורת עם השרת. אנא נסה שוב מאוחר יותר.</p>
+  @if (data.statusCode) {
+    <span class="error-code">קוד שגיאה: {{ data.statusCode }}</span>
+  }
+  <button class="btn-close" (click)="onClose()">סגור</button>
+</div>

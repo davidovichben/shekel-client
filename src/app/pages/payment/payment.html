@@ -1,0 +1,107 @@
+<div class="payment-dialog">
+  <!-- Header -->
+  <div class="dialog-header">
+    <button class="close-btn" (click)="onClose()">
+      <i class="fa-regular fa-circle-xmark"></i>
+    </button>
+    <div class="header-title">
+      <i class="fa-regular fa-credit-card"></i>
+      <h2>חיוב מהיר חדש</h2>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps-container">
+    @for (step of steps; track step.number) {
+      <div class="step" [class]="getStepClass(step.number)">
+        <span class="step-number">
+          @if (step.number < currentStep) {
+            <i class="fa-solid fa-check"></i>
+          } @else {
+            {{ step.number }}
+          }
+        </span>
+        <span class="step-label">{{ step.label }}</span>
+      </div>
+      @if (step.number < steps.length) {
+        <div class="step-line" [class.completed]="step.number < currentStep"></div>
+      }
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="dialog-content">
+    <!-- Left Side: Transaction Summary -->
+    <div class="summary-wrapper">
+      <div class="summary-section">
+        <h3>סיכום פרטי העסקה</h3>
+        <div class="summary-row">
+          <span class="label">תיאור העסקה:</span>
+          <span class="value">{{ transaction.description || '-------' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">סכום לתשלום:</span>
+          <span class="value">₪{{ transaction.amount }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">מספר תשלומים:</span>
+          <span class="value">{{ transaction.installments }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">מע"מ ({{ transaction.vatPercent }}%)</span>
+          <span class="value">₪{{ transaction.vat }}</span>
+        </div>
+
+        <div class="summary-total">
+          <span class="label">סה"כ:</span>
+          <span class="value">₪{{ transaction.total }}</span>
+          <span class="note">(כולל מע"מ)</span>
+        </div>
+
+        <div class="receipt-toggle">
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="createReceipt">
+            <span class="slider"></span>
+          </label>
+          <span>צור קבלה בסיום</span>
+        </div>
+
+        <button class="btn-continue" (click)="onContinue()" [disabled]="!canContinue()">
+          {{ getContinueButtonText() }}
+        </button>
+      </div>
+
+      <div class="ssl-badge">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>מאובטח ב-SSL</span>
+      </div>
+    </div>
+
+    <!-- Right Side: Step Content -->
+    <div class="form-wrapper">
+      <div class="form-section">
+        @switch (currentStep) {
+          @case (1) {
+            <app-step1-payer
+              [payerDetails]="payerDetails"
+              (payerDetailsChange)="payerDetails = $event">
+            </app-step1-payer>
+          }
+          @case (2) {
+            <app-step2-payment
+              [paymentDetails]="paymentDetails"
+              (paymentDetailsChange)="onPaymentDetailsChange($event)">
+            </app-step2-payment>
+          }
+        }
+      </div>
+
+      @if (currentStep > 1) {
+        <button class="btn-back" (click)="onBack()">
+          <i class="fa-solid fa-arrow-right"></i>
+          חזרה לשלב הקודם
+        </button>
+      }
+    </div>
+  </div>
+</div>

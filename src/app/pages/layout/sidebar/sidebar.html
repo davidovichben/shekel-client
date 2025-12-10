@@ -5,42 +5,49 @@
 
   <nav class="sidebar-nav">
     <a class="nav-item" routerLink="/dashboard" routerLinkActive="active">
-      <span class="icon">⊞</span>
-      <span>דשבורד ראשי</span>
+      <i class="fa-solid fa-border-all icon"></i>
+      <span>לוח הבקרה</span>
     </a>
     <a class="nav-item" routerLink="/community" routerLinkActive="active">
-      <span class="icon">👥</span>
+      <i class="fa-solid fa-users icon"></i>
       <span>קהילה</span>
     </a>
     <a class="nav-item" routerLink="/debts" routerLinkActive="active">
-      <span class="icon">📄</span>
+      <i class="fa-regular fa-exclamation-circle icon"></i>
       <span>חובות</span>
     </a>
     <a class="nav-item" routerLink="/expenses" routerLinkActive="active">
-      <span class="icon">↓</span>
+      <i class="fa-solid fa-arrow-trend-down icon"></i>
       <span>הוצאות</span>
     </a>
     <a class="nav-item" routerLink="/income" routerLinkActive="active">
-      <span class="icon">↑</span>
+      <i class="fa-solid fa-arrow-trend-up icon"></i>
       <span>הכנסות</span>
     </a>
     <a class="nav-item" routerLink="/invoices" routerLinkActive="active">
-      <span class="icon">🧾</span>
-      <span>חשבוניות וקבלות</span>
+      <i class="fa-solid fa-shekel-sign icon"></i>
+      <span>ניהול חשבונות</span>
     </a>
     <a class="nav-item" routerLink="/reports" routerLinkActive="active">
-      <span class="icon">📊</span>
+      <i class="fa-regular fa-file icon"></i>
       <span>דוחות</span>
     </a>
     <a class="nav-item" routerLink="/support" routerLinkActive="active">
-      <span class="icon">❓</span>
+      <i class="fa-regular fa-circle-question icon"></i>
       <span>תמיכה</span>
     </a>
+
+    <div class="nav-divider"></div>
+
+    <button class="quick-payment-btn" (click)="openPaymentDialog()">
+      <i class="fa-regular fa-credit-card"></i>
+      <span>ביצוע תשלום מהיר</span>
+    </button>
   </nav>
 
   <div class="sidebar-footer">
     <a class="nav-item" routerLink="/settings" routerLinkActive="active">
-      <span class="icon">⚙</span>
+      <i class="fa-solid fa-gear icon"></i>
       <span>הגדרות מערכת</span>
     </a>
   </div>

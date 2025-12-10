@@ -1,9 +1,9 @@
 <div class="member-form-dialog">
   <div class="dialog-header">
-    <h2>{{ isEditMode ? 'עריכת חבר' : 'הוסף חבר חדש' }}</h2>
     <button class="close-btn" (click)="onCancel()" [disabled]="isSaving">
-      <i class="fa-solid fa-times"></i>
+      <i class="fa-regular fa-circle-xmark"></i>
     </button>
+    <h2>{{ isEditMode ? 'עריכת חבר' : 'הוסף חבר חדש' }}</h2>
   </div>
 
   <div class="dialog-content">

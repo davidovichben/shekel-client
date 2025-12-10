@@ -2,7 +2,7 @@
   <!-- Search Section -->
   <div class="search-section">
     <h2>חפש והוסף קבוצות לרשימה</h2>
-    <div class="search-box">
+    <div class="autocomplete-input search-box">
       <input
         type="text"
         [(ngModel)]="searchText"
@@ -16,15 +16,15 @@
         </svg>
       </span>
       @if (showDropdown) {
-        <div class="search-results">
+        <div class="autocomplete-dropdown">
           <div class="search-results-list" (mousedown)="$event.preventDefault()">
             @for (group of filteredGroups; track group.id) {
-              <button class="search-result-item" (click)="addGroup(group)">
+              <button class="autocomplete-option" (click)="addGroup(group)">
                 {{ group.name }}
               </button>
             }
           </div>
-          <button class="search-result-item add-group-option" (mousedown)="$event.preventDefault()" (click)="toggleCreateGroup()">
+          <button class="autocomplete-option add-group-option" (mousedown)="$event.preventDefault()" (click)="toggleCreateGroup()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="12" y1="8" x2="12" y2="16"></line>

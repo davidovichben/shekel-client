@@ -19,78 +19,16 @@
     color: $text-dark
     font-family: 'OpenSansBold', sans-serif
 
-.search-box
-  position: relative
-  width: 400px
-
-  input
-    width: 100%
-    padding: 6px 14px
-    padding-left: 40px
-    border: none
-    border-radius: 0
-    font-size: 14px
-    box-sizing: border-box
-    direction: rtl
-    text-align: right
-    background: white
-    outline: none
-
-    &:focus
-      outline: none
-
-    &::placeholder
-      color: $gray-500
-
-  .search-icon
-    position: absolute
-    left: 12px
-    top: 50%
-    transform: translateY(-50%)
-    color: $gray-500
-
-.search-results
-  position: absolute
-  top: 100%
-  right: 0
-  left: 0
-  background: white
-  border: 1px solid $gray-300
-  border-radius: 4px
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
-  z-index: 10
-  margin-top: 4px
-
 .search-results-list
   max-height: 200px
   overflow-y: auto
 
-.search-result-item
-  display: flex
-  align-items: center
-  gap: 8px
-  width: 100%
-  padding: 10px 14px
-  text-align: right
-  background: none
-  border: none
-  border-bottom: 1px solid $gray-300
-  cursor: pointer
-  font-size: 14px
-  color: $text-dark
+.add-group-option
+  color: $header-bg
+  font-weight: 500
 
-  &:last-child
-    border-bottom: none
-
-  &:hover
-    background: $gray-100
-
-  &.add-group-option
+  svg
     color: $header-bg
-    font-weight: 500
-
-    svg
-      color: $header-bg
 
 .create-group-input
   display: flex

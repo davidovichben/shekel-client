@@ -1,10 +1,10 @@
 <div class="dialog-backdrop">
   <div class="dialog-container">
     <div class="dialog-header">
-      <h2>{{ isEditMode ? 'עריכת חשבונית' : 'יצירת חשבונית חדשה' }}</h2>
       <button class="close-btn" (click)="onClose()">
-        <span>&times;</span>
+        <i class="fa-regular fa-circle-xmark"></i>
       </button>
+      <h2>{{ isEditMode ? 'עריכת חשבונית' : 'יצירת חשבונית חדשה' }}</h2>
     </div>
 
     <form (ngSubmit)="onSubmit()">

@@ -1,0 +1,122 @@
+@use '../../../../variables' as *
+
+:host
+  display: block
+
+.export-dialog
+  direction: rtl
+  text-align: center
+  padding: 32px
+  position: relative
+  background: $bg-page
+  border-radius: 12px
+
+.dialog-content
+  margin-bottom: 28px
+
+  h2
+    margin: 0
+    font-size: 18px
+    font-weight: 700
+    color: $header-bg
+
+.export-type-label
+  margin: 28px 0 20px
+  font-size: 14px
+  color: $gray-700
+
+.file-types-section
+  margin-bottom: 0
+  text-align: center
+
+  .file-types-title
+    display: block
+    font-size: 14px
+    color: $text-dark
+    margin-bottom: 16px
+
+  .file-types-buttons
+    display: flex
+    justify-content: center
+    gap: 16px
+
+.file-type-btn
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  width: 70px
+  height: 70px
+  border: 2px solid transparent
+  border-radius: 12px
+  cursor: pointer
+  transition: transform 0.2s, box-shadow 0.2s
+
+  i
+    font-size: 24px
+    margin-bottom: 4px
+
+  span
+    font-size: 12px
+    font-weight: 600
+
+  &:hover
+    transform: scale(1.05)
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+
+  &.csv
+    background: #d4e8f8
+    color: #5b9bd5
+
+    &.selected
+      border-color: #5b9bd5
+
+  &.xls
+    background: #d4edda
+    color: #28a745
+
+    &.selected
+      border-color: #28a745
+
+  &.pdf
+    background: #f8d7da
+    color: #dc3545
+
+    &.selected
+      border-color: #dc3545
+
+.dialog-actions
+  display: flex
+  justify-content: center
+  gap: 16px
+
+.btn-confirm,
+.btn-cancel
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  padding: 10px 20px
+  min-width: 180px
+  border: none
+  border-radius: 25px
+  font-size: 14px
+  cursor: pointer
+
+.btn-confirm
+  background: $header-bg
+  color: white
+
+  &:hover
+    background: $header-bg-hover
+
+.btn-cancel
+  background: $btn-cancel-light
+  color: $btn-cancel
+
+  &:hover:not(:disabled)
+    background: $btn-cancel-light-hover
+
+  &:disabled
+    opacity: 0.5
+    cursor: not-allowed

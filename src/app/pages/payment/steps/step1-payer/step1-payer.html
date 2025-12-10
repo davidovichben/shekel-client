@@ -1,0 +1,51 @@
+<div class="form-header">
+  <label class="field-label">משלם</label>
+  <app-member-autocomplete
+    [memberName]="searchQuery"
+    placeholder="חיפוש חבר..."
+    (memberSelected)="onMemberSelected($event)">
+  </app-member-autocomplete>
+</div>
+
+<div class="use-member-toggle">
+  <label class="toggle">
+    <input type="checkbox" [(ngModel)]="useMemberDetails" (ngModelChange)="onUseMemberDetailsChange()">
+    <span class="slider"></span>
+  </label>
+  <span>השתמש בפרטי חבר הקהילה לטובת החשבונית</span>
+</div>
+
+<form class="payer-form">
+  <div class="form-row">
+    <div class="form-group">
+      <label>שם משפחה</label>
+      <input type="text" [(ngModel)]="payerDetails.lastName" name="lastName" placeholder="ברוכים">
+    </div>
+    <div class="form-group">
+      <label>שם פרטי</label>
+      <input type="text" [(ngModel)]="payerDetails.firstName" name="firstName" placeholder="ברוך">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>כתובת</label>
+      <input type="text" [(ngModel)]="payerDetails.address" name="address" placeholder="כנסת ישראל 32 בני ברק">
+    </div>
+    <div class="form-group">
+      <label>טלפון נייד</label>
+      <input type="tel" [(ngModel)]="payerDetails.mobile" name="mobile" placeholder="050-000-0000" class="ltr-input">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>ח.פ / מס חברה</label>
+      <input type="text" [(ngModel)]="payerDetails.companyId" name="companyId" placeholder="63265463512" class="ltr-input">
+    </div>
+    <div class="form-group">
+      <label>דוא"ל</label>
+      <input type="email" [(ngModel)]="payerDetails.email" name="email" placeholder="email@gmail.com" class="ltr-input">
+    </div>
+  </div>
+</form>

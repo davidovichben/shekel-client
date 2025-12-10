@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { PaymentComponent } from '../../payment/payment';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,4 +12,12 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './sidebar.sass'
 })
 export class SidebarComponent {
+  private dialog = inject(MatDialog);
+
+  openPaymentDialog(): void {
+    this.dialog.open(PaymentComponent, {
+      width: '80%',
+      panelClass: 'payment-dialog-panel'
+    });
+  }
 }

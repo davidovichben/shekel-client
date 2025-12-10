@@ -1,0 +1,91 @@
+<div class="payment-details-form">
+  <div class="form-row">
+    <div class="form-group">
+      <label>סכום לחיוב</label>
+      <div class="amount-input">
+        <input type="number" [(ngModel)]="paymentDetails.amount" name="amount" min="0.01" step="0.01" (ngModelChange)="onInputChange()" (focus)="onFocus($event)" placeholder="0">
+        <span class="currency">₪</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>מספר תשלומים</label>
+      <input type="number" [(ngModel)]="paymentDetails.installments" name="installments" min="1" max="32" (ngModelChange)="onInputChange()" (focus)="onFocus($event)" placeholder="0">
+    </div>
+  </div>
+
+  <div class="form-group full-width">
+    <label>תיאור עסקה</label>
+    <input type="text" [(ngModel)]="paymentDetails.description" name="description" (ngModelChange)="onInputChange()">
+  </div>
+
+  <div class="payment-method-section">
+    <label class="section-label">אמצעי תשלום:</label>
+    <div class="payment-method-options">
+      <label class="radio-option">
+        <input type="radio" name="paymentMethod" value="credit" [(ngModel)]="paymentDetails.paymentMethod">
+        <span>כרטיס אשראי</span>
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="paymentMethod" value="standingOrder" [(ngModel)]="paymentDetails.paymentMethod">
+        <span>חיוב מס"ב</span>
+      </label>
+    </div>
+  </div>
+
+  @if (paymentDetails.paymentMethod === 'credit') {
+    <div class="credit-card-section">
+      <div class="use-saved-card-toggle">
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="useNewCard">
+          <span class="slider"></span>
+        </label>
+        <span>השתמש בכרטיס אשראי חדש</span>
+      </div>
+
+      @if (useNewCard) {
+        <div class="new-card-form">
+          <div class="form-group">
+            <label>מספר כרטיס</label>
+            <div class="card-number-input">
+              <i class="fa-regular fa-credit-card"></i>
+              <input type="text" [(ngModel)]="newCard.cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>תוקף</label>
+              <input type="text" [(ngModel)]="newCard.expiry" name="expiry" placeholder="12/26" maxlength="5">
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="text" [(ngModel)]="newCard.cvv" name="cvv" placeholder="123" maxlength="4">
+            </div>
+          </div>
+
+          <div class="save-card-section">
+            <div class="save-card-toggle">
+              <label class="toggle">
+                <input type="checkbox" [(ngModel)]="newCard.saveCard">
+                <span class="slider"></span>
+              </label>
+              <span>שמור את פרטי הכרטיס לרכישות עתידיות</span>
+              <span class="recommended-badge">מומלץ</span>
+            </div>
+            <p class="save-card-note">למען שמירה על אבטחת סליקה הפרטים השמורים הם 4 הספרות האחרונות וסוג הכרטיס בלבד, לאחר התשלום תוכל לראות את הכרטיס ברשימת כרטיסי הלקוח.</p>
+          </div>
+        </div>
+      } @else if (savedCards.length > 0) {
+        <div class="saved-cards">
+          @for (card of savedCards; track card.id) {
+            <app-credit-card
+              [card]="card"
+              [selected]="selectedCardId === card.id"
+              (select)="selectCard($event)">
+            </app-credit-card>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
