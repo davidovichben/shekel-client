@@ -7,11 +7,11 @@
     </div>
     <div class="header-actions">
       <button class="btn-primary" (click)="openVowSetDialog()">
-        <img src="/assets/icons/grid-icon.svg" alt="Grid" class="btn-icon btn-icon-small" />
+        <img src="/assets/img/icons/grid.svg" alt="Grid" class="btn-icon btn-icon-small" />
         הכנס סט נדרים
       </button>
       <button class="btn-primary" (click)="openCreateDialog()">
-        <img src="/assets/icons/plus-icon.svg" alt="+" class="btn-icon" />
+        <img src="/assets/img/icons/plus.svg" alt="+" class="btn-icon" />
         צור חוב חדש
       </button>
     </div>
@@ -52,13 +52,13 @@
       <div class="bulk-actions">
         <span>פעולות קולקטיביות:</span>
         <button class="action-icon" (click)="onBulkAction('message')">
-          <img src="/assets/icons/chat-bubble-icon.svg" alt="Message" />
+          <img src="assets/img/icons/chat_bubble.svg" alt="Message" />
         </button>
         <button class="action-icon" (click)="onBulkAction('document')">
-          <img src="/assets/icons/document-icon-blue.svg" alt="Document" />
+          <img src="assets/img/icons/credit_card.svg" alt="Document" />
         </button>
         <button class="action-icon" (click)="onBulkAction('copy')">
-          <img src="/assets/icons/clipboard-icon.svg" alt="Clipboard" />
+          <img src="assets/img/icons/print.svg" alt="הדפסה" />
         </button>
       </div>
       <div class="export-action">
@@ -106,16 +106,16 @@
         <td>{{ debt.lastReminderSentAt || '--' }}</td>
         <td>{{ getDebtTypeLabel(debt.debtType) }}</td>
         <td>
-          <app-chip 
+          <app-chip
             [variant]="getStatusChipVariant(debt.status)"
             [label]="getStatusLabel(debt.status)">
           </app-chip>
         </td>
         <td class="col-actions">
-          <button type="button" class="row-action" (click)="openEditDialog(debt)"><i class="fa-regular fa-pen-to-square"></i></button>
-          <button type="button" class="row-action" (click)="openDeleteDialog(debt)"><i class="fa-regular fa-trash-can"></i></button>
-          <button type="button" class="row-action"><i class="fa-regular fa-credit-card"></i></button>
-          <button type="button" class="row-action"><i class="fa-regular fa-comment"></i></button>
+          <button class="row-action"><img src="assets/img/icons/chat_bubble.svg" alt="" class="action-icon"></button>
+          <button class="row-action"><i class="fa-regular fa-envelope"></i></button>
+          <button class="row-action"><img src="assets/img/icons/trash.svg" alt="" class="action-icon"></button>
+          <button class="row-action" (click)="openEditDialog(debt)"><img src="assets/img/icons/pencil.svg" alt="" class="action-icon"></button>
         </td>
       </tr>
     }

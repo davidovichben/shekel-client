@@ -56,16 +56,31 @@ export class Step2PaymentComponent {
     this.paymentDetailsChange.emit(this.paymentDetails);
   }
 
+  onAmountChange(): void {
+    setTimeout(() => {
+      if (this.paymentDetails.amount < 0) {
+        this.paymentDetails.amount = 0;
+      }
+      if (this.paymentDetails.amount > 100000) {
+        this.paymentDetails.amount = 100000;
+      }
+      this.paymentDetailsChange.emit(this.paymentDetails);
+    });
+  }
+
+  onInstallmentsChange(): void {
+    setTimeout(() => {
+      if (this.paymentDetails.installments < 0) {
+        this.paymentDetails.installments = 0;
+      }
+      if (this.paymentDetails.installments > 32) {
+        this.paymentDetails.installments = 32;
+      }
+      this.paymentDetailsChange.emit(this.paymentDetails);
+    });
+  }
+
   onInputChange(): void {
-    if (this.paymentDetails.amount < 0) {
-      this.paymentDetails.amount = 0;
-    }
-    if (this.paymentDetails.installments < 0) {
-      this.paymentDetails.installments = 0;
-    }
-    if (this.paymentDetails.installments > 32) {
-      this.paymentDetails.installments = 32;
-    }
     this.paymentDetailsChange.emit(this.paymentDetails);
   }
 

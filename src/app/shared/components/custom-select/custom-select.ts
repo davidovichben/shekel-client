@@ -51,9 +51,10 @@ export class CustomSelectComponent implements OnChanges, OnInit, AfterViewInit {
   get selectedLabel(): string {
     // Use the value directly, as it's bound via [(value)]
     const currentValue = this.value;
-    if (!currentValue) return this.placeholder;
     const option = this.options.find(o => o.value === currentValue);
-    return option?.label || this.placeholder;
+    if (option) return option.label;
+    if (!currentValue) return this.placeholder;
+    return this.placeholder;
   }
 
   toggle(): void {

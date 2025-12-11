@@ -1,9 +1,11 @@
 <div class="dialog-backdrop">
   <div class="dialog-container">
-    <app-dialog-header
-      title="יצירת סט נדרים חדש"
-      (close)="onClose()">
-    </app-dialog-header>
+    <div class="dialog-header">
+      <button class="close-btn" (click)="onClose()">
+        <img src="assets/img/icons/close.svg" alt="" class="close-icon">
+      </button>
+      <h2>יצירת סט נדרים חדש</h2>
+    </div>
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-content">
@@ -50,7 +52,7 @@
 
               <div class="form-actions-right">
                 <button type="button" class="btn-primary btn-add-vow" (click)="addVow()">
-                  <img src="/assets/icons/plus-icon.svg" alt="Add" class="btn-icon" />
+                  <img src="/assets/img/icons/plus.svg" alt="Add" class="btn-icon" />
                   הוסף נדר לסט
                 </button>
               </div>
@@ -105,7 +107,7 @@
 
             <div class="form-actions-left">
               <button type="submit" class="btn-primary btn-create-debts" [disabled]="isSubmitting">
-                <img src="/assets/icons/document-create-icon.svg" alt="Create" class="btn-icon" />
+                <img src="/assets/img/icons/document_create.svg" alt="Create" class="btn-icon" />
                 {{ isSubmitting ? 'יוצר...' : 'צור חובות נדרים' }}
               </button>
             </div>

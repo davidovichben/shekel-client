@@ -6,7 +6,7 @@
       <p>כאן ניתן למצוא ליצור ולנהל את כל החשבוניות או הקבלות שנוצרו במערכת</p>
     </div>
     <button class="btn-primary" (click)="openCreateDialog()">
-      <span>⊕</span>
+      <img src="/assets/img/icons/plus_circle.svg" alt="" class="btn-icon">
       צור חשבונית/קבלה
     </button>
   </div>
@@ -51,8 +51,8 @@
     <div class="table-actions">
       <div class="bulk-actions">
         <span>פעולות קולקטיביות:</span>
-        <button type="button" class="action-icon" (click)="onBulkAction('print')"><i class="fa-solid fa-print"></i></button>
-        <button type="button" class="action-icon" (click)="onBulkAction('delete')"><i class="fa-regular fa-trash-can"></i></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print.svg" alt=""></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('delete')"><img src="assets/img/icons/trash.svg" alt=""></button>
         <button type="button" class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
       </div>
       <div class="export-action">
@@ -89,8 +89,8 @@
         <td>{{ invoice.gregorianDate }}</td>
         <td>{{ invoice.paymentMethod }}</td>
         <td class="col-actions">
-          <button type="button" class="row-action" (click)="shareInvoice(invoice)"><i class="fa-solid fa-share-nodes"></i></button>
-          <button type="button" class="row-action" (click)="openEditDialog(invoice)"><i class="fa-regular fa-pen-to-square"></i></button>
+          <button type="button" class="row-action" (click)="shareInvoice(invoice)"><img src="assets/img/icons/share.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action" (click)="openEditDialog(invoice)"><img src="assets/img/icons/pencil.svg" alt="" class="action-icon"></button>
           <button type="button" class="row-action" (click)="duplicateInvoice(invoice)"><i class="fa-regular fa-copy"></i></button>
         </td>
       </tr>

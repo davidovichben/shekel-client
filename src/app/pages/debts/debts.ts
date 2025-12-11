@@ -607,6 +607,7 @@ export class DebtsComponent implements OnInit {
   }
 
   openExportDialog(): void {
+    const currentTab = this.tabs.find(t => t.id === this.activeTab);
     const dialogRef = this.dialog.open(ExportDialogComponent, {
       width: '600px',
       panelClass: 'confirm-dialog-panel',
@@ -615,17 +616,24 @@ export class DebtsComponent implements OnInit {
       exitAnimationDuration: '0ms',
       data: {
         title: 'ייצוא הנתונים לקובץ',
-        subtitle: 'להורדה - לחץ על סוג הקובץ המבוקש'
+        subtitle: 'להורדה - לחץ על סוג הקובץ המבוקש',
+        selectedCount: this.selectedDebts.size,
+        tabName: currentTab?.label
       }
     });
 
     dialogRef.afterClosed().subscribe((result: ExportDialogResult | undefined) => {
       if (!result || !result.fileType) return;
 
-      // Export all rows in current tab context
-      // Map activeTab to status: 'all' -> undefined, 'active' -> 'pending', 'paid' -> 'paid'
-      const status = this.activeTab === 'all' ? undefined : (this.activeTab === 'active' ? 'pending' : 'paid');
-      this.exportDebts(status, undefined, result.fileType);
+      if (result.exportScope === 'selected' && this.selectedDebts.size > 0) {
+        // Export only selected rows
+        this.exportDebts(undefined, Array.from(this.selectedDebts), result.fileType);
+      } else {
+        // Export all rows in current tab context
+        // Map activeTab to status: 'all' -> undefined, 'active' -> 'pending', 'paid' -> 'paid'
+        const status = this.activeTab === 'all' ? undefined : (this.activeTab === 'active' ? 'pending' : 'paid');
+        this.exportDebts(status, undefined, result.fileType);
+      }
     });
   }
 

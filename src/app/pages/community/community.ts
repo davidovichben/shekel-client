@@ -4,8 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MemberService } from '../../core/services/network/member.service';
+import { GroupService } from '../../core/services/network/group.service';
 import { Member } from '../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../shared/components/custom-select/custom-select';
+import { AdditionalFiltersComponent, FilterField } from '../../shared/components/additional-filters/additional-filters';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { ExportDialogComponent, ExportDialogResult } from '../../shared/components/export-dialog/export-dialog';
 import { ReminderDialogComponent, ReminderDialogResult } from '../../shared/components/reminder-dialog/reminder-dialog';
@@ -17,12 +19,13 @@ import { MemberFormComponent } from './member-form/member-form';
 @Component({
   selector: 'app-community',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent, AdditionalFiltersComponent],
   templateUrl: './community.html',
   styleUrl: './community.sass'
 })
 export class CommunityComponent implements OnInit {
   private memberService = inject(MemberService);
+  private groupService = inject(GroupService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
@@ -123,8 +126,46 @@ export class CommunityComponent implements OnInit {
     { id: 'other', label: 'אחרים', count: null as number | null }
   ];
 
+  filterFields: FilterField[] = [
+    { key: 'type', label: 'סוג חבר', type: 'select', value: '', options: [
+      { value: '', label: 'הכל' },
+      { value: 'permanent', label: 'קבוע' },
+      { value: 'guest', label: 'אורח' },
+      { value: 'family_member', label: 'בן משפחה' },
+      { value: 'supplier', label: 'ספק' },
+      { value: 'primary_admin', label: 'מנהל' },
+      { value: 'other', label: 'אחר' }
+    ]},
+    { key: 'group', label: 'נמצא בקבוצה', type: 'select', value: '', options: [
+      { value: '', label: 'הכל' }
+    ]},
+    { key: 'has_debt', label: 'בעל חוב', type: 'select', value: '', options: [
+      { value: '', label: 'הכל' },
+      { value: 'yes', label: 'כן' },
+      { value: 'no', label: 'לא' }
+    ]}
+  ];
+
   ngOnInit(): void {
     this.loadMembers();
+    this.loadGroups();
+  }
+
+  private loadGroups(): void {
+    this.groupService.list().subscribe({
+      next: (groups) => {
+        const groupField = this.filterFields.find(f => f.key === 'group');
+        if (groupField) {
+          groupField.options = [
+            { value: '', label: 'הכל' },
+            ...groups.map(g => ({ value: g.id, label: g.name }))
+          ];
+        }
+      },
+      error: (error) => {
+        console.error('Error loading groups:', error);
+      }
+    });
   }
 
   onTabClick(tabId: string): void {
@@ -160,6 +201,20 @@ export class CommunityComponent implements OnInit {
     }
   }
 
+  activeFilters: Record<string, string> = {};
+
+  onSaveFilters(filters: Record<string, string>): void {
+    this.activeFilters = filters;
+    this.currentPage = 1;
+    this.loadMembers();
+  }
+
+  onClearFilters(): void {
+    this.activeFilters = {};
+    this.currentPage = 1;
+    this.loadMembers();
+  }
+
   loadMembers(): void {
     const params: any = {
       page: this.currentPage,
@@ -175,6 +230,13 @@ export class CommunityComponent implements OnInit {
     if (this.activeTab !== 'all') {
       params.type = this.activeTab;
     }
+
+    // Add active filters to params
+    Object.entries(this.activeFilters).forEach(([key, value]) => {
+      if (value) {
+        params[key] = value;
+      }
+    });
 
     this.isLoading = true;
     this.memberService.getAll(params).subscribe({
@@ -545,6 +607,7 @@ export class CommunityComponent implements OnInit {
   }
 
   openExportDialog(): void {
+    const currentTab = this.tabs.find(t => t.id === this.activeTab);
     const dialogRef = this.dialog.open(ExportDialogComponent, {
       width: '600px',
       panelClass: 'confirm-dialog-panel',
@@ -553,15 +616,22 @@ export class CommunityComponent implements OnInit {
       exitAnimationDuration: '0ms',
       data: {
         title: 'ייצוא הנתונים לקובץ',
-        subtitle: 'להורדה - לחץ על סוג הקובץ המבוקש'
+        subtitle: 'להורדה - לחץ על סוג הקובץ המבוקש',
+        selectedCount: this.selectedMembers.size,
+        tabName: currentTab?.label
       }
     });
 
     dialogRef.afterClosed().subscribe((result: ExportDialogResult | undefined) => {
       if (!result || !result.fileType) return;
 
-      // Export all rows in current tab context
-      this.exportMembers(this.activeTab !== 'all' ? this.activeTab : undefined, undefined, result.fileType);
+      if (result.exportScope === 'selected' && this.selectedMembers.size > 0) {
+        // Export only selected rows
+        this.exportMembers(undefined, Array.from(this.selectedMembers), result.fileType);
+      } else {
+        // Export all rows in current tab context
+        this.exportMembers(this.activeTab !== 'all' ? this.activeTab : undefined, undefined, result.fileType);
+      }
     });
   }
 

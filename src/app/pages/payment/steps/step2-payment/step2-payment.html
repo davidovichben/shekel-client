@@ -3,13 +3,13 @@
     <div class="form-group">
       <label>סכום לחיוב</label>
       <div class="amount-input">
-        <input type="number" [(ngModel)]="paymentDetails.amount" name="amount" min="0.01" step="0.01" (ngModelChange)="onInputChange()" (focus)="onFocus($event)" placeholder="0">
+        <input type="number" [(ngModel)]="paymentDetails.amount" name="amount" min="0.01" max="100000" step="0.01" (ngModelChange)="onAmountChange()" (focus)="onFocus($event)" placeholder="0">
         <span class="currency">₪</span>
       </div>
     </div>
     <div class="form-group">
       <label>מספר תשלומים</label>
-      <input type="number" [(ngModel)]="paymentDetails.installments" name="installments" min="1" max="32" (ngModelChange)="onInputChange()" (focus)="onFocus($event)" placeholder="0">
+      <input type="number" [(ngModel)]="paymentDetails.installments" name="installments" min="1" max="32" (ngModelChange)="onInstallmentsChange()" (focus)="onFocus($event)" placeholder="0">
     </div>
   </div>
 
@@ -47,7 +47,7 @@
           <div class="form-group">
             <label>מספר כרטיס</label>
             <div class="card-number-input">
-              <i class="fa-regular fa-credit-card"></i>
+              <img src="assets/img/icons/credit_card.svg" alt="" class="input-icon">
               <input type="text" [(ngModel)]="newCard.cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
             </div>
           </div>
