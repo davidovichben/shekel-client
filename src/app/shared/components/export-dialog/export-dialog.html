@@ -1,19 +1,32 @@
 <div class="export-dialog">
   <button class="close-btn" (click)="onCancel()">
-    <img src="/assets/icons/close-icon.svg" alt="Close" />
+    <img src="/assets/img/icons/close.svg" alt="Close" />
   </button>
   <div class="dialog-content">
     <h2 class="dialog-title">{{ data.title || 'ייצוא הנתונים לקובץ' }}</h2>
     <p class="subtitle">{{ data.subtitle || 'להורדה - לחץ על סוג הקובץ המבוקש' }}</p>
+
+    <!-- Export Scope Selection -->
+    <div class="export-scope">
+      <label class="radio-option">
+        <span>ייצא את כל השורות בטאב הנוכחי{{ data.tabName ? ' (' + data.tabName + ')' : '' }}</span>
+        <input type="radio" name="exportScope" value="tab" [(ngModel)]="exportScope">
+      </label>
+      <label class="radio-option" [class.disabled]="!data.selectedCount || data.selectedCount === 0">
+        <span>ייצא רק את השורות שנבחרו ({{ data.selectedCount || 0 }})</span>
+        <input type="radio" name="exportScope" value="selected" [(ngModel)]="exportScope" [disabled]="!data.selectedCount || data.selectedCount === 0">
+      </label>
+    </div>
+
     <div class="file-type-buttons">
       <button class="file-type-btn csv-btn" (click)="onFileTypeSelect('csv')">
-        <img src="/assets/icons/csv-icon.svg" alt="CSV" class="file-icon" />
+        <img src="/assets/img/icons/csv.svg" alt="CSV" class="file-icon" />
       </button>
       <button class="file-type-btn xls-btn" (click)="onFileTypeSelect('xls')">
-        <img src="/assets/icons/xls-icon.svg" alt="XLS" class="file-icon" />
+        <img src="/assets/img/icons/xls.svg" alt="XLS" class="file-icon" />
       </button>
       <button class="file-type-btn pdf-btn" (click)="onFileTypeSelect('pdf')">
-        <img src="/assets/icons/pdf-icon.svg" alt="PDF" class="file-icon" />
+        <img src="/assets/img/icons/pdf.svg" alt="PDF" class="file-icon" />
       </button>
     </div>
   </div>

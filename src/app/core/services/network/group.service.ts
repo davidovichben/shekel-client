@@ -20,6 +20,15 @@ export class GroupService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
+  list(): Observable<Group[]> {
+    return this.http.get<ApiGroup[]>(`${this.apiUrl}/groups/list`).pipe(
+      map(groups => groups.map(group => ({
+        id: String(group.id),
+        name: group.name
+      })))
+    );
+  }
+
   getAvailableGroups(memberId: string): Observable<Group[]> {
     return this.http.get<ApiGroup[]>(`${this.apiUrl}/members/${memberId}/available-groups`).pipe(
       map(groups => groups.map(group => ({

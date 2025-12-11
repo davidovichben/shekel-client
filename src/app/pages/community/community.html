@@ -6,10 +6,20 @@
       <p>כאן תוכל לצפות, להוסיף, לערוך ולנהל את חברי הקהילה שלך</p>
     </div>
     <button class="btn-primary" (click)="openCreateMemberDialog()">
-      <span>⊕</span>
+      <img src="/assets/img/icons/plus_circle.svg" alt="" class="btn-icon">
       הוסף חבר חדש
     </button>
   </div>
+
+  <!-- Tabs -->
+  <app-additional-filters
+    [tabs]="tabs"
+    [activeTab]="activeTab"
+    [fields]="filterFields"
+    (tabClick)="onTabClick($event)"
+    (saveFilters)="onSaveFilters($event)"
+    (clearFilters)="onClearFilters()">
+  </app-additional-filters>
 
   <!-- Search and Actions -->
   <div class="table-header">
@@ -17,9 +27,9 @@
 		  <div class="search-box">
 			  <input type="text" placeholder="חפש חברי קהילה" [(ngModel)]="searchText" (keyup.enter)="onSearch()">
 			  @if (searchText) {
-			    <span class="reset-icon" (click)="onResetSearch()"><i class="fa-solid fa-times"></i></span>
+			    <span class="reset-icon" (click)="onResetSearch()"><img src="assets/img/icons/close.svg" alt=""></span>
 			  }
-			  <span class="search-icon" (click)="onSearch()"><i class="fa-solid fa-magnifying-glass"></i></span>
+			  <span class="search-icon" (click)="onSearch()"><img src="/assets/img/icons/search.svg" alt=""></span>
 		  </div>
 		  <app-custom-select
 			  [options]="sortOptions"
@@ -34,7 +44,11 @@
 		    <span>פעולות קולקטיביות:</span>
 		    <button type="button" class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print.svg" alt=""></button>
 		    <button type="button" class="action-icon" (click)="onBulkAction('delete')"><img src="assets/img/icons/trash.svg" alt=""></button>
+<<<<<<< HEAD
 		    <button type="button" class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
+=======
+		    <button type="button" class="action-icon" (click)="onBulkAction('email')"><img src="assets/img/icons/chat_bubble_blue.svg" alt=""></button>
+>>>>>>> abc
 	    </div>
 	    <div class="export-action">
 		    <button class="btn-outline" (click)="openExportDialog()">ייצא לקובץ</button>

@@ -182,9 +182,7 @@ export class InvoicesComponent implements OnInit {
   }
 
   openExportDialog(): void {
-    const tabLabel = this.tabs.find(t => t.id === this.activeTab)?.label || 'כל החשבוניות';
-    const selectionCount = this.selectedInvoices.size;
-
+    const currentTab = this.tabs.find(t => t.id === this.activeTab);
     const dialogRef = this.dialog.open(ExportDialogComponent, {
       width: '600px',
       panelClass: 'confirm-dialog-panel',
@@ -192,19 +190,23 @@ export class InvoicesComponent implements OnInit {
       enterAnimationDuration: '0ms',
       exitAnimationDuration: '0ms',
       data: {
-        title: 'ייצוא לקובץ',
-        message: 'בחר את סוג הייצוא:',
-        confirmText: `ייצא את כל הרשומות (${tabLabel})`,
-        cancelText: `ייצא ${selectionCount} פריטים שנבחרו`,
-        cancelDisabled: selectionCount === 0
+        title: 'ייצוא הנתונים לקובץ',
+        subtitle: 'להורדה - לחץ על סוג הקובץ המבוקש',
+        selectedCount: this.selectedInvoices.size,
+        tabName: currentTab?.label
       }
     });
 
     dialogRef.afterClosed().subscribe((result: ExportDialogResult | undefined) => {
       if (!result || !result.fileType) return;
 
-      // Export all rows in current tab context
-      this.exportInvoices(this.activeTab !== 'all' ? this.activeTab : undefined, undefined, result.fileType);
+      if (result.exportScope === 'selected' && this.selectedInvoices.size > 0) {
+        // Export only selected rows
+        this.exportInvoices(undefined, Array.from(this.selectedInvoices), result.fileType);
+      } else {
+        // Export all rows in current tab context
+        this.exportInvoices(this.activeTab !== 'all' ? this.activeTab : undefined, undefined, result.fileType);
+      }
     });
   }
 

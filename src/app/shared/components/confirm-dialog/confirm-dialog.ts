@@ -42,7 +42,7 @@ export interface ConfirmDialogData {
           @for (button of data.buttons; track button.action) {
             <button [class]="'btn-' + button.type" (click)="onButtonClick(button.action)" type="button">
               @if (button.icon) {
-                <img [src]="'/assets/icons/' + button.icon + '.svg'" [alt]="button.text" class="btn-icon" />
+                <img [src]="'/assets/img/icons/' + button.icon.replace('-icon', '') + '.svg'" [alt]="button.text" class="btn-icon" />
               }
               {{ button.text }}
             </button>
@@ -50,14 +50,14 @@ export interface ConfirmDialogData {
         } @else {
           @if (data.cancelText) {
             <button class="btn-cancel" (click)="onCancel()" type="button">
-              <img src="/assets/icons/close-icon.svg" alt="ביטול" class="btn-icon" />
+              <img src="/assets/img/icons/close.svg" alt="ביטול" class="btn-icon" />
               {{ data.cancelText }}
             </button>
           }
           @if (data.confirmText) {
             <button class="btn-confirm" (click)="onConfirm()" type="button">
               @if (data.cancelText) {
-                <img src="/assets/icons/trash-icon.svg" alt="מחק" class="btn-icon" />
+                <img src="/assets/img/icons/trash.svg" alt="מחק" class="btn-icon" />
               }
               {{ data.confirmText }}
             </button>

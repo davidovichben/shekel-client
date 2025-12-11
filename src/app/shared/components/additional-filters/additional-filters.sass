@@ -8,7 +8,8 @@
   justify-content: space-between
   align-items: center
   margin-bottom: 1rem
-  border-bottom: 1px solid #e0e0e0
+  border-bottom: 1px solid #4A5565
+  width: 100%
 
 .tabs
   display: flex
@@ -21,7 +22,8 @@
   font-size: 0.85rem
   color: #666
   cursor: pointer
-  border-bottom: 2px solid transparent
+  border-bottom: 1px solid transparent
+  margin-bottom: -1px
   transition: all 0.2s
   white-space: nowrap
   display: flex
@@ -34,7 +36,8 @@
 
   &.active
     color: $btn-primary
-    border-bottom-color: $btn-primary
+    border-bottom: 4px solid $btn-primary
+    margin-bottom: -1px
     font-family: 'Heebo', sans-serif
     font-weight: 600
 
@@ -128,7 +131,7 @@
   max-width: 900px
 
 .filter-group
-  flex: 0 0 200px
+  flex: 0 0 250px
   display: flex
   flex-direction: column
   gap: 0.4rem
@@ -163,18 +166,25 @@
 
   app-custom-select
     width: 100%
+    display: block
     position: relative
     z-index: 10
 
+    ::ng-deep .custom-select,
+    ::ng-deep .select-trigger
+      width: 100%
+
 .filter-actions
   display: flex
+  flex-direction: row-reverse
   gap: 0.75rem
   align-items: center
 
 .btn-save-filters
-  padding: 0.5rem 1.25rem
-  background: #d1d5dc
-  color: $text-primary
+  width: 106px
+  height: 46px
+  background: #cfd4de
+  color: $header-bg
   border: none
   border-radius: 8px
   font-size: 0.85rem
@@ -186,13 +196,14 @@
     background: #c4c9d0
 
   &:disabled
-    background: #d1d5dc
-    color: $text-primary
+    background: #cfd4de
+    color: $header-bg
     cursor: not-allowed
 
 .btn-clear-filters
-  padding: 0.5rem 1.25rem
-  background: #f48c8c
+  width: 106px
+  height: 46px
+  background: #F08080
   color: white
   border: none
   border-radius: 8px
@@ -201,11 +212,6 @@
   font-family: 'Heebo', sans-serif
   white-space: nowrap
 
-  &:hover:not(:disabled)
-    background: #f07575
-
-  &:disabled
-    background: #d1d5dc
-    color: white
-    cursor: not-allowed
+  &:hover
+    background: darken(#F08080, 10%)
 
