@@ -1,0 +1,254 @@
+<div class="expenses">
+  <div class="expenses-layout">
+    <!-- Left Panel: Table -->
+    <div class="table-panel">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1>הוצאות</h1>
+          <p>בדף זה ריכזנו לך את כל הנתונים על הוצאות בית הכנסת.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary" (click)="openCreateDialog()">
+            <img src="assets/img/icons/plus_circle.svg" alt="+" class="btn-icon" />
+            הוסף הוצאה
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs and Filters -->
+      <app-additional-filters
+        [tabs]="tabs"
+        [activeTab]="activeTab"
+        (tabClick)="onTabClick($event)">
+      </app-additional-filters>
+
+      <!-- Filters and Actions Row -->
+      <div class="filters-actions-row">
+        <div class="filters-section">
+          <div class="filter-dropdowns">
+            <app-custom-select
+              [options]="displayRangeOptions"
+              [(value)]="displayRange"
+              (valueChange)="onDisplayRangeChange()"
+              prefix="הצג הוצאות">
+            </app-custom-select>
+            <app-custom-select
+              [options]="sortOptions"
+              [(value)]="sortBy"
+              (valueChange)="onSortChange()"
+              prefix="מיין לפי">
+            </app-custom-select>
+          </div>
+        </div>
+        <div class="actions-section">
+          <div class="bulk-actions">
+            <span>פעולות קולקטיביות:</span>
+            <button class="action-icon" (click)="onBulkAction('share')">
+              <img src="assets/img/icons/share.svg" alt="Share" />
+            </button>
+            <button class="action-icon" (click)="onBulkAction('delete')">
+              <img src="assets/img/icons/trash.svg" alt="Delete" />
+            </button>
+            <button class="action-icon" (click)="onBulkAction('print')">
+              <img src="assets/img/icons/print.svg" alt="Print" />
+            </button>
+          </div>
+          <div class="export-action">
+            <button class="btn-outline" (click)="openExportDialog()">ייצא לקובץ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <app-data-table
+        [isLoading]="isLoading"
+        [columns]="tableColumns"
+        [data]="expenses"
+        [totalItems]="totalExpenses"
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [totalPages]="totalPages"
+        [allSelected]="areAllSelected()"
+        (pageChange)="onPageChange($event)"
+        (selectAll)="onSelectAll($event)">
+        @for (expense of expenses; track expense.id; let i = $index) {
+          <tr>
+            <td class="col-number">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+            <td class="col-checkbox">
+              <input type="checkbox"
+                     [checked]="isExpenseSelected(expense.id)"
+                     (change)="toggleExpenseSelection(expense.id, $event)">
+            </td>
+            <td>{{ expense.description || 'ללא תיאור' }}</td>
+            <td>{{ getExpenseTypeLabel(expense.type) }}</td>
+            <td>{{ expense.amount }}₪</td>
+            <td>
+              <div class="hebrew-date-cell">
+                <div class="hebrew-date-top">{{ getHebrewDateTop(expense) }}</div>
+                <div class="hebrew-date-bottom">{{ getHebrewDateBottom(expense) }}</div>
+              </div>
+            </td>
+            <td>{{ formatGregorianDate(expense.date) }}</td>
+            <td>{{ expense.supplierName || '--' }}</td>
+            <td>
+              <app-chip
+                [variant]="getStatusChipVariant(expense.status)"
+                [label]="getStatusLabel(expense.status)">
+              </app-chip>
+            </td>
+            <td>
+              <button type="button" class="receipt-btn" *ngIf="expense.receipt" (click)="onDownloadReceipt(expense)">
+                <img src="assets/img/icons/receipt.svg" alt="Receipt" class="receipt-icon">
+              </button>
+              <span *ngIf="!expense.receipt" class="receipt-placeholder">
+                <img src="assets/img/icons/receipt-light.svg" alt="No Receipt" class="receipt-icon">
+              </span>
+            </td>
+            <td class="col-actions">
+              <button type="button" class="row-action" (click)="openEditDialog(expense)">
+                <img src="assets/img/icons/edit.svg" alt="" class="action-icon">
+              </button>
+              <button type="button" class="row-action" (click)="openDeleteDialog(expense)">
+                <img src="assets/img/icons/trash.svg" alt="" class="action-icon">
+              </button>
+              <button type="button" class="row-action" (click)="onBulkAction('share')">
+                <img src="assets/img/icons/share.svg" alt="" class="action-icon">
+              </button>
+            </td>
+          </tr>
+        }
+      </app-data-table>
+
+      <!-- Footer -->
+      <div class="table-footer">
+        <span class="footer-message">נמצאו {{ totalExpenses }} רשומות, סה"כ סכום ההוצאות בהן הוא: <span class="bold">{{ getTotalAmount() }}₪</span></span>
+        <!-- Pagination -->
+        <div class="pagination">
+          <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">
+            <i class="fa-solid fa-angles-right"></i>
+          </button>
+          <button class="page-btn" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+            <i class="fa-solid fa-angle-right"></i>
+          </button>
+
+          @for (page of getPageNumbers(); track page) {
+            <button
+              class="page-btn"
+              [class.active]="page === currentPage"
+              (click)="onPageChange(page)">
+              {{ page }}
+            </button>
+          }
+
+          <button class="page-btn" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
+            <i class="fa-solid fa-angle-left"></i>
+          </button>
+          <button class="page-btn" (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">
+            <i class="fa-solid fa-angles-left"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Statistics -->
+    <div class="stats-panel">
+      <div class="stats-header">
+        <h2>לאן הולך הכסף</h2>
+      </div>
+
+      <!-- Monthly Expense Distribution -->
+      <div class="stats-section" *ngIf="stats">
+        <h3>להלן התפלגות ההוצאות החודשית שלכם:</h3>
+        <div class="distribution-chart-container" *ngIf="stats && stats.categoryDistribution">
+          <svg class="donut-chart" width="80" height="80" viewBox="0 0 80 80">
+            @for (category of stats.categoryDistribution; track category.type; let i = $index) {
+              <circle
+                [attr.cx]="40"
+                [attr.cy]="40"
+                [attr.r]="32"
+                fill="none"
+                [attr.stroke]="getCategoryColor(category.type, i)"
+                [attr.stroke-width]="8"
+                [attr.stroke-dasharray]="getCategoryDashArray(category, i)"
+                [attr.stroke-dashoffset]="getCategoryDashOffset(category, i)"
+                stroke-linecap="round"
+                transform="rotate(-90 40 40)" />
+            }
+          </svg>
+          <div class="total-amount-section" *ngIf="stats.monthlyTotal">
+            <div class="total-amount-label">מתחילת החודש הוצאתם</div>
+            <div class="total-amount-value">
+              <span class="total-label">בסך הכל:</span>
+              <span class="amount-value">{{ stats.monthlyTotal.amount }}</span>
+              <span class="amount-currency">₪</span>
+            </div>
+          </div>
+        </div>
+        <div class="category-list" *ngIf="stats && stats.categoryDistribution">
+          @for (category of stats.categoryDistribution; track category.type; let i = $index) {
+            <div class="category-item">
+              <span class="category-percentage">{{ category.percentage }}%</span>
+              <span class="category-amount">{{ category.amount }}₪</span>
+              <span class="category-label-wrapper">
+                <span class="category-dot" [style.background-color]="getCategoryColor(category.type, i)"></span>
+                <span class="category-label">{{ category.label }}</span>
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Expense Trend -->
+      <div class="stats-section" *ngIf="stats">
+        <h3>מגמת ההוצאות ב 3 החודשים האחרונים:</h3>
+        <div class="trend-chart" *ngIf="stats.trend">
+          @for (monthData of getReversedTrend(); track monthData.month; let isFirst = $first) {
+            <div class="trend-bar-container">
+              <div class="trend-bar" [style.height]="getTrendBarHeight(monthData.amount)" [class.active]="isFirst">
+              </div>
+              <div class="bar-info">
+                <span class="bar-amount">{{ monthData.amount }}₪</span>
+                <span class="bar-month">{{ formatMonth(monthData.month) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Unpaid Expenses -->
+      <div class="stats-section" *ngIf="stats">
+        <h3>ההוצאות שלא שולמו מתוך יתרת החובות הפתוחים לחודש {{ getCurrentMonthHebrew() }}:</h3>
+        <div class="unpaid-chart-container" *ngIf="stats.unpaidExpenses">
+          <div class="unpaid-amount">
+            <span class="amount-value">{{ stats.unpaidExpenses.total }}</span>
+            <span class="amount-currency">₪</span>
+          </div>
+          <div class="unpaid-circle-wrapper">
+            <svg class="unpaid-circle-ring" width="100" height="100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="white" stroke-width="9" />
+              <circle 
+                cx="50" 
+                cy="50" 
+                r="42" 
+                fill="none" 
+                stroke="#dde1ec" 
+                stroke-width="9"
+                stroke-linecap="round"
+                [attr.stroke-dasharray]="getRingDashArray()"
+                [attr.stroke-dashoffset]="getRingDashOffset()"
+                transform="rotate(-90 50 50)" />
+            </svg>
+            <div class="unpaid-circle-center">
+              <span class="circle-percentage">
+                <span class="circle-percent-sign">%</span>
+                <span class="circle-number">{{ getUnpaidPercentage() }}</span>
+              </span>
+              <span class="circle-label">נותר</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

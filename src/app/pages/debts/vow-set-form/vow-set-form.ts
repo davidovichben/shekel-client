@@ -26,7 +26,7 @@ interface VowItemForm {
 @Component({
   selector: 'app-vow-set-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent, DialogHeaderComponent, ToggleSwitchComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent, ToggleSwitchComponent],
   templateUrl: './vow-set-form.html',
   styleUrl: './vow-set-form.sass'
 })

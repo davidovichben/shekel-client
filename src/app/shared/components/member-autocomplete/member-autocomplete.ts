@@ -26,6 +26,7 @@ export class MemberAutocompleteComponent implements OnInit {
   @Input() placeholder = 'חיפוש...';
   @Input() memberId = '';
   @Input() memberName = '';
+  @Input() memberType?: string; // Filter by member type (e.g., 'supplier')
   @Output() memberIdChange = new EventEmitter<string>();
   @Output() memberNameChange = new EventEmitter<string>();
   @Output() memberSelected = new EventEmitter<Member>();
@@ -51,16 +52,48 @@ export class MemberAutocompleteComponent implements OnInit {
 
   private searchMembers(query: string): void {
     this.isLoading = true;
-    this.memberService.list(query).subscribe({
-      next: (members) => {
-        this.filteredMembers = members.slice(0, 10);
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading members:', error);
-        this.isLoading = false;
+    
+    // If memberType is specified, use getAll to get full Member objects with type
+    if (this.memberType) {
+      const params: { type: string; page: number; limit: number; search?: string } = {
+        type: this.memberType,
+        page: 1,
+        limit: 10
+      };
+      
+      // Only add search if query is not empty
+      if (query && query.trim()) {
+        params.search = query.trim();
       }
-    });
+      
+      this.memberService.getAll(params).subscribe({
+        next: (response) => {
+          this.filteredMembers = response.rows.map(m => ({
+            id: m.id,
+            name: m.fullName
+          }));
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading members:', error);
+          this.isLoading = false;
+          this.filteredMembers = [];
+        }
+      });
+    } else {
+      // Use list for better performance when no type filter is needed
+      this.memberService.list(query).subscribe({
+        next: (members) => {
+          this.filteredMembers = members.slice(0, 10);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading members:', error);
+          this.isLoading = false;
+          this.filteredMembers = [];
+        }
+      });
+    }
   }
 
   onSearch(): void {

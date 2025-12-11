@@ -6,6 +6,7 @@ import { CommunityComponent } from './pages/community/community';
 import { MemberFormComponent } from './pages/community/member-form/member-form';
 import { DebtsComponent } from './pages/debts/debts';
 import { InvoicesComponent } from './pages/invoices/invoices';
+import { ExpensesComponent } from './pages/expenses/expenses';
 import { memberResolver } from './core/resolvers/member.resolver';
 
 export const routes: Routes = [
@@ -20,6 +21,7 @@ export const routes: Routes = [
       { path: 'community/new', component: MemberFormComponent },
       { path: 'community/edit/:id', component: MemberFormComponent, resolve: { member: memberResolver } },
       { path: 'debts', component: DebtsComponent },
+      { path: 'expenses', component: ExpensesComponent },
       { path: 'invoices', component: InvoicesComponent }
     ]
   }

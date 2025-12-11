@@ -1,0 +1,198 @@
+@use '../../../../variables' as *
+
+.dialog-backdrop
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  background: rgba(0, 0, 0, 0.5)
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 1000
+
+.dialog-container
+  background: white
+  border-radius: 8px
+  width: 900px
+  max-width: 90vw
+  max-height: 90vh
+  display: flex
+  flex-direction: column
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)
+
+.dialog-header
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: 20px 24px
+  background: $header-bg
+  color: white
+  border-radius: 8px 8px 0 0
+  direction: rtl
+
+  .header-left
+    display: flex
+    align-items: center
+
+    ::ng-deep .toggle-switch-wrapper
+      .toggle-label
+        color: white
+
+  h2
+    margin: 0
+    font-size: 1.25rem
+    font-weight: 500
+    flex: 1
+    text-align: center
+    font-family: 'Heebo', sans-serif
+
+  .close-btn
+    background: none
+    border: none
+    cursor: pointer
+    padding: 4px
+    display: flex
+    align-items: center
+    justify-content: center
+    color: white
+
+    .close-icon
+      width: 20px
+      height: 20px
+
+.form-content
+  padding: 24px
+  overflow-y: auto
+  flex: 1
+
+.form-grid
+  display: flex
+  flex-direction: column
+  gap: 10px
+  direction: rtl
+
+.form-row
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: 24px
+  direction: rtl
+
+.form-group
+  display: flex
+  flex-direction: column
+  gap: 12px
+
+  label
+    display: block
+    font-size: 14px
+    font-weight: 500
+    color: $text-dark
+    font-family: 'Heebo', sans-serif
+
+    &.required::after
+      content: ' *'
+      color: $error
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  textarea
+    width: 100%
+    padding: 10px 12px
+    border: 1px solid $gray-300
+    border-radius: 6px
+    font-size: 14px
+    box-sizing: border-box
+    direction: rtl
+    background: white
+    font-family: 'Heebo', sans-serif
+
+    &:focus
+      outline: none
+      border-color: $btn-primary
+
+    &::placeholder
+      color: $gray-500
+
+  app-member-autocomplete,
+  app-custom-select,
+  app-file-upload
+    width: 100%
+
+  .existing-receipt
+    margin-top: 8px
+    padding: 8px 12px
+    background: #f5f5f5
+    border-radius: 4px
+    font-size: 14px
+    color: $text-dark
+    font-family: 'Heebo', sans-serif
+
+    .receipt-name
+      display: block
+      overflow: hidden
+      text-overflow: ellipsis
+      white-space: nowrap
+
+  .amount-input
+    position: relative
+
+    input
+      padding-left: 50px !important
+
+    .currency
+      position: absolute
+      left: 12px
+      top: 50%
+      transform: translateY(-50%)
+      font-size: 14px
+      color: $text-dark
+      font-family: 'Heebo', sans-serif
+
+.form-actions
+  display: flex
+  gap: 12px
+  padding: 16px 24px
+  direction: rtl
+  justify-content: flex-end
+  align-items: center
+  border-top: 1px solid $gray-300
+
+  button
+    display: flex
+    align-items: center
+    gap: 8px
+    padding: 10px 20px
+    border: none
+    border-radius: 8px
+    font-size: 14px
+    font-weight: 500
+    cursor: pointer
+    transition: background 0.2s
+    font-family: 'Heebo', sans-serif
+    white-space: nowrap
+
+    .btn-icon
+      width: 16px
+      height: 16px
+
+    &:disabled
+      opacity: 0.6
+      cursor: not-allowed
+
+  .btn-save
+    background: $btn-primary
+    color: white
+
+    &:hover:not(:disabled)
+      background: $btn-primary-hover
+
+  .btn-delete
+    background: $error-light
+    color: white
+
+    &:hover
+      background: #c62828
+

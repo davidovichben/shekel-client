@@ -1,0 +1,73 @@
+@use '../../../../variables' as *
+
+.file-upload
+  width: 100%
+
+.file-input-wrapper
+  position: relative
+  display: flex
+  align-items: center
+  gap: 0.5rem
+
+.file-input
+  position: absolute
+  opacity: 0
+  width: 0
+  height: 0
+  overflow: hidden
+
+.file-label
+  flex: 1
+  display: flex
+  align-items: center
+  gap: 0.5rem
+  padding: 0.75rem 1rem
+  border: 1px solid $border-color
+  border-radius: 4px
+  background-color: white
+  cursor: pointer
+  transition: border-color 0.2s
+
+  &:hover
+    border-color: $btn-primary
+
+.upload-icon
+  width: 20px
+  height: 20px
+  flex-shrink: 0
+
+.file-name
+  flex: 1
+  color: $text-dark
+  font-size: 14px
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+
+.file-placeholder
+  flex: 1
+  color: $text-muted
+  font-size: 14px
+
+.remove-btn
+  background: none
+  border: none
+  cursor: pointer
+  padding: 0.25rem
+  display: flex
+  align-items: center
+  justify-content: center
+  color: $text-muted
+
+  &:hover
+    color: $text-dark
+
+.remove-icon
+  width: 16px
+  height: 16px
+
+.error-message
+  margin-top: 0.25rem
+  color: $error
+  font-size: 12px
+

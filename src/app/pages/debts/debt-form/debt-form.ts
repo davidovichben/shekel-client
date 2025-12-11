@@ -31,7 +31,7 @@ export interface DebtFormDialogData {
 @Component({
   selector: 'app-debt-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent, DialogHeaderComponent, ToggleSwitchComponent, RadioGroupComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, MemberAutocompleteComponent, ToggleSwitchComponent, RadioGroupComponent],
   templateUrl: './debt-form.html',
   styleUrl: './debt-form.sass'
 })

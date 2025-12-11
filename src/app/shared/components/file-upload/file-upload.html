@@ -1,0 +1,20 @@
+<div class="file-upload">
+  <div class="file-input-wrapper">
+    <input
+      type="file"
+      [accept]="accept"
+      (change)="onFileChange($event)"
+      class="file-input"
+      [id]="inputId">
+    <label [for]="inputId" class="file-label">
+      <img src="assets/img/icons/upload.svg" alt="Upload" class="upload-icon" *ngIf="!fileName">
+      <span class="file-name" *ngIf="fileName">{{ fileName }}</span>
+      <span class="file-placeholder" *ngIf="!fileName">{{ placeholder }}</span>
+    </label>
+    <button type="button" class="remove-btn" *ngIf="fileName" (click)="removeFile()">
+      <img src="assets/img/icons/close.svg" alt="Remove" class="remove-icon">
+    </button>
+  </div>
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+</div>
+
