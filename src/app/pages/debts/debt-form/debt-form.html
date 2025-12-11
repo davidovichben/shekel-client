@@ -87,7 +87,7 @@
           </button>
           <div class="actions-right">
             <button type="button" class="btn-pay" (click)="onPay()">
-              <img src="assets/img/icons/filter.svg" alt="Pay" class="btn-icon" />
+              <img src="assets/img/icons/credit_card.svg" alt="Pay" class="btn-icon" />
               שלם
             </button>
             <button type="button" class="btn-reminder" (click)="onSendReminder()">
@@ -101,7 +101,7 @@
           </button>
         } @else {
           <button type="submit" class="btn-save" [disabled]="isSubmitting">
-            <img src="assets/img/icons/document_create.svg" alt="Create" class="btn-icon" />
+            <img src="assets/img/icons/floppy.svg" alt="Create" class="btn-icon" />
             {{ isSubmitting ? 'יוצר...' : 'צור חוב' }}
           </button>
         }

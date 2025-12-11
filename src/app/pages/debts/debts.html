@@ -11,7 +11,7 @@
         הכנס סט נדרים
       </button>
       <button class="btn-primary" (click)="openCreateDialog()">
-        <img src="assets/img/icons/plus.svg" alt="+" class="btn-icon" />
+        <img src="assets/img/icons/plus_circle.svg" alt="+" class="btn-icon" />
         צור חוב חדש
       </button>
     </div>
@@ -109,10 +109,10 @@
           </app-chip>
         </td>
         <td class="col-actions">
-          <button class="row-action"><img src="assets/img/icons/chat_bubble.svg" alt="" class="action-icon"></button>
-          <button class="row-action"><i class="fa-regular fa-envelope"></i></button>
-          <button class="row-action" (click)="openDeleteDialog(debt)"><img src="assets/img/icons/trash.svg" alt="" class="action-icon"></button>
-          <button class="row-action" (click)="openEditDialog(debt)"><img src="assets/img/icons/pencil.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action" (click)="openEditDialog(debt)"><img src="assets/img/icons/edit.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action" (click)="openDeleteDialog(debt)"><img src="assets/img/icons/trash.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action"><img src="assets/img/icons/credit_card.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action"><img src="assets/img/icons/chat_bubble.svg" alt="" class="action-icon"></button>
         </td>
       </tr>
     }
