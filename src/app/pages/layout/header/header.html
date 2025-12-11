@@ -5,21 +5,71 @@
       <span class="dates">{{ dayOfWeek }} | {{ hebrewDate }} | {{ gregorianDate }}</span>
     </div>
   </div>
-  <div class="search-bar">
-    <input type="text" placeholder="חפש חבר קהילה, נדרים או הוצאות..." #searchInput (input)="searchText = searchInput.value">
-    <button class="search-clear" [class.visible]="searchText" (click)="searchInput.value = ''; searchText = ''">×</button>
+  <div class="search-container">
+    <div class="search-bar">
+      <input type="text" placeholder="חפש חבר קהילה, נדרים או הוצאות..." #searchInput (input)="onSearch(searchInput.value)" (focus)="onSearchFocus()" (blur)="hideDropdown()">
+      <button class="search-clear" [class.visible]="searchText" (click)="searchInput.value = ''; clearSearch()">×</button>
+    </div>
+    @if (showDropdown && hasResults()) {
+      <div class="search-dropdown">
+        @if (searchResults.members.length > 0) {
+          <div class="search-section">
+            <div class="search-section-header">חברי קהילה</div>
+            @for (item of searchResults.members; track item.id) {
+              <div class="search-result" (click)="onResultClick(item, 'member')">
+                <span class="result-name">{{ item.name }}</span>
+              </div>
+            }
+          </div>
+        }
+        @if (searchResults.debts.length > 0) {
+          <div class="search-section">
+            <div class="search-section-header">חובות</div>
+            @for (item of searchResults.debts; track item.id) {
+              <div class="search-result" (click)="onResultClick(item, 'debt')">
+                <span class="result-name">{{ item.name }}</span>
+              </div>
+            }
+          </div>
+        }
+        @if (searchResults.receipts.length > 0) {
+          <div class="search-section">
+            <div class="search-section-header">קבלות</div>
+            @for (item of searchResults.receipts; track item.id) {
+              <div class="search-result" (click)="onResultClick(item, 'receipt')">
+                <span class="result-name">{{ item.name }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
   </div>
   <div class="header-left">
-    <button class="site-btn">אתר בית הכנסת</button>
+    <button class="site-btn">
+      <svg class="globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      אתר בית הכנסת
+    </button>
+    <div class="notification-bell">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="notification-dot"></span>
+    </div>
+    <div class="vertical-divider"></div>
     <div class="user-info">
-      <div class="user-details">
-        <span class="user-name">יוסף חיים ישראלי</span>
-        <span class="user-badge">PRO</span>
-      </div>
       <div class="user-avatar">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
         </svg>
+      </div>
+      <div class="user-details">
+        <span class="user-name">{{ userService.user()?.name }}</span>
+        <span class="user-badge">PRO</span>
       </div>
     </div>
   </div>

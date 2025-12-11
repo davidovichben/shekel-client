@@ -38,13 +38,16 @@
     font-size: 0.85rem
     color: #666
 
-.search-bar
+.search-container
   flex: 1
   max-width: 500px
   margin: 0 2rem
   position: relative
+
+.search-bar
   display: flex
   align-items: center
+  position: relative
 
   input
     width: 100%
@@ -72,12 +75,55 @@
     &.visible
       display: block
 
+.search-dropdown
+  position: absolute
+  top: 100%
+  left: 0
+  right: 0
+  background: white
+  border: 1px solid #e0e0e0
+  border-radius: 8px
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+  margin-top: 4px
+  max-height: 300px
+  overflow-y: auto
+  z-index: 1000
+
+.search-section
+  &:not(:last-child)
+    border-bottom: 1px solid #e0e0e0
+
+.search-section-header
+  font-size: 0.75rem
+  font-weight: 600
+  color: #666
+  padding: 0.5rem 1rem
+  background: #f5f5f5
+
+.search-result
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 0.75rem 1rem
+  cursor: pointer
+  transition: background-color 0.2s
+
+  &:hover
+    background: #e8f4fd
+
+.result-name
+  font-size: 0.9rem
+  color: #333
+
 .header-left
   display: flex
   align-items: center
   gap: 1rem
 
 .site-btn
+  display: flex
+  align-items: center
+  gap: 0.5rem
   padding: 0.5rem 1rem
   background: #e8f4fd
   color: #1976d2
@@ -85,6 +131,35 @@
   border-radius: 20px
   font-size: 0.85rem
   cursor: pointer
+
+  .globe-icon
+    width: 18px
+    height: 18px
+
+.notification-bell
+  position: relative
+  cursor: pointer
+  padding: 0.5rem
+
+  svg
+    width: 22px
+    height: 22px
+    color: #1976d2
+
+  .notification-dot
+    position: absolute
+    top: 6px
+    right: 6px
+    width: 8px
+    height: 8px
+    background: #4caf50
+    border-radius: 50%
+
+.vertical-divider
+  width: 1px
+  height: 30px
+  background: #c1c7d2
+  margin: 0 -8px
 
 .user-info
   display: flex
@@ -108,7 +183,7 @@
 .user-details
   display: flex
   flex-direction: column
-  align-items: flex-end
+  align-items: flex-start
 
 .user-name
   font-size: 0.8rem
@@ -117,7 +192,7 @@
 .user-badge
   font-size: 0.55rem
   color: white
-  background: $badge-pro
+  background: $primary-bg
   padding: 0.1rem 0.3rem
   border-radius: 10px
   font-family: 'Heebo', sans-serif

@@ -86,7 +86,7 @@
         </td>
         <td>{{ debt.fullName }}</td>
         <td>{{ debt.description }}</td>
-        <td>{{ debt.amount }}₪</td>
+        <td>{{ debt.amount }} ש"ח</td>
         <td>
           <span class="approval-status" [class.approved]="debt.shouldBill" [class.not-approved]="!debt.shouldBill">
             <i class="fa-solid fa-circle"></i>
@@ -94,13 +94,17 @@
           </span>
         </td>
         <td>
-          <div class="hebrew-date-cell">
-            <div class="hebrew-date-top">{{ getHebrewDateTop(debt) }}</div>
-            <div class="hebrew-date-bottom">{{ getHebrewDateBottom(debt) }}</div>
-          </div>
+          @if (debt.hebrewDate) {
+            <div class="hebrew-date-cell">
+              <div class="hebrew-date-top">{{ getHebrewDateTop(debt) }}</div>
+              <div class="hebrew-date-bottom">{{ getHebrewDateBottom(debt) }}</div>
+            </div>
+          } @else {
+            ------
+          }
         </td>
-        <td>{{ formatGregorianDate(debt.gregorianDate) }}</td>
-        <td>{{ formatGregorianDate(debt.lastReminderSentAt) }}</td>
+        <td>{{ debt.gregorianDate || '------' }}</td>
+        <td>{{ debt.lastReminderSentAt || '------' }}</td>
         <td>{{ getDebtTypeLabel(debt.debtType) }}</td>
         <td>
           <app-chip
@@ -120,7 +124,7 @@
 
   <!-- Footer -->
   <div class="table-footer">
-    <span class="footer-message">(נמצאו {{ totalDebts }} רשומות, סה"כ סכום החובות בהן הוא: <span class="bold">{{ getTotalAmount() }}₪</span>)</span>
+    <span class="footer-message">(נמצאו {{ totalDebts }} רשומות, סה"כ סכום החובות בהן הוא: <span class="bold">{{ getTotalAmount() }} ש"ח</span>)</span>
     <!-- Pagination -->
     <div class="pagination">
       <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">

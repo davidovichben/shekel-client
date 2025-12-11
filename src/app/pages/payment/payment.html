@@ -79,7 +79,7 @@
           </div>
           <div class="summary-row">
             <span class="label">סכום לתשלום:</span>
-            <span class="value">₪{{ transaction.amount | number:'1.0-2' }}</span>
+            <span class="value">{{ transaction.amount | number:'1.0-2' }} ש"ח</span>
           </div>
           <div class="summary-row">
             <span class="label">מספר תשלומים:</span>
@@ -87,12 +87,12 @@
           </div>
           <div class="summary-row">
             <span class="label">מע"מ ({{ transaction.vatPercent }}%)</span>
-            <span class="value">₪{{ transaction.vat | number:'1.0-2' }}</span>
+            <span class="value">{{ transaction.vat | number:'1.0-2' }} ש"ח</span>
           </div>
 
           <div class="summary-total">
             <span class="label">סה"כ:</span>
-            <span class="value">₪{{ transaction.total | number:'1.0-2' }}</span>
+            <span class="value">{{ transaction.total | number:'1.0-2' }} ש"ח</span>
             <span class="note">(כולל מע"מ)</span>
           </div>
 

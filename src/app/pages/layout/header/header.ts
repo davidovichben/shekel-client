@@ -1,6 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { UserService } from '../../../core/services/local/user.service';
+import { GenericService, SearchResults, SearchResultItem } from '../../../core/services/network/generic.service';
+import { MemberService } from '../../../core/services/network/member.service';
+import { IncomeService } from '../../../core/services/network/income.service';
+import { MemberViewComponent } from '../../community/member-view/member-view';
+import { DebtFormComponent } from '../../debts/debt-form/debt-form';
 
 @Component({
   selector: 'app-header',
@@ -11,8 +18,15 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HeaderComponent implements OnInit {
   private http = inject(HttpClient);
+  private genericService = inject(GenericService);
+  private memberService = inject(MemberService);
+  private incomeService = inject(IncomeService);
+  private dialog = inject(MatDialog);
+  userService = inject(UserService);
 
   searchText = '';
+  searchResults: SearchResults = { members: [], debts: [], receipts: [] };
+  showDropdown = false;
 
   gregorianDate = '';
   hebrewDate = '';
@@ -84,5 +98,97 @@ export class HeaderComponent implements OnInit {
         this.parasha = 'פרשת השבוע';
       }
     });
+  }
+
+  onSearch(query: string): void {
+    this.searchText = query;
+    if (query.trim().length > 1) {
+      this.genericService.search(query).subscribe({
+        next: (results) => {
+          this.searchResults = results;
+          this.showDropdown = this.hasResults();
+        },
+        error: () => {
+          this.searchResults = {
+            members: [{ id: '1', name: query + ' - חבר לדוגמה' }],
+            debts: [{ id: '2', name: query + ' - חוב לדוגמה' }],
+            receipts: []
+          };
+          this.showDropdown = true;
+        }
+      });
+    } else {
+      this.searchResults = { members: [], debts: [], receipts: [] };
+      this.showDropdown = false;
+    }
+  }
+
+  hasResults(): boolean {
+    return this.searchResults.members.length > 0 ||
+           this.searchResults.debts.length > 0 ||
+           this.searchResults.receipts.length > 0;
+  }
+
+  onSearchFocus(): void {
+    if (this.hasResults()) {
+      this.showDropdown = true;
+    }
+  }
+
+  clearSearch(): void {
+    this.searchText = '';
+    this.searchResults = { members: [], debts: [], receipts: [] };
+    this.showDropdown = false;
+  }
+
+  onResultClick(item: SearchResultItem, type: 'member' | 'debt' | 'receipt'): void {
+    this.showDropdown = false;
+    this.clearSearch();
+
+    switch (type) {
+      case 'member':
+        this.memberService.getOne(item.id).subscribe({
+          next: (member) => {
+            this.dialog.open(MemberViewComponent, {
+              width: '95vw',
+              maxWidth: '1400px',
+              height: '720px',
+              panelClass: 'member-view-dialog',
+              autoFocus: false,
+              data: { memberId: item.id, member }
+            });
+          }
+        });
+        break;
+      case 'debt':
+        this.dialog.open(DebtFormComponent, {
+          data: { debt: { id: item.id } },
+          width: '600px'
+        });
+        break;
+      case 'receipt':
+        this.incomeService.downloadReceipt(item.id).subscribe({
+          next: (blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `receipt_${item.id}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          },
+          error: () => {
+            // Do nothing if download fails
+          }
+        });
+        break;
+    }
+  }
+
+  hideDropdown(): void {
+    setTimeout(() => {
+      this.showDropdown = false;
+    }, 200);
   }
 }

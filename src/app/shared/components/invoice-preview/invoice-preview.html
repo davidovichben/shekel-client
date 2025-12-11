@@ -47,8 +47,8 @@
           <tr>
             <td>{{ item.description }}</td>
             <td>{{ item.quantity }}</td>
-            <td>₪{{ item.unitPrice | number:'1.0-0' }}</td>
-            <td>₪{{ item.total | number:'1.0-2' }}</td>
+            <td>{{ item.unitPrice | number:'1.0-0' }} ש"ח</td>
+            <td>{{ item.total | number:'1.0-2' }} ש"ח</td>
           </tr>
         }
       </tbody>
@@ -58,7 +58,7 @@
   <div class="totals-section">
     <div class="total-row">
       <span class="label">סה"כ:</span>
-      <span class="value">₪{{ data.subtotal | number:'1.0-2' }}</span>
+      <span class="value">{{ data.subtotal | number:'1.0-2' }} ש"ח</span>
     </div>
     <div class="total-row">
       <span class="label">עיגול:</span>
@@ -70,11 +70,11 @@
     </div>
     <div class="total-row">
       <span class="label">מע"מ {{ data.vatPercent }}%:</span>
-      <span class="value">₪{{ data.vat | number:'1.0-2' }}</span>
+      <span class="value">{{ data.vat | number:'1.0-2' }} ש"ח</span>
     </div>
     <div class="total-row final">
       <span class="label">סה"כ לתשלום:</span>
-      <span class="value">₪{{ data.total | number:'1.0-2' }}</span>
+      <span class="value">{{ data.total | number:'1.0-2' }} ש"ח</span>
     </div>
   </div>
 
@@ -93,14 +93,14 @@
           <tr>
             <td>{{ data.installments[0].paymentMethod }}</td>
             <td>{{ data.installments.length }} תשלומים</td>
-            <td>₪{{ data.total | number:'1.0-2' }}</td>
+            <td>{{ data.total | number:'1.0-2' }} ש"ח</td>
           </tr>
         } @else {
           @for (payment of data.installments; track $index) {
             <tr>
               <td>{{ payment.paymentMethod }}</td>
               <td>{{ payment.dueDate }}</td>
-              <td>₪{{ payment.amount | number:'1.0-2' }}</td>
+              <td>{{ payment.amount | number:'1.0-2' }} ש"ח</td>
             </tr>
           }
         }

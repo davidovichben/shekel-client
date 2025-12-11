@@ -356,7 +356,7 @@ export class ExpensesComponent implements OnInit {
     const selectedIds = Array.from(this.selectedExpenses);
     const selectedExpenseNames = this.expenses
       .filter(e => selectedIds.includes(e.id))
-      .map(e => `${e.description || 'ללא תיאור'} - ${e.amount}₪`);
+      .map(e => `${e.description || 'ללא תיאור'} - ${e.amount} ש"ח`);
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '500px',
@@ -418,7 +418,7 @@ export class ExpensesComponent implements OnInit {
       <tr>
         <td>${e.description || 'ללא תיאור'}</td>
         <td>${this.getExpenseTypeLabel(e.type)}</td>
-        <td>${e.amount}₪</td>
+        <td>${e.amount} ש"ח</td>
         <td>${this.formatGregorianDate(e.date)}</td>
         <td>${this.getStatusLabel(e.status)}</td>
       </tr>

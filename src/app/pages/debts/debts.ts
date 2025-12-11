@@ -125,24 +125,24 @@ export class DebtsComponent implements OnInit {
     // Load counts for all tabs
     // All debts count
     this.debtService.getAll({ page: 1, limit: 1 }).subscribe({
-      next: (response) => {
-        const allCount = response.counts?.totalRows || 0;
+      next: (response: any) => {
+        const allCount = response.counts?.totalRows || response.counts?.total_rows || response.total || response.count || 0;
         this.tabs.find(t => t.id === 'all')!.count = allCount;
       }
     });
 
     // Active debts count (pending status)
     this.debtService.getAll({ status: 'pending', page: 1, limit: 1 }).subscribe({
-      next: (response) => {
-        const activeCount = response.counts?.totalRows || 0;
+      next: (response: any) => {
+        const activeCount = response.counts?.totalRows || response.counts?.total_rows || response.total || response.count || 0;
         this.tabs.find(t => t.id === 'active')!.count = activeCount;
       }
     });
 
     // Paid debts count
     this.debtService.getAll({ status: 'paid', page: 1, limit: 1 }).subscribe({
-      next: (response) => {
-        const paidCount = response.counts?.totalRows || 0;
+      next: (response: any) => {
+        const paidCount = response.counts?.totalRows || response.counts?.total_rows || response.total || response.count || 0;
         this.tabs.find(t => t.id === 'paid')!.count = paidCount;
       }
     });
@@ -513,7 +513,7 @@ export class DebtsComponent implements OnInit {
       <tr>
         <td>${d.fullName}</td>
         <td>${d.description}</td>
-        <td>${d.amount}₪</td>
+        <td>${d.amount} ש"ח</td>
         <td>${d.gregorianDate}</td>
         <td>${this.getStatusLabel(d.status)}</td>
       </tr>
@@ -574,7 +574,7 @@ export class DebtsComponent implements OnInit {
     
     // Format debts as text for clipboard
     const text = selectedDebts.map(d => 
-      `${d.fullName} - ${d.description} - ${d.amount}₪ - ${d.gregorianDate}`
+      `${d.fullName} - ${d.description} - ${d.amount} ש"ח - ${d.gregorianDate}`
     ).join('\n');
     
     navigator.clipboard.writeText(text).then(() => {

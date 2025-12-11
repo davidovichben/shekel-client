@@ -371,7 +371,7 @@ export class CommunityComponent implements OnInit {
         <td>${m.id}</td>
         <td>${m.fullName}</td>
         <td>${this.getMemberTypeName(m.type)}</td>
-        <td>₪${m.balance}</td>
+        <td>${m.balance} ש"ח</td>
         <td style="direction: ltr; text-align: left;">${m.mobile || ''}</td>
         <td>${m.lastMessageDate || '--'}</td>
         <td>${m.groups && m.groups.length > 0 ? m.groups.join(', ') : 'לא משויך לקבוצות'}</td>

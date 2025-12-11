@@ -169,13 +169,13 @@ export class IncomesComponent implements OnInit {
         this.incomes = response.rows;
         this.totalIncomes = response.counts?.totalRows || response.rows.length;
         this.totalPages = response.counts?.totalPages || Math.ceil(this.totalIncomes / this.itemsPerPage);
-        
+
         // Calculate total from rows - API returns "total" field in each row
         this.totalSum = this.incomes.reduce((sum, income) => {
           const amount = parseFloat(String(income.amount || 0));
           return sum + (isNaN(amount) ? 0 : amount);
         }, 0);
-        
+
         this.isLoading = false;
       },
       error: (error) => {
@@ -189,7 +189,7 @@ export class IncomesComponent implements OnInit {
     this.isLoadingStats = true;
     const today = new Date();
     const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-    
+
     this.incomeService.getStats(currentMonth, 3).subscribe({
       next: (response) => {
         this.stats = response;
@@ -436,7 +436,7 @@ export class IncomesComponent implements OnInit {
       <tr>
         <td>${i.description || 'ללא תיאור'}</td>
         <td>${this.getCategoryLabel(i.category)}</td>
-        <td>${i.amount}₪</td>
+        <td>${i.amount} ש"ח</td>
         <td>${this.formatGregorianDate(i.date)}</td>
         <td>${this.getStatusLabel(i.status)}</td>
       </tr>
@@ -487,7 +487,7 @@ export class IncomesComponent implements OnInit {
   private bulkCopy(ids: string[]): void {
     const selectedIncomes = this.incomes.filter(i => ids.includes(i.id));
     const text = selectedIncomes.map(i =>
-      `${i.description || 'ללא תיאור'} - ${this.getCategoryLabel(i.category)} - ${i.amount}₪ - ${this.formatGregorianDate(i.date)}`
+      `${i.description || 'ללא תיאור'} - ${this.getCategoryLabel(i.category)} - ${i.amount} ש"ח - ${this.formatGregorianDate(i.date)}`
     ).join('\n');
 
     navigator.clipboard.writeText(text).then(() => {
@@ -529,20 +529,20 @@ export class IncomesComponent implements OnInit {
         const exportParams: any = {
           file_type: result.fileType
         };
-        
+
         if (this.activeTab === 'collected') {
           exportParams.status = 'paid';
         } else if (this.activeTab === 'pending') {
           exportParams.status = 'pending';
         }
-        
+
         // Add date range if applicable
         if (this.displayRange !== 'all') {
           const dateRange = this.getDateRange(this.displayRange);
           if (dateRange.from) exportParams.date_from = dateRange.from;
           if (dateRange.to) exportParams.date_to = dateRange.to;
         }
-        
+
         this.incomeService.export(exportParams).subscribe({
           next: (blob) => this.downloadFile(blob, result.fileType),
           error: (error) => console.error('Error exporting all incomes:', error)

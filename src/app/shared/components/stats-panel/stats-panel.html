@@ -28,7 +28,7 @@
         <div class="total-amount-value">
           <span class="total-label">בסך הכל:</span>
           <span class="amount-value">{{ stats.monthlyTotal.amount }}</span>
-          <span class="amount-currency">₪</span>
+          <span class="amount-currency">ש"ח</span>
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@
       @for (category of sortedCategories; track category.type; let i = $index) {
         <div class="category-item">
           <span class="category-percentage">{{ category.percentage }}%</span>
-          <span class="category-amount">{{ category.amount }}₪</span>
+          <span class="category-amount">{{ category.amount }} ש"ח</span>
           <div class="category-label-wrapper">
             <span class="category-dot" [style.background-color]="getCategoryColor(category.type, category.rank, sortedCategories.length)"></span>
             <span class="category-label">{{ category.label }}</span>
@@ -56,7 +56,7 @@
           <div class="trend-bar" [style.height]="getTrendBarHeight(monthData.amount)" [class.active]="isFirst">
           </div>
           <div class="bar-info">
-            <span class="bar-amount">{{ monthData.amount }}₪</span>
+            <span class="bar-amount">{{ monthData.amount }} ש"ח</span>
             <span class="bar-month">{{ formatMonth(monthData.month) }}</span>
           </div>
         </div>
@@ -70,7 +70,7 @@
     <div class="unpaid-chart-container" *ngIf="(type === 'expenses' && stats.unpaidExpenses) || (type === 'incomes' && stats.uncollectedIncome)">
       <div class="unpaid-amount">
         <span class="amount-value">{{ getUnpaidTotal() }}</span>
-        <span class="amount-currency">₪</span>
+        <span class="amount-currency">ש"ח</span>
       </div>
       <div class="unpaid-circle-wrapper">
         <svg class="unpaid-circle-ring" width="100" height="100">

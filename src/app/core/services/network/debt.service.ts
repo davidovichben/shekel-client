@@ -31,25 +31,18 @@ export class DebtService {
   }
 
   private mapDebtFromApi(debt: any): Debt {
-    // Map API field names to our interface
-    // API uses: due_date, member_id, member_name, last_reminder_sent_at
-    const gregorianDate = debt.due_date || debt.gregorianDate || '';
-    const lastReminderSentAt = debt.last_reminder_sent_at || debt.lastReminderSentAt || null;
-    
     return {
       ...debt,
-      id: String(debt.id || debt._id),
-      fullName: debt.member_name || debt.memberName || debt.fullName || '',
-      // Store ISO date string directly - will format for display in component
-      gregorianDate: gregorianDate || '',
+      id: debt.id || debt._id,
+      fullName: debt.fullName || debt.memberName || debt.full_name || debt.member_name || debt.name || '',
+      gregorianDate: this.formatDate(debt.gregorianDate || debt.gregorian_date || debt.date),
       debtType: debt.debtType || debt.type || debt.debt_type || '',
-      lastReminder: debt.lastReminder || null,
-      // Store ISO date string directly - will format for display in component
-      lastReminderSentAt: lastReminderSentAt || null,
+      lastReminder: debt.lastReminder ? this.formatDate(debt.lastReminder) : null,
+      lastReminderSentAt: debt.lastReminderSentAt ? this.formatDate(debt.lastReminderSentAt) : null,
       status: debt.status || 'pending',
       amount: debt.amount ? parseFloat(String(debt.amount)) : 0,
       description: debt.description || '',
-      memberId: String(debt.member_id || debt.memberId || ''),
+      memberId: debt.memberId || debt.member_id || '',
       autoPaymentApproved: debt.autoPaymentApproved || false,
       shouldBill: debt.shouldBill !== undefined ? debt.shouldBill : (debt.should_bill !== undefined ? debt.should_bill : debt.autoPaymentApproved),
       hebrewDate: debt.hebrewDate || debt.hebrew_date || '',
@@ -58,9 +51,9 @@ export class DebtService {
     };
   }
 
-  getAll(params?: { 
-    status?: string; 
-    page?: number; 
+  getAll(params?: {
+    status?: string;
+    page?: number;
     limit?: number;
     date_from?: string;
     date_to?: string;
@@ -68,10 +61,14 @@ export class DebtService {
     sort_order?: 'asc' | 'desc';
     should_bill?: boolean;
   }): Observable<PaginationResponse<Debt>> {
-    return this.http.get<PaginationResponse<Debt>>(this.apiUrl, { params: params as any }).pipe(
+    return this.http.get<any>(this.apiUrl, { params: params as any }).pipe(
       map(response => ({
         ...response,
-        rows: response.rows.map((debt: any) => this.mapDebtFromApi(debt))
+        rows: (response.rows || []).map((debt: any) => this.mapDebtFromApi(debt)),
+        counts: {
+          totalRows: response.counts?.totalRows || response.counts?.total_rows || response.total || response.count || 0,
+          totalPages: response.counts?.totalPages || response.counts?.total_pages || response.totalPages || 1
+        }
       }))
     );
   }

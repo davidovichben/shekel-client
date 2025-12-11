@@ -82,7 +82,7 @@
             </td>
             <td>{{ expense.description || 'ללא תיאור' }}</td>
             <td>{{ getExpenseTypeLabel(expense.type) }}</td>
-            <td>{{ expense.amount }}₪</td>
+            <td>{{ expense.amount }} ש"ח</td>
             <td>
               <div class="hebrew-date-cell">
                 <div class="hebrew-date-top">{{ getHebrewDateTop(expense) }}</div>
@@ -122,7 +122,7 @@
 
       <!-- Footer -->
       <div class="table-footer">
-        <span class="footer-message">נמצאו {{ totalExpenses }} רשומות, סה"כ סכום ההוצאות בהן הוא: <span class="bold">{{ getTotalAmount() }}₪</span></span>
+        <span class="footer-message">נמצאו {{ totalExpenses }} רשומות, סה"כ סכום ההוצאות בהן הוא: <span class="bold">{{ getTotalAmount() }} ש"ח</span></span>
         <!-- Pagination -->
         <div class="pagination">
           <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">

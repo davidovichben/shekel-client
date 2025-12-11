@@ -77,7 +77,7 @@
             <td>{{ income.description || 'ללא תיאור' }}</td>
             <td>{{ getPaymentTypeLabel(income.paymentType) }}</td>
             <td>{{ getCategoryLabel(income.category) }}</td>
-            <td>{{ income.amount }}₪</td>
+            <td>{{ income.amount }} ש"ח</td>
             <td>
               <div class="hebrew-date-cell">
                 <div class="hebrew-date-top">{{ getHebrewDateTop(income) }}</div>
@@ -112,7 +112,7 @@
 
       <!-- Footer -->
       <div class="table-footer">
-        <span class="footer-message">נמצאו {{ totalIncomes }} רשומות, סה"כ סכום ההכנסות בהן הוא: <span class="bold">{{ getTotalAmount() }}₪</span></span>
+        <span class="footer-message">נמצאו {{ totalIncomes }} רשומות, סה"כ סכום ההכנסות בהן הוא: <span class="bold">{{ getTotalAmount() }} ש"ח</span></span>
         <!-- Pagination -->
         <div class="pagination">
           <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">
