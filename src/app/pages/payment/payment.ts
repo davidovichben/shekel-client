@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { Step1PayerComponent, PayerDetails } from './steps/step1-payer/step1-payer';
-import { Step2PaymentComponent, PaymentDetails } from './steps/step2-payment/step2-payment';
+import { Step2PaymentComponent, PaymentDetails, Step2ValidationState } from './steps/step2-payment/step2-payment';
+import { Step3InvoiceComponent } from './steps/step3-invoice/step3-invoice';
 
 export interface PaymentDialogData {
   memberId?: string;
@@ -22,7 +23,7 @@ interface TransactionSummary {
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, Step1PayerComponent, Step2PaymentComponent],
+  imports: [CommonModule, FormsModule, MatDialogModule, Step1PayerComponent, Step2PaymentComponent, Step3InvoiceComponent],
   templateUrl: './payment.html',
   styleUrl: './payment.sass'
 })
@@ -53,6 +54,11 @@ export class PaymentComponent {
     paymentMethod: 'credit'
   };
 
+  step2ValidationState: Step2ValidationState = {
+    isValid: false,
+    newCardSaved: false
+  };
+
   transaction: TransactionSummary = {
     description: '',
     amount: 0,
@@ -80,6 +86,10 @@ export class PaymentComponent {
   onPaymentDetailsChange(details: PaymentDetails): void {
     this.paymentDetails = details;
     this.updateTransactionSummary();
+  }
+
+  onStep2ValidationStateChange(state: Step2ValidationState): void {
+    this.step2ValidationState = state;
   }
 
   private updateTransactionSummary(): void {
@@ -146,7 +156,8 @@ export class PaymentComponent {
         return !!(
           this.paymentDetails.amount > 0 &&
           this.paymentDetails.installments > 0 &&
-          this.paymentDetails.installments <= 32
+          this.paymentDetails.installments <= 32 &&
+          this.step2ValidationState.isValid
         );
       case 3:
         return true;

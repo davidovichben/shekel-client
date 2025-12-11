@@ -22,11 +22,11 @@
     <label class="section-label">אמצעי תשלום:</label>
     <div class="payment-method-options">
       <label class="radio-option">
-        <input type="radio" name="paymentMethod" value="credit" [(ngModel)]="paymentDetails.paymentMethod">
+        <input type="radio" name="paymentMethod" value="credit" [(ngModel)]="paymentDetails.paymentMethod" (ngModelChange)="onPaymentMethodChange()">
         <span>כרטיס אשראי</span>
       </label>
       <label class="radio-option">
-        <input type="radio" name="paymentMethod" value="standingOrder" [(ngModel)]="paymentDetails.paymentMethod">
+        <input type="radio" name="paymentMethod" value="standingOrder" [(ngModel)]="paymentDetails.paymentMethod" (ngModelChange)="onPaymentMethodChange()">
         <span>חיוב מס"ב</span>
       </label>
     </div>
@@ -36,7 +36,7 @@
     <div class="credit-card-section">
       <div class="use-saved-card-toggle">
         <label class="toggle">
-          <input type="checkbox" [(ngModel)]="useNewCard">
+          <input type="checkbox" [(ngModel)]="useNewCard" (ngModelChange)="onUseNewCardChange()">
           <span class="slider"></span>
         </label>
         <span>השתמש בכרטיס אשראי חדש</span>
@@ -74,6 +74,23 @@
             </div>
             <p class="save-card-note">למען שמירה על אבטחת סליקה הפרטים השמורים הם 4 הספרות האחרונות וסוג הכרטיס בלבד, לאחר התשלום תוכל לראות את הכרטיס ברשימת כרטיסי הלקוח.</p>
           </div>
+
+          <button
+            type="button"
+            class="btn-save-card"
+            [class.saved]="newCardSaved"
+            [disabled]="!isNewCardFormValid() || savingCard || newCardSaved"
+            (click)="saveNewCard()">
+            @if (savingCard) {
+              <span class="btn-spinner"></span>
+              שומר...
+            } @else if (newCardSaved) {
+              <i class="fa-solid fa-check"></i>
+              כרטיס נשמר בהצלחה
+            } @else {
+              שמור כרטיס
+            }
+          </button>
         </div>
       } @else if (savedCards.length > 0) {
         <div class="saved-cards">

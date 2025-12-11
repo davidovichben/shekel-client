@@ -267,7 +267,7 @@ input[type="radio"]
     border-collapse: collapse
 
   th, td
-    padding: 0.75rem
+    padding: 0.5rem
     text-align: center
     font-size: 0.85rem
     border-bottom: 1px solid $table-border-color
@@ -289,9 +289,6 @@ input[type="radio"]
   .col-checkbox
     width: 40px
     text-align: center
-
-  .col-actions
-    width: 120px
 
   .col-fullname
     min-width: 180px
@@ -738,7 +735,25 @@ app-custom-select
     overflow: hidden
     background: transparent !important
     box-shadow: none !important
-    animation: dialogScaleIn 0.25s ease-out
+    animation: paymentDialogEaseIn 0.35s cubic-bezier(0.4, 0, 0.2, 1)
+
+@keyframes paymentDialogEaseIn
+  0%
+    opacity: 0
+    transform: translateY(20px) scale(0.98)
+  100%
+    opacity: 1
+    transform: translateY(0) scale(1)
+
+.payment-dialog-backdrop
+  background: rgba(0, 0, 0, 0.4)
+  animation: backdropFadeIn 0.3s ease-out
+
+@keyframes backdropFadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
 
 // Autocomplete Input
 .autocomplete-input
@@ -824,3 +839,109 @@ app-custom-select
 
     &:hover
       background: $gray-100
+
+// Loading State
+.loading-state
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  gap: 16px
+  padding: 48px
+  color: $gray-500
+
+  .spinner
+    width: 40px
+    height: 40px
+    border: 3px solid #f3f3f3
+    border-top: 3px solid $primary-bg
+    border-radius: 50%
+    animation: spin 1s linear infinite
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+
+// Dialog Footer
+.dialog-footer
+  display: flex
+  gap: 12px
+  padding: 16px 24px
+  border-top: 1px solid $border-color
+  justify-content: flex-end
+
+// Button Styles
+.btn-save
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  padding: 12px 20px
+  min-width: 120px
+  background: $primary-bg
+  color: white
+  border: none
+  border-radius: 4px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  transition: background 0.2s
+
+  &:hover:not(:disabled)
+    background: $primary-bg-hover
+
+  &:disabled
+    opacity: 0.7
+    cursor: not-allowed
+
+  .btn-icon
+    display: flex
+    align-items: center
+
+  .btn-spinner
+    width: 16px
+    height: 16px
+    border: 2px solid rgba(255, 255, 255, 0.3)
+    border-top: 2px solid white
+    border-radius: 50%
+    animation: spin 1s linear infinite
+
+.btn-cancel
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  padding: 12px 20px
+  min-width: 120px
+  background: $btn-cancel
+  color: white
+  border: none
+  border-radius: 4px
+  font-size: 14px
+  font-weight: 500
+  cursor: pointer
+  transition: background 0.2s
+
+  &:hover:not(:disabled)
+    background: $btn-cancel-hover
+
+  &:disabled
+    opacity: 0.7
+    cursor: not-allowed
+
+// Error Message
+.error-message
+  color: $error
+  font-size: 12px
+  margin-top: 4px
+
+// Input Invalid State
+input.invalid
+  border-color: $error
+
+// LTR Input
+.ltr-input
+  direction: ltr
+  text-align: left

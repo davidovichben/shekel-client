@@ -18,6 +18,11 @@ export interface NewCardData {
   saveCard: boolean;
 }
 
+export interface Step2ValidationState {
+  isValid: boolean;
+  newCardSaved: boolean;
+}
+
 @Component({
   selector: 'app-step2-payment',
   standalone: true,
@@ -33,9 +38,12 @@ export class Step2PaymentComponent {
     paymentMethod: 'credit'
   };
   @Output() paymentDetailsChange = new EventEmitter<PaymentDetails>();
+  @Output() validationStateChange = new EventEmitter<Step2ValidationState>();
 
   useNewCard = false;
   selectedCardId = '';
+  newCardSaved = false;
+  savingCard = false;
 
   newCard: NewCardData = {
     cardNumber: '',
@@ -54,6 +62,62 @@ export class Step2PaymentComponent {
     this.selectedCardId = card.id;
     this.paymentDetails.selectedCardId = card.id;
     this.paymentDetailsChange.emit(this.paymentDetails);
+    this.emitValidationState();
+  }
+
+  private emitValidationState(): void {
+    this.validationStateChange.emit({
+      isValid: this.isStepValid(),
+      newCardSaved: this.newCardSaved
+    });
+  }
+
+  isStepValid(): boolean {
+    if (this.paymentDetails.paymentMethod === 'standingOrder') {
+      return true;
+    }
+    if (this.paymentDetails.paymentMethod === 'credit') {
+      if (this.useNewCard) {
+        return this.newCardSaved;
+      } else {
+        return !!this.selectedCardId;
+      }
+    }
+    return false;
+  }
+
+  isNewCardFormValid(): boolean {
+    return !!(
+      this.newCard.cardNumber?.replace(/\s/g, '').length >= 13 &&
+      this.newCard.expiry?.length === 5 &&
+      this.newCard.cvv?.length >= 3
+    );
+  }
+
+  async saveNewCard(): Promise<void> {
+    if (!this.isNewCardFormValid() || this.savingCard) return;
+
+    this.savingCard = true;
+    try {
+      // TODO: Replace with actual API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      this.newCardSaved = true;
+      this.emitValidationState();
+    } catch (error) {
+      this.newCardSaved = false;
+      this.emitValidationState();
+    } finally {
+      this.savingCard = false;
+    }
+  }
+
+  onUseNewCardChange(): void {
+    this.newCardSaved = false;
+    this.emitValidationState();
+  }
+
+  onPaymentMethodChange(): void {
+    this.emitValidationState();
   }
 
   onAmountChange(): void {

@@ -90,8 +90,16 @@
           @case (2) {
             <app-step2-payment
               [paymentDetails]="paymentDetails"
-              (paymentDetailsChange)="onPaymentDetailsChange($event)">
+              (paymentDetailsChange)="onPaymentDetailsChange($event)"
+              (validationStateChange)="onStep2ValidationStateChange($event)">
             </app-step2-payment>
+          }
+          @case (3) {
+            <app-step3-invoice
+              [payerDetails]="payerDetails"
+              [paymentDetails]="paymentDetails"
+              [transaction]="transaction">
+            </app-step3-invoice>
           }
         }
       </div>

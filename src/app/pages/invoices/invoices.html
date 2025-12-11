@@ -89,9 +89,9 @@
         <td>{{ invoice.gregorianDate }}</td>
         <td>{{ invoice.paymentMethod }}</td>
         <td class="col-actions">
+          <button type="button" class="row-action" (click)="duplicateInvoice(invoice)"><img src="assets/img/icons/copy.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action" (click)="openEditDialog(invoice)"><img src="assets/img/icons/edit.svg" alt="" class="action-icon"></button>
           <button type="button" class="row-action" (click)="shareInvoice(invoice)"><img src="assets/img/icons/share.svg" alt="" class="action-icon"></button>
-          <button type="button" class="row-action" (click)="openEditDialog(invoice)"><img src="assets/img/icons/pencil.svg" alt="" class="action-icon"></button>
-          <button type="button" class="row-action" (click)="duplicateInvoice(invoice)"><i class="fa-regular fa-copy"></i></button>
         </td>
       </tr>
     }

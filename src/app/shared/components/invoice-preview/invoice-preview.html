@@ -1,0 +1,102 @@
+<div class="invoice-card">
+  <div class="invoice-header">
+    <h2 class="org-name">{{ data.organizationName }}</h2>
+    <div class="org-logo">
+      @if (logoUrl) {
+        <img [src]="logoUrl" alt="Logo">
+      } @else {
+        LOGO
+      }
+    </div>
+  </div>
+
+  <div class="org-details">
+    <span>עוסק מורשה: {{ data.organizationId }}</span>
+    <span>דוא"ל: {{ data.email }}</span>
+    <span>טלפון: {{ data.phone }}</span>
+    <span>כתובת: {{ data.address }}</span>
+  </div>
+
+  <div class="invoice-info">
+    <div class="invoice-date">{{ data.date }}</div>
+    <div class="customer-details">
+      <div class="customer-name">לכבוד: {{ data.customerName }}</div>
+      <div class="customer-address">{{ data.customerAddress }}</div>
+      <div class="customer-tax-id">ח.פ / ת.ז: {{ data.customerTaxId }}</div>
+    </div>
+    @if (data.debtRef) {
+      <div class="invoice-ref">חשבונית מס' עבור חוב מס': {{ data.debtRef }}</div>
+    }
+  </div>
+
+  <h3 class="invoice-title">חשבונית מס / קבלה {{ data.invoiceNumber }}</h3>
+
+  <div class="items-section">
+    <div class="section-title">פרטים:</div>
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>מוצר / שירות</th>
+          <th>כמות</th>
+          <th>מחיר יחידה</th>
+          <th>סה"כ</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of data.lineItems; track $index) {
+          <tr>
+            <td>{{ item.description }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₪{{ item.unitPrice | number:'1.0-0' }}</td>
+            <td>{{ data.date }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="totals-section">
+    <div class="total-row">
+      <span class="label">סה"כ:</span>
+      <span class="value">₪{{ data.subtotal | number:'1.0-2' }}</span>
+    </div>
+    <div class="total-row">
+      <span class="label">עיגול:</span>
+      <span class="value">--</span>
+    </div>
+    <div class="total-row">
+      <span class="label">הנחה:</span>
+      <span class="value">--</span>
+    </div>
+    <div class="total-row">
+      <span class="label">מע"מ {{ data.vatPercent }}%:</span>
+      <span class="value">₪{{ data.vat | number:'1.0-2' }}</span>
+    </div>
+    <div class="total-row final">
+      <span class="label">סה"כ לתשלום:</span>
+      <span class="value">₪{{ data.total | number:'1.0-2' }}</span>
+    </div>
+  </div>
+
+  <div class="payments-section">
+    <div class="section-title">תשלומים:</div>
+    <table class="payments-table">
+      <thead>
+        <tr>
+          <th>אמצעי תשלום</th>
+          <th>תאריך פרעון</th>
+          <th>סכום</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (payment of data.installments; track $index) {
+          <tr>
+            <td>{{ payment.paymentMethod }}</td>
+            <td>{{ payment.dueDate }}</td>
+            <td>₪{{ payment.amount | number:'1.0-2' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

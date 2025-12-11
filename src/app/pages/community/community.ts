@@ -514,6 +514,7 @@ export class CommunityComponent implements OnInit {
     this.dialog.open(PaymentComponent, {
       width: '80%',
       panelClass: 'payment-dialog-panel',
+      backdropClass: 'payment-dialog-backdrop',
       autoFocus: false,
       data: {
         memberId: member.id,

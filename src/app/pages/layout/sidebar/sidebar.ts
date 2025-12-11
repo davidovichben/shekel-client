@@ -17,7 +17,8 @@ export class SidebarComponent {
   openPaymentDialog(): void {
     this.dialog.open(PaymentComponent, {
       width: '80%',
-      panelClass: 'payment-dialog-panel'
+      panelClass: 'payment-dialog-panel',
+      backdropClass: 'payment-dialog-backdrop'
     });
   }
 }
