@@ -1,17 +1,23 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { InvoicePreviewComponent, InvoiceData } from '../../../../shared/components/invoice-preview/invoice-preview';
+import { CustomSelectComponent } from '../../../../shared/components/custom-select/custom-select';
 import { PayerDetails } from '../step1-payer/step1-payer';
 import { PaymentDetails } from '../step2-payment/step2-payment';
+import { IncomeCategory } from '../../../../core/entities/income.entity';
+import { PdfGenerationService } from '../../../../core/services/pdf-generation.service';
 
 @Component({
   selector: 'app-step3-invoice',
   standalone: true,
-  imports: [CommonModule, InvoicePreviewComponent],
+  imports: [CommonModule, FormsModule, InvoicePreviewComponent, CustomSelectComponent],
   templateUrl: './step3-invoice.html',
   styleUrl: './step3-invoice.sass'
 })
 export class Step3InvoiceComponent {
+  private pdfGenerationService = inject(PdfGenerationService);
+  
   @Input() payerDetails!: PayerDetails;
   @Input() paymentDetails!: PaymentDetails;
   @Input() transaction!: {
@@ -22,6 +28,40 @@ export class Step3InvoiceComponent {
     vatPercent: number;
     total: number;
   };
+  @Output() receiptTypeChange = new EventEmitter<string>();
+  @ViewChild(InvoicePreviewComponent) invoicePreview?: InvoicePreviewComponent;
+
+  receiptType = IncomeCategory.Other;
+  receiptTypeOptions = [
+    { value: IncomeCategory.Vows, label: 'נדרים' },
+    { value: IncomeCategory.CommunityDonations, label: 'תרומות מהקהילה' },
+    { value: IncomeCategory.ExternalDonations, label: 'תרומות חיצוניות' },
+    { value: IncomeCategory.Ascensions, label: 'עליות' },
+    { value: IncomeCategory.OnlineDonations, label: 'תרומות אונליין' },
+    { value: IncomeCategory.MembershipFees, label: 'דמי חברים' },
+    { value: IncomeCategory.Other, label: 'אחר' }
+  ];
+
+  onReceiptTypeChange(): void {
+    this.receiptTypeChange.emit(this.receiptType);
+  }
+
+  /**
+   * Generate PDF receipt from invoice preview
+   */
+  async generateReceiptPdf(): Promise<Blob> {
+    if (!this.invoicePreview) {
+      throw new Error('Invoice preview component not found');
+    }
+
+    const element = this.invoicePreview.getElementRef();
+    if (!element) {
+      throw new Error('Invoice element not found');
+    }
+
+    const filename = `receipt_${this.invoiceData.invoiceNumber}.pdf`;
+    return await this.pdfGenerationService.generatePdfFromElement(element, filename);
+  }
 
   get invoiceData(): InvoiceData {
     const installmentAmount = this.transaction.installments > 0

@@ -12,11 +12,12 @@ import { ExpenseService } from '../../core/services/network/expense.service';
 import { Expense, ExpenseStatus, ExpenseType, ExpenseStats } from '../../core/entities/expense.entity';
 import { ChipComponent, ChipVariant } from '../../shared/components/chip/chip';
 import { convertToHebrewDate } from '../../core/utils/hebrew-date.util';
+import { StatsPanelComponent, StatsData } from '../../shared/components/stats-panel/stats-panel';
 
 @Component({
   selector: 'app-expenses',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent, AdditionalFiltersComponent, ChipComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, DataTableComponent, AdditionalFiltersComponent, ChipComponent, StatsPanelComponent],
   templateUrl: './expenses.html',
   styleUrl: './expenses.sass'
 })
@@ -32,7 +33,7 @@ export class ExpensesComponent implements OnInit {
   totalSum = 0;
   isLoading = false;
   selectedExpenses: Set<string> = new Set();
-  stats: ExpenseStats | null = null;
+  stats: StatsData | null = null;
   isLoadingStats = false;
 
   activeTab = 'all';
@@ -153,7 +154,17 @@ export class ExpensesComponent implements OnInit {
         this.expenses = response.rows;
         this.totalExpenses = response.counts?.totalRows || response.rows.length;
         this.totalPages = response.counts?.totalPages || Math.ceil(this.totalExpenses / this.itemsPerPage);
-        this.totalSum = response.totalSum ? parseFloat(String(response.totalSum)) : 0;
+        
+        // Use totalSum from API if available, otherwise calculate from rows
+        if (response.totalSum && parseFloat(String(response.totalSum)) > 0) {
+          this.totalSum = parseFloat(String(response.totalSum));
+        } else {
+          // Calculate total from visible rows as fallback
+          this.totalSum = this.expenses.reduce((sum, expense) => {
+            return sum + parseFloat(String(expense.amount || 0));
+          }, 0);
+        }
+        
         this.isLoading = false;
       },
       error: (error) => {
@@ -628,115 +639,4 @@ export class ExpensesComponent implements OnInit {
     });
   }
 
-  getCategoryDistributionGradient(): string {
-    if (!this.stats?.categoryDistribution || this.stats.categoryDistribution.length === 0) {
-      return 'conic-gradient(#e0e0e0 0% 100%)';
-    }
-
-    const colors = ['#bfc7da', '#acb8d2', '#2f3265', '#bfc7da', '#acb8d2', '#2f3265', '#bfc7da'];
-    let currentPercent = 0;
-    const segments: string[] = [];
-
-    this.stats.categoryDistribution.forEach((category, index) => {
-      const color = colors[index % colors.length];
-      const nextPercent = currentPercent + category.percentage;
-      segments.push(`${color} ${currentPercent}% ${nextPercent}%`);
-      currentPercent = nextPercent;
-    });
-
-    // Fill remaining with gray
-    if (currentPercent < 100) {
-      segments.push(`#e0e0e0 ${currentPercent}% 100%`);
-    }
-
-    return `conic-gradient(${segments.join(', ')})`;
-  }
-
-  getCategoryColor(type: string, index: number): string {
-    // Use the chart colors from variables: dark blue, medium gray, light gray, medium gray
-    const colors = ['#2f3265', '#acb8d2', '#bfc7da', '#acb8d2'];
-    return colors[index % colors.length];
-  }
-
-  getCategoryDashArray(category: any, index: number): string {
-    const circumference = 2 * Math.PI * 32; // radius is 32
-    const dashLength = (circumference * category.percentage) / 100;
-    // Gap is the rest of the circle so only this segment is visible
-    const gap = circumference - dashLength;
-    return `${dashLength} ${gap}`;
-  }
-
-  getCategoryDashOffset(category: any, index: number): number {
-    if (index === 0) return 0;
-    
-    // Calculate offset based on previous categories to connect segments tightly
-    const circumference = 2 * Math.PI * 32;
-    let offset = 0;
-    for (let i = 0; i < index; i++) {
-      const prevCategory = this.stats?.categoryDistribution[i];
-      if (prevCategory) {
-        offset += (circumference * prevCategory.percentage) / 100;
-      }
-    }
-    return -offset;
-  }
-
-  getTrendBarHeight(amount: string): string {
-    if (!this.stats?.trend || this.stats.trend.length === 0) return '30px';
-    
-    const amounts = this.stats.trend.map(t => parseFloat(t.amount));
-    const maxAmount = Math.max(...amounts);
-    const currentAmount = parseFloat(amount);
-    
-    if (maxAmount === 0) return '30px';
-    
-    const percentage = (currentAmount / maxAmount) * 100;
-    const minHeight = 30;
-    const maxHeight = 150;
-    const height = minHeight + (percentage / 100) * (maxHeight - minHeight);
-    
-    return `${height}px`;
-  }
-
-  formatMonth(month: string): string {
-    // Convert YYYY-MM to MM/YY format
-    const parts = month.split('-');
-    if (parts.length === 2) {
-      return `${parts[1]}/${parts[0].slice(-2)}`;
-    }
-    return month;
-  }
-
-  getUnpaidPercentage(): number {
-    return this.stats?.unpaidExpenses?.percentage || 0;
-  }
-
-  getPaidPercentage(): number {
-    return 100 - (this.stats?.unpaidExpenses?.percentage || 0);
-  }
-
-  getReversedTrend(): any[] {
-    if (!this.stats?.trend) return [];
-    return [...this.stats.trend].reverse();
-  }
-
-  getRingDashArray(): string {
-    const circumference = 2 * Math.PI * 42; // radius is 42
-    const unpaidPercent = this.getUnpaidPercentage();
-    const dashLength = (circumference * unpaidPercent) / 100;
-    return `${dashLength} ${circumference}`;
-  }
-
-  getRingDashOffset(): number {
-    return 0;
-  }
-
-  getCurrentMonthHebrew(): string {
-    const months = [
-      'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
-      'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'
-    ];
-    const today = new Date();
-    return months[today.getMonth()];
-  }
 }

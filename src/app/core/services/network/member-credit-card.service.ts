@@ -48,4 +48,22 @@ export class MemberCreditCardService {
   setDefault(memberId: string, cardId: string): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${memberId}/credit-cards/${cardId}/set-default`, {});
   }
+
+  create(memberId: string, cardData: {
+    last_digits: string;
+    company: string;
+    expiration: string; // Format: MM/YY
+    full_name: string;
+  }): Observable<MemberCreditCard> {
+    return this.http.post<ApiCreditCard>(`${this.apiUrl}/${memberId}/credit-cards`, cardData).pipe(
+      map(card => ({
+        id: String(card.id),
+        type: card.company.toLowerCase() as 'visa' | 'mastercard' | 'amex' | 'diners',
+        lastFourDigits: card.last_digits,
+        holderName: card.full_name,
+        expiryDate: card.expiration,
+        isDefault: card.is_default === 1
+      }))
+    );
+  }
 }

@@ -4,10 +4,7 @@
     <button class="close-btn" (click)="onClose()">
       <img src="assets/img/icons/close.svg" alt="" class="close-icon">
     </button>
-    <div class="header-title">
-      <img src="assets/img/icons/credit_card.svg" alt="" class="header-icon">
-      <h2>חיוב מהיר חדש</h2>
-    </div>
+    <h2>חיוב מהיר חדש</h2>
   </div>
 
   <!-- Steps -->
@@ -36,22 +33,40 @@
       <p class="processing-text">יוצר קשר עם חברת האשראי - אנא המתן</p>
     </div>
   } @else if (currentStep === 4) {
-    <div class="success-container">
-      <div class="success-icon">
-        <i class="fa-solid fa-check"></i>
+    @if (chargeError) {
+      <div class="error-container">
+        <div class="error-icon">
+          <i class="fa-solid fa-xmark"></i>
+        </div>
+        <p class="error-message">{{ chargeError }}</p>
+        <button class="btn-back" (click)="currentStep = 3">
+          חזרה לשלב הקודם
+        </button>
       </div>
-      <p class="success-message">
-        הפעולה בוצעה בהצלחה והחשבונית נשלחה לאיש הקשר!
-        <br>
-        להורדת החשבונית לחץ כאן.
-      </p>
-      <button class="btn-download" (click)="downloadInvoice()">
-        להורדת החשבונית
-      </button>
-      <p class="invoices-link">
-        את כל החשבוניות ניתן למצוא גם בעמוד <a href="/invoices">קבלות וחשבוניות</a>
-      </p>
-    </div>
+    } @else {
+      <div class="success-container">
+        <div class="success-icon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <p class="success-message">
+          הפעולה בוצעה בהצלחה@if (createReceipt && chargeResponse?.receipt?.id) { והקבלה נוצרה אוטומטית!}
+          @if (createReceipt && chargeResponse?.receipt?.id) {
+            <br>
+            להורדת הקבלה לחץ כאן.
+          }
+        </p>
+        @if (createReceipt && chargeResponse?.receipt?.id) {
+          <button class="btn-download" (click)="downloadInvoice()">
+            להורדת הקבלה
+          </button>
+        }
+        @if (createReceipt && chargeResponse?.receipt?.id) {
+          <p class="invoices-link">
+            את כל הקבלות ניתן למצוא גם בעמוד <a href="/incomes">הכנסות</a>
+          </p>
+        }
+      </div>
+    }
   } @else {
     <div class="dialog-content">
       <!-- Left Side: Transaction Summary -->
@@ -89,7 +104,11 @@
             <span>צור קבלה בסיום</span>
           </div>
 
-          <button class="btn-continue" (click)="onContinue()" [disabled]="!canContinue()">
+          <button 
+            type="button"
+            class="btn-continue" 
+            (click)="onContinue()" 
+            [disabled]="!canContinue() || isProcessing">
             {{ getContinueButtonText() }}
           </button>
         </div>
@@ -107,13 +126,17 @@
             @case (1) {
               <app-step1-payer
                 [payerDetails]="payerDetails"
-                [memberId]="memberId"
-                (payerDetailsChange)="payerDetails = $event">
+                [memberName]="memberName"
+                (payerDetailsChange)="onPayerDetailsChange($event)"
+                (memberIdChange)="onMemberIdChange($event)"
+                (memberNameChange)="memberName = $event">
               </app-step1-payer>
             }
             @case (2) {
               <app-step2-payment
                 [paymentDetails]="paymentDetails"
+                [memberId]="memberId"
+                [payerName]="getPayerFullName()"
                 (paymentDetailsChange)="onPaymentDetailsChange($event)"
                 (validationStateChange)="onStep2ValidationStateChange($event)">
               </app-step2-payment>
@@ -122,7 +145,8 @@
               <app-step3-invoice
                 [payerDetails]="payerDetails"
                 [paymentDetails]="paymentDetails"
-                [transaction]="transaction">
+                [transaction]="transaction"
+                (receiptTypeChange)="onReceiptTypeChange($event)">
               </app-step3-invoice>
             }
           }

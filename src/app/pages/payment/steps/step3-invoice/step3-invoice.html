@@ -1,4 +1,14 @@
 <div class="invoice-preview-container">
+  <div class="receipt-type-section">
+    <label>סוג קבלה:</label>
+    <app-custom-select
+      [options]="receiptTypeOptions"
+      [(value)]="receiptType"
+      (valueChange)="onReceiptTypeChange()"
+      placeholder="בחר סוג קבלה">
+    </app-custom-select>
+  </div>
+
   <p class="preview-note">תצוגה מקדימה לקבלה שתיווצר אוטומטית בסיום התשלום</p>
 
   <app-invoice-preview [data]="invoiceData"></app-invoice-preview>

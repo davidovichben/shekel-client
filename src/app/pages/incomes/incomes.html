@@ -1,18 +1,12 @@
-<div class="expenses">
-  <div class="expenses-layout">
+<div class="incomes">
+  <div class="incomes-layout">
     <!-- Left Panel: Table -->
     <div class="table-panel">
       <!-- Header -->
       <div class="page-header">
         <div class="page-header-text">
-          <h1>הוצאות</h1>
-          <p>בדף זה ריכזנו לך את כל הנתונים על הוצאות בית הכנסת.</p>
-        </div>
-        <div class="header-actions">
-          <button class="btn-primary" (click)="openCreateDialog()">
-            <img src="assets/img/icons/plus_circle.svg" alt="+" class="btn-icon" />
-            הוסף הוצאה
-          </button>
+          <h1>הכנסות</h1>
+          <p>בדף זה ריכזנו לך את כל הנתונים על ההכנסות לבית הכנסת.</p>
         </div>
       </div>
 
@@ -31,7 +25,7 @@
               [options]="displayRangeOptions"
               [(value)]="displayRange"
               (valueChange)="onDisplayRangeChange()"
-              prefix="הצג הוצאות">
+              prefix="הצג הכנסות">
             </app-custom-select>
             <app-custom-select
               [options]="sortOptions"
@@ -64,54 +58,50 @@
       <app-data-table
         [isLoading]="isLoading"
         [columns]="tableColumns"
-        [data]="expenses"
-        [totalItems]="totalExpenses"
+        [data]="incomes"
+        [totalItems]="totalIncomes"
         [currentPage]="currentPage"
         [itemsPerPage]="itemsPerPage"
         [totalPages]="totalPages"
         [allSelected]="areAllSelected()"
         (pageChange)="onPageChange($event)"
         (selectAll)="onSelectAll($event)">
-        @for (expense of expenses; track expense.id; let i = $index) {
+        @for (income of incomes; track income.id; let i = $index) {
           <tr>
             <td class="col-number">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
             <td class="col-checkbox">
               <input type="checkbox"
-                     [checked]="isExpenseSelected(expense.id)"
-                     (change)="toggleExpenseSelection(expense.id, $event)">
+                     [checked]="isIncomeSelected(income.id)"
+                     (change)="toggleIncomeSelection(income.id, $event)">
             </td>
-            <td>{{ expense.description || 'ללא תיאור' }}</td>
-            <td>{{ getExpenseTypeLabel(expense.type) }}</td>
-            <td>{{ expense.amount }}₪</td>
+            <td>{{ income.description || 'ללא תיאור' }}</td>
+            <td>{{ getPaymentTypeLabel(income.paymentType) }}</td>
+            <td>{{ getCategoryLabel(income.category) }}</td>
+            <td>{{ income.amount }}₪</td>
             <td>
               <div class="hebrew-date-cell">
-                <div class="hebrew-date-top">{{ getHebrewDateTop(expense) }}</div>
-                <div class="hebrew-date-bottom">{{ getHebrewDateBottom(expense) }}</div>
+                <div class="hebrew-date-top">{{ getHebrewDateTop(income) }}</div>
+                <div class="hebrew-date-bottom">{{ getHebrewDateBottom(income) }}</div>
               </div>
             </td>
-            <td>{{ formatGregorianDate(expense.date) }}</td>
-            <td>{{ expense.supplierName || '--' }}</td>
+            <td>{{ formatGregorianDate(income.date) }}</td>
+            <td>{{ income.payerName || '--' }}</td>
+            <td>{{ income.number || '--' }}</td>
             <td>
               <app-chip
-                [variant]="getStatusChipVariant(expense.status)"
-                [label]="getStatusLabel(expense.status)">
+                [variant]="getStatusChipVariant(income.status)"
+                [label]="getStatusLabel(income.status)">
               </app-chip>
             </td>
             <td>
-              <button type="button" class="receipt-btn" *ngIf="expense.receipt" (click)="onDownloadReceipt(expense)">
+              <button type="button" class="receipt-btn" *ngIf="income.number" (click)="onDownloadReceipt(income)">
                 <img src="assets/img/icons/receipt.svg" alt="Receipt" class="receipt-icon">
               </button>
-              <span *ngIf="!expense.receipt" class="receipt-placeholder">
+              <span *ngIf="!income.number" class="receipt-placeholder">
                 <img src="assets/img/icons/receipt-light.svg" alt="No Receipt" class="receipt-icon">
               </span>
             </td>
             <td class="col-actions">
-              <button type="button" class="row-action" (click)="openEditDialog(expense)">
-                <img src="assets/img/icons/edit.svg" alt="" class="action-icon">
-              </button>
-              <button type="button" class="row-action" (click)="openDeleteDialog(expense)">
-                <img src="assets/img/icons/trash.svg" alt="" class="action-icon">
-              </button>
               <button type="button" class="row-action" (click)="onBulkAction('share')">
                 <img src="assets/img/icons/share.svg" alt="" class="action-icon">
               </button>
@@ -122,7 +112,7 @@
 
       <!-- Footer -->
       <div class="table-footer">
-        <span class="footer-message">נמצאו {{ totalExpenses }} רשומות, סה"כ סכום ההוצאות בהן הוא: <span class="bold">{{ getTotalAmount() }}₪</span></span>
+        <span class="footer-message">נמצאו {{ totalIncomes }} רשומות, סה"כ סכום ההכנסות בהן הוא: <span class="bold">{{ getTotalAmount() }}₪</span></span>
         <!-- Pagination -->
         <div class="pagination">
           <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">
@@ -152,6 +142,7 @@
     </div>
 
     <!-- Right Panel: Statistics -->
-    <app-stats-panel [stats]="stats" type="expenses"></app-stats-panel>
+    <app-stats-panel [stats]="stats" type="incomes"></app-stats-panel>
   </div>
 </div>
+

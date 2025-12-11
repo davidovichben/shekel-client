@@ -30,13 +30,20 @@ export class Step1PayerComponent {
     companyId: ''
   };
   @Input() memberId = '';
+  @Input() memberName = '';
   @Output() payerDetailsChange = new EventEmitter<PayerDetails>();
+  @Output() memberIdChange = new EventEmitter<string>();
+  @Output() memberNameChange = new EventEmitter<string>();
 
   useMemberDetails = true;
   selectedMember: Member | null = null;
 
   onMemberSelected(member: Member): void {
     this.selectedMember = member;
+    this.memberId = member.id;
+    this.memberName = member.fullName;
+    this.memberIdChange.emit(member.id);
+    this.memberNameChange.emit(member.fullName);
     if (this.useMemberDetails) {
       this.loadMemberDetails(member);
     }

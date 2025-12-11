@@ -1,0 +1,101 @@
+<div class="stats-panel">
+  <div class="stats-header">
+    <h2>{{ type === 'expenses' ? 'לאן הולך הכסף' : 'מאין נכנס הכסף' }}</h2>
+  </div>
+
+  <!-- Monthly Distribution -->
+  <div class="stats-section" *ngIf="stats">
+    <h3>{{ type === 'expenses' ? 'להלן התפלגות ההוצאות החודשית שלכם:' : 'להלן התפלגות ההכנסות החודשיות שלכם:' }}</h3>
+    <div class="distribution-chart-container" *ngIf="stats && stats.categoryDistribution">
+      @let sortedCategories = getSortedCategories();
+      <svg class="donut-chart" width="80" height="80" viewBox="0 0 80 80">
+        @for (category of sortedCategories; track category.type; let i = $index) {
+          <circle
+            [attr.cx]="40"
+            [attr.cy]="40"
+            [attr.r]="32"
+            fill="none"
+            [attr.stroke]="getCategoryColor(category.type, category.rank, sortedCategories.length)"
+            [attr.stroke-width]="8"
+            [attr.stroke-dasharray]="getCategoryDashArray(category)"
+            [attr.stroke-dashoffset]="getCategoryDashOffset(category, sortedCategories, i)"
+            stroke-linecap="round"
+            transform="rotate(-90 40 40)" />
+        }
+      </svg>
+      <div class="total-amount-section" *ngIf="stats.monthlyTotal">
+        <div class="total-amount-label">{{ type === 'expenses' ? 'מתחילת החודש הוצאתם' : ('מתחילת חודש ' + getCurrentMonthHebrew() + ' הכנסתם') }}</div>
+        <div class="total-amount-value">
+          <span class="total-label">בסך הכל:</span>
+          <span class="amount-value">{{ stats.monthlyTotal.amount }}</span>
+          <span class="amount-currency">₪</span>
+        </div>
+      </div>
+    </div>
+    <div class="category-list" *ngIf="stats && stats.categoryDistribution">
+      @let sortedCategories = getSortedCategories();
+      @for (category of sortedCategories; track category.type; let i = $index) {
+        <div class="category-item">
+          <span class="category-percentage">{{ category.percentage }}%</span>
+          <span class="category-amount">{{ category.amount }}₪</span>
+          <div class="category-label-wrapper">
+            <span class="category-dot" [style.background-color]="getCategoryColor(category.type, category.rank, sortedCategories.length)"></span>
+            <span class="category-label">{{ category.label }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Trend -->
+  <div class="stats-section" *ngIf="stats">
+    <h3>{{ type === 'expenses' ? 'מגמת ההוצאות ב 3 החודשים האחרונים:' : 'מגמת ההכנסות ב 3 החודשים האחרונים:' }}</h3>
+    <div class="trend-chart" *ngIf="stats.trend">
+      @for (monthData of getReversedTrend(); track monthData.month; let isFirst = $first) {
+        <div class="trend-bar-container">
+          <div class="trend-bar" [style.height]="getTrendBarHeight(monthData.amount)" [class.active]="isFirst">
+          </div>
+          <div class="bar-info">
+            <span class="bar-amount">{{ monthData.amount }}₪</span>
+            <span class="bar-month">{{ formatMonth(monthData.month) }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Unpaid/Uncollected -->
+  <div class="stats-section" *ngIf="stats">
+    <h3>{{ type === 'expenses' ? 'ההוצאות שלא שולמו מתוך יתרת החובות הפתוחים לחודש ' + getCurrentMonthHebrew() + ':' : 'ההכנסות שלא נגבו מתוך יתרת החובות הפתוחים לחודש ' + getCurrentMonthHebrew() + ':' }}</h3>
+    <div class="unpaid-chart-container" *ngIf="(type === 'expenses' && stats.unpaidExpenses) || (type === 'incomes' && stats.uncollectedIncome)">
+      <div class="unpaid-amount">
+        <span class="amount-value">{{ getUnpaidTotal() }}</span>
+        <span class="amount-currency">₪</span>
+      </div>
+      <div class="unpaid-circle-wrapper">
+        <svg class="unpaid-circle-ring" width="100" height="100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="white" stroke-width="9" />
+          <circle 
+            cx="50" 
+            cy="50" 
+            r="42" 
+            fill="none" 
+            stroke="#dde1ec" 
+            stroke-width="9"
+            stroke-linecap="round"
+            [attr.stroke-dasharray]="getRingDashArray()"
+            [attr.stroke-dashoffset]="getRingDashOffset()"
+            transform="rotate(-90 50 50)" />
+        </svg>
+        <div class="unpaid-circle-center">
+          <span class="circle-percentage">
+            <span class="circle-percent-sign">%</span>
+            <span class="circle-number">{{ getUnpaidPercentage() }}</span>
+          </span>
+          <span class="circle-label">נותר</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

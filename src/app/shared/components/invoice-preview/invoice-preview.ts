@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface InvoiceLineItem {
@@ -46,4 +46,12 @@ export interface InvoiceData {
 export class InvoicePreviewComponent {
   @Input() data!: InvoiceData;
   @Input() logoUrl?: string;
+  @ViewChild('invoiceCard', { static: false }) invoiceCardRef?: ElementRef<HTMLElement>;
+
+  /**
+   * Get the HTML element reference for PDF generation
+   */
+  getElementRef(): HTMLElement | null {
+    return this.invoiceCardRef?.nativeElement || null;
+  }
 }

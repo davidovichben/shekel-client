@@ -3,44 +3,32 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
-export interface CreateBillingRequest {
-  member_id: string;
-  amount: number;
-  installments: number;
-  description: string;
-  payer: {
-    first_name: string;
-    last_name: string;
-    mobile: string;
-    address: string;
-    email: string;
-    company_id?: string;
-  };
-}
-
-export interface CreateBillingResponse {
-  id: string;
-  member_id: string;
-  amount: number;
-  installments: number;
-  description: string;
-  status: string;
-  created_at: string;
-}
-
 export interface ChargeBillingRequest {
-  billing_id: string;
-  payment_method: 'credit' | 'cash' | 'check' | 'bank_transfer' | 'other';
-  card_token?: string;
+  credit_card_id: number;
+  amount: number;
+  description?: string;
+  type?: string; // Receipt type: vows, community_donations, external_donations, ascensions, online_donations, membership_fees, other
+  createReceipt?: boolean; // Set to true to generate and save a PDF receipt
 }
 
 export interface ChargeBillingResponse {
-  id: string;
-  billing_id: string;
-  status: 'success' | 'failed' | 'pending';
-  transaction_id?: string;
-  invoice_url?: string;
-  created_at: string;
+  success: boolean;
+  transaction: {
+    id: string;
+    amount: string;
+    credit_card_id: number;
+    last_digits: string;
+    description: string;
+    status: string;
+  };
+  receipt: {
+    id: number;
+    receipt_number: string;
+    total_amount: string;
+    status: string;
+    type: string;
+    pdf_file?: string | null; // PDF file path if createReceipt was true
+  };
 }
 
 @Injectable({
@@ -51,11 +39,27 @@ export class BillingService {
 
   constructor(private http: HttpClient) {}
 
-  create(billing: CreateBillingRequest): Observable<CreateBillingResponse> {
-    return this.http.post<CreateBillingResponse>(this.apiUrl, billing);
-  }
-
   charge(request: ChargeBillingRequest): Observable<ChargeBillingResponse> {
     return this.http.post<ChargeBillingResponse>(`${this.apiUrl}/charge`, request);
+  }
+
+  /**
+   * Charge with PDF receipt file upload
+   * @param request Charge request data
+   * @param pdfFile PDF file as Blob
+   */
+  chargeWithReceipt(request: ChargeBillingRequest, pdfFile: Blob): Observable<ChargeBillingResponse> {
+    const formData = new FormData();
+    formData.append('credit_card_id', request.credit_card_id.toString());
+    formData.append('amount', request.amount.toString());
+    if (request.description) {
+      formData.append('description', request.description);
+    }
+    if (request.type) {
+      formData.append('type', request.type);
+    }
+    formData.append('receipt_pdf', pdfFile, 'receipt.pdf');
+    
+    return this.http.post<ChargeBillingResponse>(`${this.apiUrl}/charge`, formData);
   }
 }
