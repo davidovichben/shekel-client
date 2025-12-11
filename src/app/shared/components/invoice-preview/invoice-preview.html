@@ -89,12 +89,20 @@
         </tr>
       </thead>
       <tbody>
-        @for (payment of data.installments; track $index) {
+        @if (data.installments.length > 1) {
           <tr>
-            <td>{{ payment.paymentMethod }}</td>
-            <td>{{ payment.dueDate }}</td>
-            <td>₪{{ payment.amount | number:'1.0-2' }}</td>
+            <td>{{ data.installments[0].paymentMethod }}</td>
+            <td>{{ data.installments.length }} תשלומים</td>
+            <td>₪{{ data.total | number:'1.0-2' }}</td>
           </tr>
+        } @else {
+          @for (payment of data.installments; track $index) {
+            <tr>
+              <td>{{ payment.paymentMethod }}</td>
+              <td>{{ payment.dueDate }}</td>
+              <td>₪{{ payment.amount | number:'1.0-2' }}</td>
+            </tr>
+          }
         }
       </tbody>
     </table>

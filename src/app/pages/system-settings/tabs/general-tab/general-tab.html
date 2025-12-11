@@ -1,0 +1,128 @@
+<div class="tab-container">
+  <div class="card-content">
+    <div class="section-title">פרטי בית הכנסת:</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>שם בית הכנסת</label>
+        <input type="text" [(ngModel)]="settings.synagogue_name" placeholder="שם בית הכנסת">
+      </div>
+      <div class="form-group">
+        <label>טלפון</label>
+        <input type="text" [(ngModel)]="settings.synagogue_phone" placeholder="טלפון" class="ltr-input">
+      </div>
+      <div class="form-group">
+        <label>כתובת מלאה</label>
+        <input type="text" [(ngModel)]="settings.synagogue_address" placeholder="כתובת מלאה">
+      </div>
+      <div class="form-group">
+        <label>כתובת דואר אלקטרוני</label>
+        <input type="email" [(ngModel)]="settings.synagogue_email" placeholder="דוא״ל" class="ltr-input">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group checkbox-inline">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="settings.show_details_on_invoice">
+          <span>פרטים אלה יופיעו גם על החשבוניות</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-row business-type-row">
+      <div class="form-group business-type">
+        <label>סוג העוסק:</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="type" value="npo" [(ngModel)]="settings.type">
+          <span>עמותה</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="type" value="exempt" [(ngModel)]="settings.type">
+          <span>עוסק פטור</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="type" value="licensed" [(ngModel)]="settings.type">
+          <span>עוסק מורשה</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="type" value="company" [(ngModel)]="settings.type">
+          <span>חברה בע"מ</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section-title">פרטי עוסק / עמותה:</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>מספר עוסק מורשה / מספר עמותה</label>
+        <input type="text" [(ngModel)]="settings.business_number" placeholder="מספר עוסק" class="ltr-input">
+      </div>
+      <div class="form-group">
+        <label>כתובת מלאה</label>
+        <input type="text" [(ngModel)]="settings.address" placeholder="כתובת מלאה">
+      </div>
+      <div class="form-group">
+        <label>טלפון</label>
+        <input type="text" [(ngModel)]="settings.phone" placeholder="טלפון" class="ltr-input">
+      </div>
+      <div class="form-group">
+        <label>כתובת דואר אלקטרוני</label>
+        <input type="email" [(ngModel)]="settings.email" placeholder="דוא״ל" class="ltr-input">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>שם העוסק / העמותה</label>
+        <input type="text" [(ngModel)]="settings.name" placeholder="שם העוסק">
+      </div>
+      <div class="form-group">
+        <label>אתר</label>
+        <input type="text" [(ngModel)]="settings.website" placeholder="אתר" class="ltr-input">
+      </div>
+      <div class="form-group">
+        <label>לוגו שיופיע על הקבלה</label>
+        <app-image-input
+          [(ngModel)]="settings.logo"
+          placeholder="בחר קובץ"
+          accept=".png,.jpg,.jpeg,.svg">
+        </app-image-input>
+      </div>
+      <div class="form-group"></div>
+    </div>
+
+    <div class="form-row">
+      <div>
+        <div class="text-sm">מבנה תאריך מועדף:</div>
+        <div class="form-group date-format">
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="preferred_date_format" value="hebrew" [(ngModel)]="settings.preferred_date_format">
+              <span>עברי</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="preferred_date_format" value="gregorian" [(ngModel)]="settings.preferred_date_format">
+              <span>לועזי</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <button class="btn-save" (click)="onSave()" [disabled]="isSaving">
+      @if (isSaving) {
+        <span class="loader"></span>
+      } @else {
+        שמור הגדרות
+      }
+    </button>
+  </div>
+</div>

@@ -369,6 +369,26 @@ export class DebtsComponent implements OnInit {
     return '';
   }
 
+  formatGregorianDate(dateString: string | null | undefined): string {
+    if (!dateString) return '--';
+    
+    // Handle ISO date format (e.g., "2026-01-01T00:00:00.000000Z")
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      // If not a valid date, check if it's already formatted
+      if (dateString.includes('/')) {
+        return dateString;
+      }
+      return dateString;
+    }
+    
+    // Format as DD/MM/YYYY for display
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   // Selection functionality
   toggleDebtSelection(debtId: string, event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;

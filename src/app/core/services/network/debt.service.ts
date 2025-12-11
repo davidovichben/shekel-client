@@ -17,36 +17,44 @@ export class DebtService {
   private formatDate(dateString: string | null | undefined): string {
     if (!dateString) return '';
     
+    // Handle ISO date format (e.g., "2026-01-01T00:00:00.000000Z")
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       return dateString; // Return as-is if can't parse
     }
     
-    // Format as MM/DD/YYYY
+    // Format as DD/MM/YYYY (to match Hebrew date utility expectations)
     const year = String(date.getFullYear());
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${month}/${day}/${year}`;
+    return `${day}/${month}/${year}`;
   }
 
   private mapDebtFromApi(debt: any): Debt {
+    // Map API field names to our interface
+    // API uses: due_date, member_id, member_name, last_reminder_sent_at
+    const gregorianDate = debt.due_date || debt.gregorianDate || '';
+    const lastReminderSentAt = debt.last_reminder_sent_at || debt.lastReminderSentAt || null;
+    
     return {
       ...debt,
-      id: debt.id || debt._id,
-      fullName: debt.memberName || debt.fullName || '',
-      gregorianDate: this.formatDate(debt.gregorianDate),
+      id: String(debt.id || debt._id),
+      fullName: debt.member_name || debt.memberName || debt.fullName || '',
+      // Store ISO date string directly - will format for display in component
+      gregorianDate: gregorianDate || '',
       debtType: debt.debtType || debt.type || debt.debt_type || '',
-      lastReminder: debt.lastReminder ? this.formatDate(debt.lastReminder) : null,
-      lastReminderSentAt: debt.lastReminderSentAt ? this.formatDate(debt.lastReminderSentAt) : null,
+      lastReminder: debt.lastReminder || null,
+      // Store ISO date string directly - will format for display in component
+      lastReminderSentAt: lastReminderSentAt || null,
       status: debt.status || 'pending',
-      amount: debt.amount ? parseFloat(debt.amount) : 0,
+      amount: debt.amount ? parseFloat(String(debt.amount)) : 0,
       description: debt.description || '',
-      memberId: debt.memberId || '',
+      memberId: String(debt.member_id || debt.memberId || ''),
       autoPaymentApproved: debt.autoPaymentApproved || false,
       shouldBill: debt.shouldBill !== undefined ? debt.shouldBill : (debt.should_bill !== undefined ? debt.should_bill : debt.autoPaymentApproved),
-      hebrewDate: debt.hebrewDate || '',
-      createdAt: debt.createdAt || '',
-      updatedAt: debt.updatedAt || ''
+      hebrewDate: debt.hebrewDate || debt.hebrew_date || '',
+      createdAt: debt.createdAt || debt.created_at || '',
+      updatedAt: debt.updatedAt || debt.updated_at || ''
     };
   }
 

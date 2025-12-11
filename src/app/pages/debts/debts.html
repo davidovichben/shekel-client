@@ -99,8 +99,8 @@
             <div class="hebrew-date-bottom">{{ getHebrewDateBottom(debt) }}</div>
           </div>
         </td>
-        <td>{{ debt.gregorianDate }}</td>
-        <td>{{ debt.lastReminderSentAt || '--' }}</td>
+        <td>{{ formatGregorianDate(debt.gregorianDate) }}</td>
+        <td>{{ formatGregorianDate(debt.lastReminderSentAt) }}</td>
         <td>{{ getDebtTypeLabel(debt.debtType) }}</td>
         <td>
           <app-chip

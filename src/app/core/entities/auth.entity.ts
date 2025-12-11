@@ -1,15 +1,15 @@
 export interface LoginRequest {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface LoginResponse {
-  token: string;
-  refreshToken?: string;
-  user?: {
+  access_token: string;
+  refresh_token?: string;
+  user: {
     id: string;
-    username: string;
-    email?: string;
+    name: string;
+    email: string;
   };
 }
 

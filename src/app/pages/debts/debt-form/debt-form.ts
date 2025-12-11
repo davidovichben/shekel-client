@@ -77,29 +77,53 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
 
   private convertDateToInputFormat(dateString: string): string {
     if (!dateString) return '';
-    // Convert from yy/mm/dd to yyyy-mm-dd for HTML date input
+    
+    // If already in YYYY-MM-DD format (from HTML date input), return as-is
+    if (dateString.includes('-') && dateString.length === 10) {
+      return dateString;
+    }
+    
+    // Try to parse MM/DD/YYYY format (from service)
     const parts = dateString.split('/');
     if (parts.length === 3) {
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      // Convert 2-digit year to 4-digit (assuming 20xx)
-      const fullYear = year.length === 2 ? `20${year}` : year;
-      return `${fullYear}-${month}-${day}`;
+      const month = parts[0];
+      const day = parts[1];
+      const year = parts[2];
+      // Convert to YYYY-MM-DD for HTML date input
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     }
+    
+    // Try to parse as Date object
+    const date = new Date(dateString);
+    if (!isNaN(date.getTime())) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    
     return dateString;
   }
 
   private convertDateToApiFormat(dateString: string): string {
     if (!dateString) return '';
-    // Convert from yyyy-mm-dd to DD/MM/YYYY for API (as per API docs)
-    const parts = dateString.split('-');
-    if (parts.length === 3) {
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      return `${day}/${month}/${year}`;
+    
+    // Convert from yyyy-mm-dd (HTML date input) to DD/MM/YYYY for API
+    if (dateString.includes('-')) {
+      const parts = dateString.split('-');
+      if (parts.length === 3) {
+        const year = parts[0];
+        const month = parts[1];
+        const day = parts[2];
+        return `${day}/${month}/${year}`;
+      }
     }
+    
+    // If already in DD/MM/YYYY format, return as-is
+    if (dateString.includes('/')) {
+      return dateString;
+    }
+    
     return dateString;
   }
 
@@ -213,7 +237,13 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
-    if (!this.debt.fullName || !this.debt.amount || !this.debt.gregorianDate) {
+    // Validation
+    if (!this.debt.memberId || !this.debt.amount || !this.debt.gregorianDate) {
+      console.error('Validation failed:', {
+        memberId: this.debt.memberId,
+        amount: this.debt.amount,
+        gregorianDate: this.debt.gregorianDate
+      });
       return;
     }
 
@@ -234,18 +264,23 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
       debtToSave.sendImmediateReminder = true;
     }
 
+    console.log('Saving debt:', debtToSave);
+
     const request = this.isEditMode
       ? this.debtService.update(this.debtId, debtToSave)
       : this.debtService.create(debtToSave);
 
     request.subscribe({
       next: (result) => {
+        console.log('Debt saved successfully:', result);
         this.isSubmitting = false;
         this.dialogRef.close(result);
       },
       error: (error) => {
         console.error('Error saving debt:', error);
+        console.error('Error details:', error.error || error.message);
         this.isSubmitting = false;
+        // TODO: Show error message to user
       }
     });
   }

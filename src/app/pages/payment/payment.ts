@@ -37,6 +37,7 @@ export class PaymentComponent {
   ];
 
   createReceipt = true;
+  isProcessing = false;
 
   payerDetails: PayerDetails = {
     firstName: '',
@@ -103,13 +104,24 @@ export class PaymentComponent {
     this.transaction.total = Math.round((amount + vat) * 100) / 100;
   }
 
-  onContinue(): void {
-    if (this.currentStep < 4) {
+  async onContinue(): Promise<void> {
+    if (this.currentStep === 3) {
+      this.isProcessing = true;
+      // Mock 5 second wait for payment processing
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      this.isProcessing = false;
+      this.currentStep = 4;
+    } else if (this.currentStep < 4) {
       this.currentStep++;
       this.updateButtonText();
     } else {
       this.onSubmit();
     }
+  }
+
+  downloadInvoice(): void {
+    // TODO: Implement invoice download
+    console.log('Downloading invoice...');
   }
 
   onBack(): void {
@@ -130,7 +142,10 @@ export class PaymentComponent {
 
   getStepClass(stepNumber: number): string {
     if (stepNumber < this.currentStep) return 'completed';
-    if (stepNumber === this.currentStep) return 'active';
+    if (stepNumber === this.currentStep) {
+      // On step 4, show it as completed instead of active
+      return this.currentStep === 4 ? 'completed' : 'active';
+    }
     return '';
   }
 
