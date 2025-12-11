@@ -30,86 +30,110 @@
   </div>
 
   <!-- Content -->
-  <div class="dialog-content">
-    <!-- Left Side: Transaction Summary -->
-    <div class="summary-wrapper">
-      <div class="summary-section">
-        <h3>סיכום פרטי העסקה</h3>
-        <div class="summary-row">
-          <span class="label">תיאור העסקה:</span>
-          <span class="value">{{ transaction.description || '-------' }}</span>
-        </div>
-        <div class="summary-row">
-          <span class="label">סכום לתשלום:</span>
-          <span class="value">₪{{ transaction.amount | number:'1.0-2' }}</span>
-        </div>
-        <div class="summary-row">
-          <span class="label">מספר תשלומים:</span>
-          <span class="value">{{ transaction.installments | number:'1.0-0' }}</span>
-        </div>
-        <div class="summary-row">
-          <span class="label">מע"מ ({{ transaction.vatPercent }}%)</span>
-          <span class="value">₪{{ transaction.vat | number:'1.0-2' }}</span>
-        </div>
-
-        <div class="summary-total">
-          <span class="label">סה"כ:</span>
-          <span class="value">₪{{ transaction.total | number:'1.0-2' }}</span>
-          <span class="note">(כולל מע"מ)</span>
-        </div>
-
-        <div class="receipt-toggle">
-          <label class="toggle">
-            <input type="checkbox" [(ngModel)]="createReceipt">
-            <span class="slider"></span>
-          </label>
-          <span>צור קבלה בסיום</span>
-        </div>
-
-        <button class="btn-continue" (click)="onContinue()" [disabled]="!canContinue()">
-          {{ getContinueButtonText() }}
-        </button>
-      </div>
-
-      <div class="ssl-badge">
-        <i class="fa-solid fa-shield-halved"></i>
-        <span>מאובטח ב-SSL</span>
-      </div>
+  @if (isProcessing) {
+    <div class="processing-container">
+      <div class="processing-spinner"></div>
+      <p class="processing-text">יוצר קשר עם חברת האשראי - אנא המתן</p>
     </div>
+  } @else if (currentStep === 4) {
+    <div class="success-container">
+      <div class="success-icon">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <p class="success-message">
+        הפעולה בוצעה בהצלחה והחשבונית נשלחה לאיש הקשר!
+        <br>
+        להורדת החשבונית לחץ כאן.
+      </p>
+      <button class="btn-download" (click)="downloadInvoice()">
+        להורדת החשבונית
+      </button>
+      <p class="invoices-link">
+        את כל החשבוניות ניתן למצוא גם בעמוד <a href="/invoices">קבלות וחשבוניות</a>
+      </p>
+    </div>
+  } @else {
+    <div class="dialog-content">
+      <!-- Left Side: Transaction Summary -->
+      <div class="summary-wrapper">
+        <div class="summary-section">
+          <h3>סיכום פרטי העסקה</h3>
+          <div class="summary-row">
+            <span class="label">תיאור העסקה:</span>
+            <span class="value">{{ transaction.description || '-------' }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">סכום לתשלום:</span>
+            <span class="value">₪{{ transaction.amount | number:'1.0-2' }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">מספר תשלומים:</span>
+            <span class="value">{{ transaction.installments | number:'1.0-0' }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">מע"מ ({{ transaction.vatPercent }}%)</span>
+            <span class="value">₪{{ transaction.vat | number:'1.0-2' }}</span>
+          </div>
 
-    <!-- Right Side: Step Content -->
-    <div class="form-wrapper">
-      <div class="form-section">
-        @switch (currentStep) {
-          @case (1) {
-            <app-step1-payer
-              [payerDetails]="payerDetails"
-              (payerDetailsChange)="payerDetails = $event">
-            </app-step1-payer>
+          <div class="summary-total">
+            <span class="label">סה"כ:</span>
+            <span class="value">₪{{ transaction.total | number:'1.0-2' }}</span>
+            <span class="note">(כולל מע"מ)</span>
+          </div>
+
+          <div class="receipt-toggle">
+            <label class="toggle">
+              <input type="checkbox" [(ngModel)]="createReceipt">
+              <span class="slider"></span>
+            </label>
+            <span>צור קבלה בסיום</span>
+          </div>
+
+          <button class="btn-continue" (click)="onContinue()" [disabled]="!canContinue()">
+            {{ getContinueButtonText() }}
+          </button>
+        </div>
+
+        <div class="ssl-badge">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>מאובטח ב-SSL</span>
+        </div>
+      </div>
+
+      <!-- Right Side: Step Content -->
+      <div class="form-wrapper">
+        <div class="form-section">
+          @switch (currentStep) {
+            @case (1) {
+              <app-step1-payer
+                [payerDetails]="payerDetails"
+                (payerDetailsChange)="payerDetails = $event">
+              </app-step1-payer>
+            }
+            @case (2) {
+              <app-step2-payment
+                [paymentDetails]="paymentDetails"
+                (paymentDetailsChange)="onPaymentDetailsChange($event)"
+                (validationStateChange)="onStep2ValidationStateChange($event)">
+              </app-step2-payment>
+            }
+            @case (3) {
+              <app-step3-invoice
+                [payerDetails]="payerDetails"
+                [paymentDetails]="paymentDetails"
+                [transaction]="transaction">
+              </app-step3-invoice>
+            }
           }
-          @case (2) {
-            <app-step2-payment
-              [paymentDetails]="paymentDetails"
-              (paymentDetailsChange)="onPaymentDetailsChange($event)"
-              (validationStateChange)="onStep2ValidationStateChange($event)">
-            </app-step2-payment>
-          }
-          @case (3) {
-            <app-step3-invoice
-              [payerDetails]="payerDetails"
-              [paymentDetails]="paymentDetails"
-              [transaction]="transaction">
-            </app-step3-invoice>
-          }
+        </div>
+
+        @if (currentStep > 1) {
+          <button class="btn-back" (click)="onBack()">
+            <i class="fa-solid fa-arrow-right"></i>
+            חזרה לשלב הקודם
+          </button>
         }
       </div>
-
-      @if (currentStep > 1) {
-        <button class="btn-back" (click)="onBack()">
-          <i class="fa-solid fa-arrow-right"></i>
-          חזרה לשלב הקודם
-        </button>
-      }
     </div>
-  </div>
+  }
 </div>

@@ -46,11 +46,11 @@
 
   &.completed
     .step-label
-      color: #28a745
+      color: $success-green
 
     .step-number
-      background: #28a745
-      border-color: #28a745
+      background: $success-green
+      border-color: $success-green
       color: white
 
 .step-line
@@ -60,7 +60,7 @@
   margin: 0 8px
 
   &.completed
-    background: #28a745
+    background: $success-green
 
 .dialog-content
   display: flex
@@ -173,7 +173,7 @@
       border-radius: 50%
 
   input:checked + .slider
-    background-color: #28a745
+    background-color: $success-green
 
   input:checked + .slider::before
     transform: translateX(20px)
@@ -230,7 +230,7 @@
 
   i
     font-size: 16px
-    color: #28a745
+    color: $success-green
 
 .form-wrapper
   flex: 1
@@ -305,3 +305,101 @@
     &.ltr-input
       direction: ltr
       text-align: left
+
+// Processing State
+.processing-container
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  min-height: 400px
+  padding: 48px
+  background: white
+
+.processing-spinner
+  width: 48px
+  height: 48px
+  position: relative
+
+  &::before
+    content: ''
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    border: 3px solid transparent
+    border-top-color: $success-green
+    border-right-color: $success-green
+    border-radius: 50%
+    animation: processingSpinner 1s linear infinite
+
+@keyframes processingSpinner
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+
+.processing-text
+  margin-top: 24px
+  font-size: 16px
+  color: $primary-bg
+  text-align: center
+
+// Success State (Step 4)
+.success-container
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  min-height: 600px
+  padding: 48px
+  background: white
+
+.success-icon
+  width: 64px
+  height: 64px
+  border-radius: 50%
+  background: $success-green
+  display: flex
+  align-items: center
+  justify-content: center
+  margin-bottom: 24px
+
+  i
+    font-size: 28px
+    color: white
+
+.success-message
+  font-size: 16px
+  color: $text-dark
+  text-align: center
+  line-height: 1.6
+  margin: 0 0 24px
+
+.btn-download
+  padding: 14px 48px
+  background: $primary-bg
+  color: white
+  border: none
+  border-radius: 8px
+  font-size: 15px
+  font-weight: 600
+  cursor: pointer
+  margin-bottom: 16px
+
+  &:hover
+    background: $primary-bg-hover
+
+.invoices-link
+  font-size: 14px
+  color: $text-dark
+  margin: 0
+
+  a
+    color: $primary-bg
+    text-decoration: underline
+    font-weight: 600
+
+    &:hover
+      text-decoration: none
