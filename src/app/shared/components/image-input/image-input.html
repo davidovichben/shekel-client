@@ -1,0 +1,23 @@
+<div class="image-input-container">
+  @if (imagePreview) {
+    <div class="image-preview">
+      <img [src]="imagePreview" alt="Preview">
+      <button type="button" class="clear-btn" (click)="clearFile()">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+  }
+
+  <div class="file-input-wrapper">
+    <input
+      type="file"
+      [id]="'imageInput' + placeholder"
+      [accept]="accept"
+      (change)="onFileChange($event)"
+      hidden>
+    <label [for]="'imageInput' + placeholder" class="file-input-trigger">
+      <span>{{ fileName || placeholder }}</span>
+      <img src="assets/img/icons/upload_file.svg" alt="" class="upload-icon">
+    </label>
+  </div>
+</div>

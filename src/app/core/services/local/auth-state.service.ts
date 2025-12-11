@@ -45,7 +45,9 @@ export class AuthStateService {
   }
 
   setTokens(authToken: AuthToken): void {
-    this.setToken(authToken.token);
+    if (authToken.token) {
+      this.setToken(authToken.token);
+    }
     if (authToken.refreshToken) {
       this.setRefreshToken(authToken.refreshToken);
     }
