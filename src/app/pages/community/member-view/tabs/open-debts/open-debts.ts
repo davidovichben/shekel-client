@@ -1,9 +1,11 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Member } from '../../../../../core/entities/member.entity';
 import { Debt, DebtStatus } from '../../../../../core/entities/debt.entity';
 import { DebtService } from '../../../../../core/services/network/debt.service';
+import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-member-open-debts',
@@ -14,6 +16,7 @@ import { DebtService } from '../../../../../core/services/network/debt.service';
 })
 export class MemberOpenDebtsComponent implements OnInit {
   private debtService = inject(DebtService);
+  private dialog = inject(MatDialog);
 
   @Input() member: Member | null = null;
 
@@ -122,18 +125,53 @@ export class MemberOpenDebtsComponent implements OnInit {
 
   // Row actions
   onSendReminder(debt: Debt): void {
-    console.log('Send reminder for debt:', debt.id);
+    this.debtService.sendReminder(debt.id).subscribe({
+      next: (updatedDebt) => {
+        const index = this.debts.findIndex(d => d.id === debt.id);
+        if (index !== -1) {
+          this.debts[index] = updatedDebt;
+        }
+      },
+      error: (error) => {
+        console.error('Error sending reminder:', error);
+      }
+    });
   }
 
   onEditDebt(debt: Debt): void {
+    // TODO: Open edit debt dialog
     console.log('Edit debt:', debt.id);
   }
 
   onDeleteDebt(debt: Debt): void {
-    console.log('Delete debt:', debt.id);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      panelClass: 'confirm-dialog-panel',
+      data: {
+        title: 'מחיקת חוב',
+        message: 'האם אתה בטוח שברצונך למחוק את החוב?',
+        confirmText: 'מחק',
+        cancelText: 'ביטול'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.debtService.delete(debt.id).subscribe({
+          next: () => {
+            this.debts = this.debts.filter(d => d.id !== debt.id);
+            this.calculateTotalAmount();
+          },
+          error: (error) => {
+            console.error('Error deleting debt:', error);
+          }
+        });
+      }
+    });
   }
 
   onViewDebt(debt: Debt): void {
+    // TODO: Open view debt dialog/panel
     console.log('View debt:', debt.id);
   }
 }

@@ -18,12 +18,31 @@ export class MemberService {
     return this.http.get<PaginationResponse<Member>>(this.apiUrl, { params: params as any }).pipe(
       map(response => ({
         ...response,
-        rows: response.rows.map((member: any) => ({
-          ...member,
-          id: member.id || member._id || member.memberId
-        }))
+        rows: response.rows.map((member: any) => this.mapMember(member))
       }))
     );
+  }
+
+  private mapMember(member: any): Member {
+    return {
+      ...member,
+      id: member.id || member._id || member.memberId,
+      fullName: member.fullName || member.full_name || '',
+      firstName: member.firstName || member.first_name || '',
+      lastName: member.lastName || member.last_name || '',
+      memberNumber: member.memberNumber || member.member_number || '',
+      gregorianBirthDate: member.gregorianBirthDate || member.gregorian_birth_date || null,
+      hebrewBirthDate: member.hebrewBirthDate || member.hebrew_birth_date || null,
+      gregorianWeddingDate: member.gregorianWeddingDate || member.gregorian_wedding_date || null,
+      hebrewWeddingDate: member.hebrewWeddingDate || member.hebrew_wedding_date || null,
+      gregorianDeathDate: member.gregorianDeathDate || member.gregorian_death_date || null,
+      hebrewDeathDate: member.hebrewDeathDate || member.hebrew_death_date || null,
+      contactPerson: member.contactPerson || member.contact_person || '',
+      contactPersonType: member.contactPersonType || member.contact_person_type || '',
+      hasWebsiteAccount: member.hasWebsiteAccount ?? member.has_website_account ?? false,
+      shouldMail: member.shouldMail ?? member.should_mail ?? false,
+      lastMessageDate: member.lastMessageDate || member.last_message_date || null
+    };
   }
 
   list(search?: string): Observable<{ id: string; name: string }[]> {
@@ -33,7 +52,9 @@ export class MemberService {
   }
 
   getOne(id: string): Observable<Member> {
-    return this.http.get<Member>(`${this.apiUrl}/${id}`);
+    return this.http.get<Member>(`${this.apiUrl}/${id}`).pipe(
+      map(member => this.mapMember(member))
+    );
   }
 
   create(member: Partial<Member>): Observable<Member> {

@@ -29,14 +29,13 @@ export class Step1PayerComponent {
     email: '',
     companyId: ''
   };
+  @Input() memberId = '';
   @Output() payerDetailsChange = new EventEmitter<PayerDetails>();
 
-  searchQuery = '';
   useMemberDetails = true;
   selectedMember: Member | null = null;
 
   onMemberSelected(member: Member): void {
-    this.searchQuery = member.fullName;
     this.selectedMember = member;
     if (this.useMemberDetails) {
       this.loadMemberDetails(member);

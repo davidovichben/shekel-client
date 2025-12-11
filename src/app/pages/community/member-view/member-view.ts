@@ -106,9 +106,13 @@ export class MemberViewComponent implements OnInit {
     const types: Record<string, string> = {
       'permanent': 'חבר קהילה',
       'familyMember': 'בן משפחה',
+      'family_member': 'בן משפחה',
       'guest': 'אורח',
       'supplier': 'ספק',
       'primaryAdmin': 'מנהל',
+      'primary_admin': 'מנהל',
+      'secondaryAdmin': 'מנהל משני',
+      'secondary_admin': 'מנהל משני',
       'other': 'אחר'
     };
     return types[type] || type;

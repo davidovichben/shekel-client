@@ -27,6 +27,8 @@ export class MemberGroupsComponent implements OnInit {
   newGroupName = '';
   isCreating = false;
   removingGroupIds: Set<string> = new Set();
+  addingGroupIds: Set<string> = new Set();
+  recentlyAddedIds: Set<string> = new Set();
   private closeTimeout: any = null;
 
   ngOnInit(): void {
@@ -136,11 +138,34 @@ export class MemberGroupsComponent implements OnInit {
   addGroup(group: Group): void {
     if (!this.member) return;
     if (this.memberGroups.find(g => g.id === group.id)) return;
+    if (this.addingGroupIds.has(group.id)) return;
 
-    this.memberGroupService.addToMember(this.member.id, group.id).subscribe(() => {
-      this.memberGroups = [...this.memberGroups, group];
-      this.searchText = '';
+    this.addingGroupIds.add(group.id);
+    this.memberGroupService.addToMember(this.member.id, group.id).subscribe({
+      next: () => {
+        this.addingGroupIds.delete(group.id);
+        this.recentlyAddedIds.add(group.id);
+        this.memberGroups = [...this.memberGroups, group];
+        this.searchText = '';
+        this.showDropdown = false;
+
+        // Remove highlight after animation
+        setTimeout(() => {
+          this.recentlyAddedIds.delete(group.id);
+        }, 2000);
+      },
+      error: () => {
+        this.addingGroupIds.delete(group.id);
+      }
     });
+  }
+
+  isAdding(groupId: string): boolean {
+    return this.addingGroupIds.has(groupId);
+  }
+
+  isRecentlyAdded(groupId: string): boolean {
+    return this.recentlyAddedIds.has(groupId);
   }
 
   removeGroup(group: Group): void {

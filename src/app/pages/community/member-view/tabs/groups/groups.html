@@ -17,10 +17,13 @@
       </span>
       @if (showDropdown) {
         <div class="autocomplete-dropdown">
-          <div class="search-results-list" (mousedown)="$event.preventDefault()">
+          <div class="search-results-list">
             @for (group of filteredGroups; track group.id) {
-              <button class="autocomplete-option" (click)="addGroup(group)">
-                {{ group.name }}
+              <button class="autocomplete-option" [class.adding]="isAdding(group.id)" [disabled]="isAdding(group.id)" (mousedown)="$event.preventDefault()" (click)="addGroup(group)">
+                @if (isAdding(group.id)) {
+                  <div class="option-spinner"></div>
+                }
+                <span>{{ group.name }}</span>
               </button>
             }
           </div>
@@ -70,7 +73,7 @@
     } @else {
       <div class="groups-list">
         @for (group of memberGroups; track group.id) {
-          <div class="group-tag" [class.removing]="isRemoving(group.id)">
+          <div class="group-tag" [class.removing]="isRemoving(group.id)" [class.recently-added]="isRecentlyAdded(group.id)">
             <button class="remove-btn" (click)="removeGroup(group)" [disabled]="isRemoving(group.id)">
               @if (isRemoving(group.id)) {
                 <div class="remove-spinner"></div>
