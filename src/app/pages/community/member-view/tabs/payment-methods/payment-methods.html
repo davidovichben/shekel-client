@@ -1,5 +1,40 @@
 <div class="payment-methods-tab">
   <div class="methods-layout">
+
+    <!-- Right column - Credit Cards -->
+    <div class="right-column">
+      <div class="method-card credit-cards-card">
+        <div class="method-header">
+          <h3>כרטיסי אשראי:</h3>
+        </div>
+        <p class="method-description">הכרטיס הנבחר הוא כרטיס ברירת המחדל לתשלומים במערכת</p>
+
+        @if (creditCards.length > 0) {
+          <div class="cards-grid">
+            @for (card of creditCards; track card.id) {
+              <app-credit-card
+                [card]="card"
+                [selected]="selectedCardId === card.id"
+                (select)="selectCard($event)">
+              </app-credit-card>
+            }
+          </div>
+        } @else {
+          <div class="no-cards-placeholder">
+            <div class="placeholder-icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+            </div>
+            <p>לא הוגדרו כרטיסי אשראי</p>
+          </div>
+        }
+
+        <button class="btn-primary add-card-btn" (click)="onAddCard()">הוסף כרטיס חדש</button>
+      </div>
+    </div>
+
     <!-- Left column -->
     <div class="left-column">
       <!-- Standing Order Section -->
@@ -47,38 +82,5 @@
       </div>
     </div>
 
-    <!-- Right column - Credit Cards -->
-    <div class="right-column">
-      <div class="method-card credit-cards-card">
-        <div class="method-header">
-          <h3>כרטיסי אשראי:</h3>
-        </div>
-        <p class="method-description">הכרטיס הנבחר הוא כרטיס ברירת המחדל לתשלומים במערכת</p>
-
-        @if (creditCards.length > 0) {
-          <div class="cards-grid">
-            @for (card of creditCards; track card.id) {
-              <app-credit-card
-                [card]="card"
-                [selected]="selectedCardId === card.id"
-                (select)="selectCard($event)">
-              </app-credit-card>
-            }
-          </div>
-        } @else {
-          <div class="no-cards-placeholder">
-            <div class="placeholder-icon">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                <line x1="1" y1="10" x2="23" y2="10"></line>
-              </svg>
-            </div>
-            <p>לא הוגדרו כרטיסי אשראי</p>
-          </div>
-        }
-
-        <button class="btn-primary add-card-btn" (click)="onAddCard()">הוסף כרטיס חדש</button>
-      </div>
-    </div>
   </div>
 </div>

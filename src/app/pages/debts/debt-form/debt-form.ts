@@ -7,7 +7,6 @@ import { DebtStatus } from '../../../core/entities/debt.entity';
 import { Member } from '../../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../../shared/components/custom-select/custom-select';
 import { MemberAutocompleteComponent } from '../../../shared/components/member-autocomplete/member-autocomplete';
-import { DialogHeaderComponent } from '../../../shared/components/dialog-header/dialog-header';
 import { ToggleSwitchComponent } from '../../../shared/components/toggle-switch/toggle-switch';
 import { RadioGroupComponent } from '../../../shared/components/radio-group/radio-group';
 
@@ -160,18 +159,18 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
 
   formatDate(dateString: string | null): string {
     if (!dateString) return '';
-    
+
     // Check if it's already in DD/MM/YYYY format
     if (typeof dateString === 'string' && dateString.includes('/')) {
       return dateString;
     }
-    
+
     // Try to parse as Date
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       return dateString; // Return as-is if can't parse
     }
-    
+
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
@@ -180,9 +179,9 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
 
   onSendReminder(): void {
     if (!this.debtId) return;
-    
+
     this.isSubmitting = true;
-    
+
     this.debtService.sendReminder(this.debtId).subscribe({
       next: (result) => {
         this.isSubmitting = false;
@@ -200,9 +199,9 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
 
   onPay(): void {
     if (!this.debtId) return;
-    
+
     this.isSubmitting = true;
-    
+
     this.debtService.update(this.debtId, {
       ...this.debt,
       status: DebtStatus.Paid
@@ -220,7 +219,7 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
 
   onDelete(): void {
     if (!this.debtId) return;
-    
+
     this.debtService.delete(this.debtId).subscribe({
       next: () => {
         this.dialogRef.close({ deleted: true });

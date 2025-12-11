@@ -1,10 +1,11 @@
-import { Component, Inject, Optional } from '@angular/core';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { Step1PayerComponent, PayerDetails } from './steps/step1-payer/step1-payer';
 import { Step2PaymentComponent, PaymentDetails, Step2ValidationState } from './steps/step2-payment/step2-payment';
 import { Step3InvoiceComponent } from './steps/step3-invoice/step3-invoice';
+import { MemberService } from '../../core/services/network/member.service';
 
 export interface PaymentDialogData {
   memberId?: string;
@@ -27,7 +28,7 @@ interface TransactionSummary {
   templateUrl: './payment.html',
   styleUrl: './payment.sass'
 })
-export class PaymentComponent {
+export class PaymentComponent implements OnInit {
   currentStep = 1;
   steps = [
     { number: 1, label: 'פרטי משלם' },
@@ -38,6 +39,7 @@ export class PaymentComponent {
 
   createReceipt = true;
   isProcessing = false;
+  memberId = '';
 
   payerDetails: PayerDetails = {
     firstName: '',
@@ -71,12 +73,13 @@ export class PaymentComponent {
 
   constructor(
     public dialogRef: MatDialogRef<PaymentComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: PaymentDialogData
-  ) {
-    if (data?.memberName) {
-      const nameParts = data.memberName.split(' ');
-      this.payerDetails.firstName = nameParts[0] || '';
-      this.payerDetails.lastName = nameParts.slice(1).join(' ') || '';
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: PaymentDialogData,
+    private memberService: MemberService
+  ) {}
+
+  ngOnInit(): void {
+    if (this.data?.memberId) {
+      this.memberId = this.data.memberId;
     }
   }
 

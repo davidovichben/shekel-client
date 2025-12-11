@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, HostListener, ElementRef, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, HostListener, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -18,10 +18,11 @@ interface MemberListItem {
   templateUrl: './member-autocomplete.html',
   styleUrl: './member-autocomplete.sass'
 })
-export class MemberAutocompleteComponent implements OnInit {
+export class MemberAutocompleteComponent implements OnInit, OnChanges {
   private memberService = inject(MemberService);
   private elementRef = inject(ElementRef);
   private searchSubject = new Subject<string>();
+  private initialMemberLoaded = false;
 
   @Input() placeholder = 'חיפוש...';
   @Input() memberId = '';
@@ -48,6 +49,31 @@ export class MemberAutocompleteComponent implements OnInit {
 
     // Load initial list
     this.searchMembers('');
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['memberId'] && this.memberId && !this.initialMemberLoaded) {
+      this.initialMemberLoaded = true;
+      this.loadMemberById(this.memberId);
+    }
+  }
+
+  private loadMemberById(id: string): void {
+    this.isLoading = true;
+    this.memberService.getOne(id).subscribe({
+      next: (member) => {
+        this.memberId = member.id;
+        this.memberName = member.fullName;
+        this.searchQuery = member.fullName;
+        this.isLoading = false;
+        this.memberSelected.emit(member);
+      },
+      error: (error) => {
+        console.error('Error loading member:', error);
+        this.isLoading = false;
+        this.searchMembers('');
+      }
+    });
   }
 
   private searchMembers(query: string): void {

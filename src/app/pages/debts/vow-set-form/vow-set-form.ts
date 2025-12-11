@@ -8,7 +8,6 @@ import { AliyahType } from '../../../core/entities/vow-set.entity';
 import { Member } from '../../../core/entities/member.entity';
 import { CustomSelectComponent } from '../../../shared/components/custom-select/custom-select';
 import { MemberAutocompleteComponent } from '../../../shared/components/member-autocomplete/member-autocomplete';
-import { DialogHeaderComponent } from '../../../shared/components/dialog-header/dialog-header';
 import { ToggleSwitchComponent } from '../../../shared/components/toggle-switch/toggle-switch';
 
 export interface VowSetFormDialogData {
@@ -85,7 +84,7 @@ export class VowSetFormComponent implements OnInit {
   addVow(): void {
     // Convert amount to number and validate
     const amount = Number(this.newVow.amount);
-    
+
     // Validate required fields - member must be selected
     if (!this.newVow.memberId || !this.newVow.fullName) {
       console.warn('Cannot add vow: missing member', {
@@ -107,7 +106,7 @@ export class VowSetFormComponent implements OnInit {
     // Read sendReminder value - ensure it's a proper boolean
     // The value should be directly from newVow.sendReminder which is bound via ngModel
     const sendReminderValue = this.newVow.sendReminder === true;
-    
+
     const vowToAdd: VowItemForm = {
       memberId: this.newVow.memberId,
       fullName: this.newVow.fullName,
@@ -196,7 +195,7 @@ export class VowSetFormComponent implements OnInit {
       // Construct description: vowSet.description + " - " + aliyahType label
       const aliyahLabel = this.getAliyahLabel(vow.aliyahType);
       let description = '';
-      
+
       if (this.vowSet.description && vow.aliyahType) {
         description = `${this.vowSet.description} - ${aliyahLabel}`;
       } else if (this.vowSet.description) {
