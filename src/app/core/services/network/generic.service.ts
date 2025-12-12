@@ -15,6 +15,15 @@ export interface SearchResults {
   receipts: SearchResultItem[];
 }
 
+export interface Package {
+  id: string;
+  name: string;
+  price: number;
+  features: string[];
+  payment_features: string[];
+  paid_features?: string[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,5 +38,9 @@ export class GenericService {
 
   getBanks(): Observable<Bank[]> {
     return this.http.get<Bank[]>(`${this.apiUrl}/banks`);
+  }
+
+  getPackages(): Observable<Package[]> {
+    return this.http.get<Package[]>(`${this.apiUrl}/packages`);
   }
 }

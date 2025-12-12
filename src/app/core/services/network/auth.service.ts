@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, catchError, of } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../../entities/auth.entity';
 import { AuthStateService } from '../local/auth-state.service';
 import { UserService } from '../local/user.service';
@@ -30,7 +30,20 @@ export class AuthService {
     );
   }
 
-  logout(): void {
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
+      tap(() => {
+        this.clearLocalAuth();
+      }),
+      catchError(() => {
+        // Clear local auth even if server call fails
+        this.clearLocalAuth();
+        return of(undefined);
+      })
+    );
+  }
+
+  private clearLocalAuth(): void {
     this.authStateService.clearTokens();
     this.userService.clearUser();
   }

@@ -1,0 +1,108 @@
+<div class="packages-tab">
+  <div class="card-header">
+    <h2>מנוי ושדרוג תכנית</h2>
+  </div>
+
+  <div class="card-content">
+    <!-- Current Subscription Info -->
+    <div class="current-subscription">
+      <p class="subscription-info">
+        <span>בחשבון זה החבילה הפעילה היא: </span>
+        <strong>חבילת {{ currentSubscription.packageName }}</strong>
+      </p>
+      <p class="billing-info">
+        החיוב הבא על סך <strong>{{ currentSubscription.nextBillingAmount }} ש"ח</strong> ירד מחשבונך בתאריך: {{ currentSubscription.nextBillingDate }}
+      </p>
+      <p class="card-info">
+        באמצעות כרטיס האשראי המסתיים בספרות {{ currentSubscription.cardLastFour }}
+      </p>
+      <button class="btn-change-card" (click)="onChangeCard()">החלף כרטיס אשראי</button>
+    </div>
+
+    <!-- Packages Section -->
+    <div class="packages-section">
+      <h3 class="packages-title">מעוניין בחבילה אחרת?</h3>
+      <p class="packages-subtitle">אלה החבילות שאנו מציעים (המחירים כוללים מע"מ):</p>
+
+      @if (isLoading) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>טוען חבילות...</span>
+        </div>
+      } @else {
+        <div class="packages-grid">
+          @for (pkg of packages; track pkg.id; let i = $index) {
+            <div class="package-card" [class.recommended]="pkg.isRecommended" [class.current]="isCurrentPackage(pkg)">
+              @if (i === 1) {
+                <div class="ribbon-wrapper">
+                  <div class="recommended-ribbon">מומלץ</div>
+                </div>
+              }
+              @if (isCurrentPackage(pkg)) {
+                <div class="current-badge">החבילה שלך</div>
+              }
+            <div class="package-header">
+              <span class="package-name">{{ pkg.name }}</span>
+            </div>
+            <div class="package-price">
+              <span class="price-currency">₪</span>
+              <span class="price-amount">{{ pkg.price }}</span>
+              <span class="price-period">/ לחודש</span>
+            </div>
+
+            <div class="package-features">
+              <div class="features-title">השירותים הכלולים בחבילה:</div>
+              <ul class="features-list">
+                @for (feature of pkg.features; track feature) {
+                  <li>
+                    <span class="feature-icon">
+                      <i class="fa-solid fa-check"></i>
+                    </span>
+                    {{ feature }}
+                  </li>
+                }
+              </ul>
+
+              @if (pkg.paidFeatures && pkg.paidFeatures.length > 0) {
+                <div class="paid-features-title">שירותים בתוספת תשלום:</div>
+                <ul class="features-list paid-features">
+                  @for (feature of pkg.paidFeatures; track feature) {
+                    <li>
+                      <span class="feature-icon">
+                        <i class="fa-solid fa-check"></i>
+                      </span>
+                      {{ feature }}
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <div class="no-paid-features">לא יינתנו שירותים בתוספת תשלום.</div>
+              }
+            </div>
+          </div>
+        }
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+@if (showChangeCardDialog) {
+  <div class="dialog-overlay" (click)="closeChangeCardDialog()">
+    <div class="change-card-dialog" (click)="$event.stopPropagation()">
+      <div class="dialog-header">
+        <h3>החלפת כרטיס אשראי</h3>
+        <button class="btn-close" (click)="closeChangeCardDialog()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <app-tranzila-payment
+          [config]="tranzilaConfig"
+          (paymentSuccess)="onCardStored($event)"
+          (paymentError)="onCardStoreError($event)">
+        </app-tranzila-payment>
+      </div>
+    </div>
+  </div>
+}

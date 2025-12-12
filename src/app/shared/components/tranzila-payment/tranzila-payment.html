@@ -1,0 +1,22 @@
+<div class="tranzila-payment">
+  @if (isLoading) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+      <span>טוען טופס תשלום...</span>
+    </div>
+  }
+
+  @if (iframeUrl) {
+    <iframe
+      #paymentFrame
+      [src]="iframeUrl"
+      [style.width]="width"
+      [style.height]="height"
+      [class.loading]="isLoading"
+      (load)="onIframeLoad()"
+      frameborder="0"
+      scrolling="no"
+      allowtransparency="true">
+    </iframe>
+  }
+</div>
