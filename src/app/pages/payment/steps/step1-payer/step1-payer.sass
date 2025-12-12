@@ -1,63 +1,36 @@
 @use '../../../../../variables' as *
 
-.form-header
+.form-group
   display: flex
   flex-direction: column
-  gap: 8px
+  gap: 12px
   margin-bottom: 16px
 
-  .field-label
-    font-size: 13px
-    color: $gray-700
+  label
+    display: block
+    font-size: 14px
+    font-weight: 500
+    color: $text-dark
+    font-family: 'Heebo', sans-serif
+
+  app-member-autocomplete
+    width: 100%
 
 .use-member-toggle
   display: flex
   align-items: center
   gap: 12px
   margin-bottom: 24px
-  font-size: 14px
-  color: $text-dark
-  flex-direction: row-reverse
-  justify-content: flex-end
+  direction: rtl
 
-.toggle
-  position: relative
-  display: inline-block
-  width: 44px
-  height: 24px
+  ::ng-deep .toggle-switch-wrapper
+    flex-direction: row-reverse
 
-  input
-    opacity: 0
-    width: 0
-    height: 0
+    .toggle-label
+      order: 1
 
-  .slider
-    position: absolute
-    cursor: pointer
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
-    background-color: $gray-300
-    transition: 0.3s
-    border-radius: 24px
-
-    &::before
-      position: absolute
-      content: ""
-      height: 18px
-      width: 18px
-      left: 3px
-      bottom: 3px
-      background-color: white
-      transition: 0.3s
-      border-radius: 50%
-
-  input:checked + .slider
-    background-color: #28a745
-
-  input:checked + .slider::before
-    transform: translateX(20px)
+    .toggle-switch
+      order: 2
 
 .payer-form
   display: flex

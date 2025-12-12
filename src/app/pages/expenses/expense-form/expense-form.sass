@@ -37,8 +37,14 @@
     align-items: center
 
     ::ng-deep .toggle-switch-wrapper
+      flex-direction: row-reverse
+
       .toggle-label
         color: white
+        order: 1
+
+      .toggle-switch
+        order: 2
 
   h2
     margin: 0

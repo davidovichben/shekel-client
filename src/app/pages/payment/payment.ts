@@ -13,6 +13,7 @@ import { IncomeService } from '../../core/services/network/income.service';
 export interface PaymentDialogData {
   memberId?: string;
   memberName?: string;
+  amount?: number;
 }
 
 interface TransactionSummary {
@@ -95,6 +96,10 @@ export class PaymentComponent implements OnInit {
     }
     if (this.data?.memberName) {
       this.memberName = this.data.memberName;
+    }
+    if (this.data?.amount !== undefined) {
+      this.paymentDetails.amount = this.data.amount;
+      this.updateTransactionSummary();
     }
   }
 

@@ -82,17 +82,17 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
       return dateString;
     }
     
-    // Try to parse MM/DD/YYYY format (from service)
+    // Try to parse DD/MM/YYYY format (from service)
     const parts = dateString.split('/');
     if (parts.length === 3) {
-      const month = parts[0];
-      const day = parts[1];
+      const day = parts[0];
+      const month = parts[1];
       const year = parts[2];
       // Convert to YYYY-MM-DD for HTML date input
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     }
     
-    // Try to parse as Date object
+    // Try to parse as Date object (ISO format or other)
     const date = new Date(dateString);
     if (!isNaN(date.getTime())) {
       const year = date.getFullYear();

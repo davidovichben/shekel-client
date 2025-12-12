@@ -2,22 +2,24 @@
 
 .dashboard
   padding: 1.5rem
+  min-height: 100%
+  box-sizing: border-box
 
 // Greeting
 .greeting-section
-  padding: 2rem 1.5rem 1rem
+  padding-right: 25px
   text-align: right
 
   h1
     margin: 0 0 0.25rem
     font-size: 1.75rem
-    color: $text-dark
+    color: $primary-bg
     font-family: 'Heebo', sans-serif
     font-weight: 700
 
   p
     margin: 0
-    color: $text-dark
+    color: $primary-bg
     font-size: 1.1rem
 
 // Stats Grid
@@ -28,229 +30,386 @@
   padding: 1rem 1.5rem
 
 .stat-card
-  background: $card-bg
+  background: $bg-light-grey
   border-radius: 12px
-  padding: 0.7rem 1rem 0
+  padding: 0.7rem 1rem
   text-align: center
   box-shadow: none
+  width: 100%
+  height: 170px
+  display: flex
+  flex-direction: column
+  box-sizing: border-box
+  position: relative
+  justify-content: flex-start
 
 .stat-icon
   margin: 0 auto 0.5rem
-  font-size: 1.5rem
-  color: $icon-color
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-shrink: 0
+
+  img
+    width: 19px
+    height: auto
+    display: block
+
+  .shekel-symbol
+    font-size: 20px
+    color: $text-dark
+    font-family: 'Heebo', sans-serif
+    margin-bottom: -10px
+    font-weight: 500
 
 .stat-label
-  font-size: 0.85rem
-  color: #666
-  margin-bottom: 0.5rem
+  font-size: 16px
+  color: $text-stat-label
+  font-family: 'Heebo', sans-serif
+  flex-shrink: 0
 
 .stat-value
-  font-size: 2rem
+  font-size: 30px
   font-family: 'Heebo', sans-serif
   font-weight: 700
-  color: #333
+  color: $btn-primary
   margin-bottom: 0.25rem
+  flex-shrink: 0
 
 .stat-subtitle
-  font-size: 0.75rem
-  color: #999
-  margin-bottom: 1rem
+  font-size: 12px
+  color: $text-stat-subtitle
+  margin-bottom: 0
+  font-family: 'Heebo', sans-serif
+  flex-shrink: 0
 
 .stat-btn
   width: 60%
   padding: 0.75rem 0.5rem
-  background: $btn-primary
-  color: white
+  background: $bg-action-button
+  color: $btn-primary
   border: none
   border-radius: 20px
   font-size: 0.8rem
   cursor: pointer
   transition: all 0.2s
-  position: relative
-  margin-bottom: -50px
+  margin-top: auto
+  align-self: center
+  flex-shrink: 0
+  position: absolute
+  bottom: -20px
+  left: 50%
+  transform: translateX(-50%)
 
   &:hover
-    background: $btn-primary-hover
+    background: color-mix(in srgb, $bg-action-button 90%, black)
 
 // Charts Section
 .charts-section
   display: grid
-  grid-template-columns: 1fr 1fr 1.5fr
+  grid-template-columns: 0.55fr 0.55fr 1fr
   gap: 1rem
   padding: 0 1.5rem 1rem
+  direction: rtl
 
 .chart-card
-  background: white
-  border-radius: 12px
-  padding: 1.5rem
+  background: $bg-light-grey
+  border-radius: 16px
+  padding: 0.75rem 1rem
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
 
   h3
-    margin: 0 0 0.25rem
+    margin: 0 0 0.15rem
     font-size: 1rem
-    color: #333
+    color: #757575
 
   .chart-subtitle
-    margin: 0 0 1rem
-    font-size: 0.8rem
+    margin: 0 0 0.5rem
+    font-size: 0.75rem
     color: #999
 
+// Loading and Error States
+.loading-state,
+.error-state
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  padding: 3rem
+  text-align: center
+
+  .spinner
+    width: 40px
+    height: 40px
+    border: 3px solid #f3f3f3
+    border-top: 3px solid $btn-primary
+    border-radius: 50%
+    animation: spin 1s linear infinite
+    margin-bottom: 1rem
+
+  p
+    color: $text-dark
+    font-size: 1rem
+    margin: 0.5rem 0
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+
 // Balance Chart
+.balance-chart
+  .balance-change
+    font-size: 0.75rem
+    color: #666
+    font-family: 'Heebo', sans-serif
+    margin-bottom: 0.25rem
+
 .bar-chart
   display: flex
-  justify-content: center
-  gap: 2rem
-  height: 120px
-  align-items: flex-end
+  flex-direction: column
   margin-bottom: 1rem
+  margin-top: 2rem
 
-  .bar
-    width: 60px
-    border-radius: 4px 4px 0 0
+  .bar-row
     display: flex
-    align-items: flex-start
-    justify-content: center
-    padding-top: 0.5rem
+    margin-left: 10px
+    align-items: center
+    gap: 0.75rem
+    direction: rtl
 
-    span
+    .bar-container
+      flex: 1
+      min-width: 0
+      position: relative
+      display: flex
+      align-items: center
+      max-width: calc(100% - 80px)
+
+    .bar
+      height: 26px
+      border-radius: 0
+      transition: width 0.3s ease
+      min-width: 20px
+      margin-left: 10px
+      flex-shrink: 0
+
+    &.income .bar
+      background: #2f3264
+
+    &.expense .bar
+      background: $chart-gray-light
+
+    .bar-value
       font-size: 0.75rem
+      color: #757575
       font-family: 'Heebo', sans-serif
       font-weight: 600
+      white-space: nowrap
+      margin-left: 0.5rem
+      flex-shrink: 0
 
-    &.income
-      background: #1976d2
-
-      span
-        color: white
-
-    &.expense
-      background: #e0e0e0
-
-      span
-        color: #333
-
-.chart-legend
+.balance-footer
   display: flex
-  justify-content: center
-  gap: 1.5rem
-  font-size: 0.8rem
-  margin-bottom: 0.5rem
+  justify-content: space-between
+  align-items: center
+  margin-top: 0.75rem
+  direction: rtl
 
-  .dot
-    display: inline-block
-    width: 10px
-    height: 10px
-    border-radius: 50%
-    margin-left: 0.5rem
+  .balance-result
+    font-size: 0.75rem
+    color: #666
+    font-family: 'Heebo', sans-serif
 
-    &.income
-      background: #1976d2
+    &.negative
+      color: #d32f2f
 
-    &.expense
-      background: #e0e0e0
+  .balance-legend
+    display: flex
+    gap: 1rem
+    align-items: center
 
-.balance-result
-  text-align: center
-  font-size: 0.85rem
-  color: #666
+    .legend-item
+      display: flex
+      align-items: center
+      gap: 0.5rem
+
+      .dot
+        display: inline-block
+        width: 10px
+        height: 10px
+        border-radius: 50%
+        flex-shrink: 0
+
+        &.income
+          background: $btn-primary
+
+        &.expense
+          background: $chart-gray-light
+
+      .legend-text
+        font-size: 0.75rem
+        color: #666
+        font-family: 'Heebo', sans-serif
 
 // Pie Chart
 .pie-chart-container
   display: flex
   align-items: center
-  justify-content: space-around
+  gap: 1.5rem
+  direction: rtl
 
-.pie-chart
-  width: 100px
-  height: 100px
-  border-radius: 50%
-  background: conic-gradient(#e0e0e0 0% 40%, #bdbdbd 40% 70%, #424242 70% 100%)
+.donut-chart-wrapper
+  position: relative
   display: flex
   align-items: center
   justify-content: center
-  position: relative
+  flex-shrink: 0
 
-  &::before
-    content: ''
-    position: absolute
-    width: 60px
-    height: 60px
-    background: white
-    border-radius: 50%
+.donut-chart
+  width: 120px
+  height: 120px
+  flex-shrink: 0
+
+.donut-center
+  position: absolute
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  z-index: 1
+  max-width: 100px
+  text-align: center
 
   .pie-value
-    position: relative
     font-family: 'Heebo', sans-serif
     font-weight: 700
-    font-size: 0.9rem
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem)
+    color: #757575
+    white-space: nowrap
+    line-height: 1.2
 
 .pie-legend
   display: flex
   flex-direction: column
   gap: 0.5rem
-  font-size: 0.8rem
+  font-size: 0.75rem
+
+  .legend-item
+    display: flex
+    align-items: center
+    gap: 0.5rem
 
   .dot
     display: inline-block
-    width: 10px
-    height: 10px
-    border-radius: 2px
-    margin-left: 0.5rem
+    width: 12px
+    height: 12px
+    border-radius: 50%
+    flex-shrink: 0
 
-    &.gray
-      background: #e0e0e0
-
-    &.light-gray
-      background: #bdbdbd
-
-    &.dark
-      background: #424242
+  .legend-label
+    color: #757575
+    font-family: 'Heebo', sans-serif
 
 // Review Chart
 .toggle-container
   display: flex
   align-items: center
-  justify-content: space-between
-  margin-bottom: 1rem
-  font-size: 0.8rem
+  margin-bottom: 0.5rem
+  font-size: 0.75rem
   color: #666
+
+.monthly-bars-container
+  display: flex
+  flex-direction: column
+  direction: ltr
 
 .monthly-bars
   display: flex
   justify-content: space-between
   align-items: flex-end
-  height: 120px
+  height: 82px
+  gap: 0.5rem
+  position: relative
+  padding: 0 0.5rem
+  margin-bottom: 0.25rem
+
+  // Dashed grid lines background pattern - smaller dashes, more per row
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 11.5 L100 11.5' stroke='%23dde1ec' stroke-width='1' stroke-dasharray='1.5,1.5' fill='none' opacity='0.6'/%3E%3C/svg%3E")
+  background-repeat: repeat-y
+  background-size: 100% 12px
+  background-position: top
+  background-color: $bg-light-grey
 
 .month-bar
   display: flex
   flex-direction: column
   align-items: center
   flex: 1
+  gap: 0.5rem
+  position: relative
+  z-index: 1
 
-  .bar-fill
-    width: 30px
-    background: linear-gradient(to top, #f5f5f5, #e0e0e0)
-    border-radius: 4px 4px 0 0
+  .amount
+    font-size: 0.7rem
+    font-weight: 600
+    color: $gray-500
+    font-family: 'Heebo', sans-serif
+    white-space: nowrap
+
+  .trend-bar
+    width: 100%
+    max-width: 50px
+    min-height: 23px
+    border-radius: 40px 40px 0 0
+    transition: height 0.3s ease
+
+.month-labels
+  display: flex
+  justify-content: space-between
+  gap: 0.5rem
+  padding: 0 0.5rem
+  direction: ltr
+
+  .month-label-item
+    flex: 1
+    display: flex
+    flex-direction: column
+    align-items: center
+    gap: 0.15rem
 
   .amount
     font-size: 0.65rem
-    color: #666
-    margin-top: 0.5rem
+    font-weight: 600
+    color: $gray-500
+    font-family: 'Heebo', sans-serif
 
   .month
     font-size: 0.65rem
-    color: #999
+    color: $gray-500
+    font-family: 'Heebo', sans-serif
 
 // Bottom Section
 .bottom-section
   display: grid
-  grid-template-columns: 300px 1fr
+  grid-template-columns: 2fr 1fr
   gap: 1rem
   padding: 0 1.5rem 1.5rem
+  direction: rtl
+
+  .recent-debts
+    order: 1
+
+  .quick-reports
+    order: 2
 
 // Quick Reports
 .quick-reports
-  background: white
+  background: $bg-light-grey
   border-radius: 12px
   padding: 1.5rem
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
@@ -258,74 +417,130 @@
   h3
     margin: 0 0 0.25rem
     font-size: 1rem
-    color: #333
+    color: #757575
+    font-family: 'Heebo', sans-serif
+    font-weight: 600
 
   > p
     margin: 0 0 1rem
     font-size: 0.8rem
     color: #999
+    font-family: 'Heebo', sans-serif
 
 .report-item
   display: flex
   justify-content: space-between
   align-items: center
   padding: 0.75rem 0
-  border-bottom: 1px solid #f0f0f0
+  gap: 0.5rem
 
-  &:last-child
-    border-bottom: none
-
-  span
+  > span:first-child
     font-size: 0.85rem
-    color: #333
+    color: #757575
+    font-family: 'Heebo', sans-serif
+    white-space: nowrap
+
+  .dashed-line
+    flex: 1
+    height: 1px
+    border-top: 1px dashed #dadde4
+    margin: 0 0.5rem
 
 .report-btn
+  display: flex
+  align-items: center
+  gap: 0.5rem
   padding: 0.4rem 0.8rem
-  background: #fff3e0
-  color: #e65100
+  background: $chart-gray-medium
+  color: #FCFCFC
   border: none
   border-radius: 6px
   font-size: 0.75rem
   cursor: pointer
+  font-family: 'Heebo', sans-serif
+  transition: opacity 0.2s
+  position: relative
+  z-index: 1
+  padding-left: 0.5rem
+
+  &:hover
+    opacity: 0.9
+
+  .report-icon
+    width: 14px
+    height: 17px
+    flex-shrink: 0
 
 // Recent Debts
 .recent-debts
-  background: white
+  background: $bg-light-grey
   border-radius: 12px
   padding: 1.5rem
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
+  direction: rtl
 
   h3
     margin: 0 0 0.25rem
     font-size: 1rem
-    color: #333
+    color: #757575
+    font-family: 'Heebo', sans-serif
+    font-weight: 600
 
   > p
     margin: 0 0 1rem
     font-size: 0.8rem
     color: #999
+    font-family: 'Heebo', sans-serif
+
+  .loading-debts, .no-debts
+    text-align: center
+    padding: 2rem
+    color: #999
+    font-family: 'Heebo', sans-serif
 
   table
     width: 100%
     border-collapse: collapse
+    font-family: 'Heebo', sans-serif
 
-  th, td
-    padding: 0.75rem
-    text-align: right
-    font-size: 0.85rem
+  thead
+    th
+      padding: 0.3rem 0.75rem
+      text-align: right
+      font-size: 0.85rem
+      color: $btn-primary
+      font-weight: 600
+      border-bottom: 1px solid #dadde4
+      background: transparent
 
-  th
-    color: #666
-    font-weight: normal
-    border-bottom: 1px solid #e0e0e0
+      &:last-child
+        text-align: center
+
+  tbody
+    tr
+      background: transparent
+
+      &:hover
+        background: rgba(0, 0, 0, 0.02)
 
   td
-    border-bottom: 1px solid #f0f0f0
+    padding: 0.5rem 0.75rem
+    text-align: right
+    font-size: 0.85rem
+    color: #757575
+    border-bottom: 1px solid #dadde4
+
+    &:last-child
+      display: flex
+      justify-content: center
 
   .status
-    padding: 0.25rem 0.5rem
-    border-radius: 4px
+    display: inline-block
+    padding: 0.25rem 0.75rem
+    border-radius: 20px
     font-size: 0.75rem
+    font-weight: 500
+    font-family: 'Heebo', sans-serif
 
     &.paid
       background: #e8f5e9
@@ -335,12 +550,25 @@
       background: #ffebee
       color: #e53935
 
-.action-btn
-  padding: 0.4rem 0.8rem
-  background: #e3f2fd
-  color: #1976d2
-  border: none
-  border-radius: 6px
-  font-size: 0.75rem
-  cursor: pointer
-  white-space: nowrap
+  .reminder-btn
+    width: 30px
+    height: 30px
+    border: none
+    background: transparent
+    cursor: pointer
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 0
+    transition: opacity 0.2s
+
+    &:hover:not(:disabled)
+      opacity: 0.8
+
+    &:disabled
+      opacity: 0.5
+      cursor: not-allowed
+
+    .reminder-icon
+      width: 30px
+      height: 30px

@@ -4,7 +4,7 @@
       <label>סכום לחיוב</label>
       <div class="amount-input">
         <input type="number" [(ngModel)]="paymentDetails.amount" name="amount" min="0.01" max="100000" step="0.01" (ngModelChange)="onAmountChange()" (focus)="onFocus($event)" placeholder="0">
-        <span class="currency">ש"ח</span>
+        <span class="currency">₪</span>
       </div>
     </div>
     <div class="form-group">

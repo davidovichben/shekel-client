@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Member } from '../../../../../core/entities/member.entity';
 import { CustomSelectComponent, SelectOption } from '../../../../../shared/components/custom-select/custom-select';
+import { ToggleSwitchComponent } from '../../../../../shared/components/toggle-switch/toggle-switch';
 import { CreditCardsComponent, CreditCard } from './credit-cards/credit-cards';
 import { BankAccountComponent, BankAccountData } from './bank-account/bank-account';
 import { MemberCreditCardService } from '../../../../../core/services/network/member-credit-card.service';
@@ -11,7 +12,7 @@ import { MemberBillingSettingsService } from '../../../../../core/services/netwo
 @Component({
   selector: 'app-member-billing-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent, CreditCardsComponent, BankAccountComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, ToggleSwitchComponent, CreditCardsComponent, BankAccountComponent],
   templateUrl: './billing-settings.html',
   styleUrl: './billing-settings.sass'
 })

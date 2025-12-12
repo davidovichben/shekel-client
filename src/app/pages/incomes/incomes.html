@@ -77,13 +77,8 @@
             <td>{{ income.description || 'ללא תיאור' }}</td>
             <td>{{ getPaymentTypeLabel(income.paymentType) }}</td>
             <td>{{ getCategoryLabel(income.category) }}</td>
-            <td>{{ income.amount }} ש"ח</td>
-            <td>
-              <div class="hebrew-date-cell">
-                <div class="hebrew-date-top">{{ getHebrewDateTop(income) }}</div>
-                <div class="hebrew-date-bottom">{{ getHebrewDateBottom(income) }}</div>
-              </div>
-            </td>
+            <td>{{ income.amount }} ₪</td>
+            <td>{{ getHebrewDate(income) }}</td>
             <td>{{ formatGregorianDate(income.date) }}</td>
             <td>{{ income.payerName || '--' }}</td>
             <td>{{ income.number || '--' }}</td>
@@ -102,7 +97,7 @@
               </span>
             </td>
             <td class="col-actions">
-              <button type="button" class="row-action" (click)="onBulkAction('share')">
+              <button type="button" class="row-action" (click)="shareIncome(income)">
                 <img src="assets/img/icons/share.svg" alt="" class="action-icon">
               </button>
             </td>
@@ -112,7 +107,7 @@
 
       <!-- Footer -->
       <div class="table-footer">
-        <span class="footer-message">נמצאו {{ totalIncomes }} רשומות, סה"כ סכום ההכנסות בהן הוא: <span class="bold">{{ getTotalAmount() }} ש"ח</span></span>
+        <span class="footer-message">נמצאו {{ totalIncomes }} רשומות, סה"כ סכום ההכנסות בהן הוא: <span class="bold">{{ getTotalAmount() }} ₪</span></span>
         <!-- Pagination -->
         <div class="pagination">
           <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">

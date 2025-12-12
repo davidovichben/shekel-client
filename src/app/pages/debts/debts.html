@@ -51,12 +51,15 @@
     <div class="actions-section">
       <div class="bulk-actions">
         <span>פעולות קולקטיביות:</span>
-        <button class="action-icon" (click)="onBulkAction('message')">
+        <button type="button" class="action-icon" (click)="onBulkAction('message')">
           <img src="assets/img/icons/chat_bubble.svg" alt="Message" />
         </button>
-        <button class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
-        <button class="action-icon" (click)="onBulkAction('delete')"><img src="assets/img/icons/trash.svg" alt=""></button>
-        <button class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print.svg" alt=""></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('document')">
+          <img src="assets/img/icons/pdf.svg" alt="Document" />
+        </button>
+        <button type="button" class="action-icon" (click)="onBulkAction('print')">
+          <img src="assets/img/icons/print.svg" alt="Print" />
+        </button>
       </div>
       <div class="export-action">
         <button class="btn-outline" (click)="openExportDialog()">ייצא לקובץ</button>
@@ -86,25 +89,16 @@
         </td>
         <td>{{ debt.fullName }}</td>
         <td>{{ debt.description }}</td>
-        <td>{{ debt.amount }} ש"ח</td>
+        <td>{{ debt.amount }} ₪</td>
         <td>
           <span class="approval-status" [class.approved]="debt.shouldBill" [class.not-approved]="!debt.shouldBill">
             <i class="fa-solid fa-circle"></i>
             {{ debt.shouldBill ? 'מאושר' : 'לא מאושר' }}
           </span>
         </td>
-        <td>
-          @if (debt.hebrewDate) {
-            <div class="hebrew-date-cell">
-              <div class="hebrew-date-top">{{ getHebrewDateTop(debt) }}</div>
-              <div class="hebrew-date-bottom">{{ getHebrewDateBottom(debt) }}</div>
-            </div>
-          } @else {
-            ------
-          }
-        </td>
-        <td>{{ debt.gregorianDate || '------' }}</td>
-        <td>{{ debt.lastReminderSentAt || '------' }}</td>
+        <td>{{ getHebrewDate(debt) }}</td>
+        <td>{{ formatGregorianDate(debt.gregorianDate) }}</td>
+        <td>{{ formatGregorianDate(debt.lastReminderSentAt) }}</td>
         <td>{{ getDebtTypeLabel(debt.debtType) }}</td>
         <td>
           <app-chip
@@ -115,8 +109,8 @@
         <td class="col-actions">
           <button type="button" class="row-action" (click)="openEditDialog(debt)"><img src="assets/img/icons/edit.svg" alt="" class="action-icon"></button>
           <button type="button" class="row-action" (click)="openDeleteDialog(debt)"><img src="assets/img/icons/trash.svg" alt="" class="action-icon"></button>
-          <button type="button" class="row-action"><img src="assets/img/icons/credit_card.svg" alt="" class="action-icon"></button>
-          <button type="button" class="row-action"><img src="assets/img/icons/chat_bubble.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action" [disabled]="isStatusPaid(debt.status)" (click)="openPaymentDialog(debt)"><img src="assets/img/icons/credit_card.svg" alt="" class="action-icon"></button>
+          <button type="button" class="row-action" [disabled]="isStatusPaid(debt.status)" (click)="sendReminder(debt)"><img src="assets/img/icons/chat_bubble.svg" alt="" class="action-icon"></button>
         </td>
       </tr>
     }
@@ -124,7 +118,7 @@
 
   <!-- Footer -->
   <div class="table-footer">
-    <span class="footer-message">(נמצאו {{ totalDebts }} רשומות, סה"כ סכום החובות בהן הוא: <span class="bold">{{ getTotalAmount() }} ש"ח</span>)</span>
+    <span class="footer-message">(נמצאו {{ totalDebts }} רשומות, סה"כ סכום החובות בהן הוא: <span class="bold">{{ getTotalAmount() }} ₪</span>)</span>
     <!-- Pagination -->
     <div class="pagination">
       <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">

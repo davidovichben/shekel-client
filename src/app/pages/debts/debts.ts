@@ -2,11 +2,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
 import { CustomSelectComponent } from '../../shared/components/custom-select/custom-select';
 import { AdditionalFiltersComponent } from '../../shared/components/additional-filters/additional-filters';
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { ExportDialogComponent, ExportDialogResult } from '../../shared/components/export-dialog/export-dialog';
+import { ReminderDialogComponent, ReminderDialogResult } from '../../shared/components/reminder-dialog/reminder-dialog';
+import { PaymentComponent } from '../payment/payment';
 import { DebtFormComponent } from './debt-form/debt-form';
 import { VowSetFormComponent } from './vow-set-form/vow-set-form';
 import { DebtService } from '../../core/services/network/debt.service';
@@ -122,28 +125,22 @@ export class DebtsComponent implements OnInit {
   }
 
   private loadTabCounts(): void {
-    // Load counts for all tabs
-    // All debts count
+    // Make a single request - API returns counts for all statuses in response.counts
     this.debtService.getAll({ page: 1, limit: 1 }).subscribe({
       next: (response: any) => {
-        const allCount = response.counts?.totalRows || response.counts?.total_rows || response.total || response.count || 0;
+        // API returns: { counts: { all: X, pending: Y, paid: Z, totalRows: N, totalPages: M } }
+        const counts = response.counts || {};
+        
+        const allCount = counts['all'] || 0;
+        const pendingCount = counts['pending'] || 0;
+        const paidCount = counts['paid'] || 0;
+
         this.tabs.find(t => t.id === 'all')!.count = allCount;
-      }
-    });
-
-    // Active debts count (pending status)
-    this.debtService.getAll({ status: 'pending', page: 1, limit: 1 }).subscribe({
-      next: (response: any) => {
-        const activeCount = response.counts?.totalRows || response.counts?.total_rows || response.total || response.count || 0;
-        this.tabs.find(t => t.id === 'active')!.count = activeCount;
-      }
-    });
-
-    // Paid debts count
-    this.debtService.getAll({ status: 'paid', page: 1, limit: 1 }).subscribe({
-      next: (response: any) => {
-        const paidCount = response.counts?.totalRows || response.counts?.total_rows || response.total || response.count || 0;
+        this.tabs.find(t => t.id === 'active')!.count = pendingCount;
         this.tabs.find(t => t.id === 'paid')!.count = paidCount;
+      },
+      error: (error) => {
+        console.error('Error loading tab counts:', error);
       }
     });
   }
@@ -432,16 +429,12 @@ export class DebtsComponent implements OnInit {
       return;
     }
 
-    if (action === 'delete') {
-      this.bulkDelete();
-    } else if (action === 'print') {
+    if (action === 'print') {
       this.bulkPrint();
     } else if (action === 'message') {
       this.bulkSendMessage();
     } else if (action === 'document') {
       this.bulkGenerateDocument();
-    } else if (action === 'copy') {
-      this.bulkCopy();
     } else {
       console.log(`Bulk action: ${action}`, Array.from(this.selectedDebts));
     }
@@ -475,7 +468,7 @@ export class DebtsComponent implements OnInit {
         
         // Delete all selected debts
         const deletePromises = ids.map(id => 
-          this.debtService.delete(id).toPromise()
+          firstValueFrom(this.debtService.delete(id))
         );
         
         Promise.all(deletePromises).then(() => {
@@ -513,7 +506,7 @@ export class DebtsComponent implements OnInit {
       <tr>
         <td>${d.fullName}</td>
         <td>${d.description}</td>
-        <td>${d.amount} ש"ח</td>
+        <td>${d.amount} ₪</td>
         <td>${d.gregorianDate}</td>
         <td>${this.getStatusLabel(d.status)}</td>
       </tr>
@@ -558,8 +551,53 @@ export class DebtsComponent implements OnInit {
 
   private bulkSendMessage(): void {
     const selectedIds = Array.from(this.selectedDebts);
-    console.log('Bulk send message for debts:', selectedIds);
-    // TODO: Implement bulk message sending
+    const selectedDebts = this.debts.filter(d => selectedIds.includes(d.id));
+    
+    // Get unique member IDs from selected debts
+    const memberIds = [...new Set(selectedDebts.map(d => d.memberId).filter(id => id))];
+    
+    const dialogRef = this.dialog.open(ReminderDialogComponent, {
+      width: '750px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        memberIds: memberIds,
+        memberCount: memberIds.length
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: ReminderDialogResult | undefined) => {
+      if (result && result.message) {
+        try {
+          // Send reminder for each selected debt
+          const reminderPromises = selectedIds.map(id => 
+            firstValueFrom(this.debtService.sendReminder(id))
+          );
+          
+          await Promise.all(reminderPromises);
+          
+          this.selectedDebts.clear();
+          this.loadDebts();
+          this.loadTabCounts();
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            panelClass: 'confirm-dialog-panel',
+            backdropClass: 'confirm-dialog-backdrop',
+            enterAnimationDuration: '0ms',
+            exitAnimationDuration: '0ms',
+            data: {
+              title: 'ההודעות נשלחו בהצלחה',
+              message: `הודעות תזכורת נשלחו ל-${selectedIds.length} חובות`,
+              confirmText: 'סגור'
+            }
+          });
+        } catch (error) {
+          console.error('Error sending reminders:', error);
+        }
+      }
+    });
   }
 
   private bulkGenerateDocument(): void {
@@ -568,13 +606,86 @@ export class DebtsComponent implements OnInit {
     // TODO: Implement bulk document generation
   }
 
+  sendReminder(debt: Debt): void {
+    // Don't send reminder if debt is paid
+    if (this.isStatusPaid(debt.status)) {
+      return;
+    }
+    
+    // Pre-fill message with debt type and amount
+    const debtTypeLabel = this.getDebtTypeLabel(debt.debtType);
+    const messageTemplate = `שלום,
+זוהי הודעת תזכורת לתשלום חוב: ${debtTypeLabel} על סך ${debt.amount} ₪ מבית הכנסת "אהל יצחק", נבקשך להסדיר את התשלום בהקדם.
+בתודה מראש
+גבאי בית הכנסת - רבי שלמה.`;
+
+    const dialogRef = this.dialog.open(ReminderDialogComponent, {
+      width: '750px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        memberIds: debt.memberId ? [debt.memberId] : [],
+        memberCount: 1,
+        memberName: debt.fullName,
+        initialMessage: messageTemplate,
+        debtStatus: debt.status
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: ReminderDialogResult | undefined) => {
+      if (result && result.message) {
+        try {
+          await firstValueFrom(this.debtService.sendReminder(debt.id));
+          
+          this.loadDebts();
+          this.loadTabCounts();
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            panelClass: 'confirm-dialog-panel',
+            backdropClass: 'confirm-dialog-backdrop',
+            enterAnimationDuration: '0ms',
+            exitAnimationDuration: '0ms',
+            data: {
+              title: 'ההודעה נשלחה בהצלחה',
+              message: `הודעת תזכורת נשלחה ל-${debt.fullName}`,
+              confirmText: 'סגור'
+            }
+          });
+        } catch (error) {
+          console.error('Error sending reminder:', error);
+        }
+      }
+    });
+  }
+
+  openPaymentDialog(debt: Debt): void {
+    // Don't open payment dialog if debt is paid
+    if (this.isStatusPaid(debt.status)) {
+      return;
+    }
+
+    this.dialog.open(PaymentComponent, {
+      width: '80%',
+      panelClass: 'payment-dialog-panel',
+      backdropClass: 'payment-dialog-backdrop',
+      autoFocus: false,
+      data: {
+        memberId: debt.memberId,
+        memberName: debt.fullName,
+        amount: debt.amount
+      }
+    });
+  }
+
   private bulkCopy(): void {
     const selectedIds = Array.from(this.selectedDebts);
     const selectedDebts = this.debts.filter(d => selectedIds.includes(d.id));
     
     // Format debts as text for clipboard
     const text = selectedDebts.map(d => 
-      `${d.fullName} - ${d.description} - ${d.amount} ש"ח - ${d.gregorianDate}`
+      `${d.fullName} - ${d.description} - ${d.amount} ₪ - ${d.gregorianDate}`
     ).join('\n');
     
     navigator.clipboard.writeText(text).then(() => {
@@ -604,7 +715,7 @@ export class DebtsComponent implements OnInit {
           },
           {
             text: 'כן, מחק',
-            icon: 'trash-icon',
+            icon: 'trash-white-icon',
             type: 'primary',
             action: 'confirm'
           }

@@ -41,4 +41,11 @@ export class InvoiceService {
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  export(ids?: string[], fileType?: string): Observable<Blob> {
+    const body: { ids?: string[]; file_type?: string } = {};
+    if (ids) body.ids = ids;
+    if (fileType) body.file_type = fileType;
+    return this.http.post(`${this.apiUrl}/export`, body, { responseType: 'blob' });
+  }
 }

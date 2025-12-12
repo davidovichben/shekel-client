@@ -11,11 +11,11 @@
       <div class="panel-content">
         <!-- Auto monthly charge toggle -->
         <div class="setting-row">
-          <label class="toggle-label">בצע חיוב אוטומטי חודשי</label>
-          <label class="toggle-switch">
-            <input type="checkbox" [(ngModel)]="shouldBill" (ngModelChange)="onShouldBillChange()">
-            <span class="toggle-slider"></span>
-          </label>
+          <app-toggle-switch
+            [(ngModel)]="shouldBill"
+            (toggleChange)="onShouldBillChange()"
+            label="בצע חיוב אוטומטי חודשי">
+          </app-toggle-switch>
         </div>
 
         <!-- Billing day -->

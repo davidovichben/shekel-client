@@ -6,6 +6,7 @@ import { CustomSelectComponent } from '../../shared/components/custom-select/cus
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { ExportDialogComponent, ExportDialogResult } from '../../shared/components/export-dialog/export-dialog';
+import { ShareDialogComponent } from '../../shared/components/share-dialog/share-dialog';
 import { InvoiceFormComponent } from './invoice-form/invoice-form';
 
 interface Invoice {
@@ -249,7 +250,22 @@ export class InvoicesComponent implements OnInit {
   }
 
   shareInvoice(invoice: Invoice): void {
-    console.log('Share invoice:', invoice.id);
+    this.openShareDialog([invoice.id]);
+  }
+
+  private openShareDialog(invoiceIds: string[]): void {
+    this.dialog.open(ShareDialogComponent, {
+      width: '600px',
+      panelClass: 'share-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        entityType: 'invoices',
+        selectedIds: invoiceIds,
+        title: invoiceIds.length === 1 ? 'שתף חשבונית' : 'שתף חשבוניות'
+      }
+    });
   }
 
   duplicateInvoice(invoice: Invoice): void {

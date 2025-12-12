@@ -1,6 +1,7 @@
-<div class="form-header">
-  <label class="field-label">משלם</label>
+<div class="form-group">
+  <label>משלם:</label>
   <app-member-autocomplete
+    [memberId]="memberId"
     [memberName]="memberName"
     placeholder="חיפוש חבר..."
     (memberSelected)="onMemberSelected($event)">
@@ -8,11 +9,11 @@
 </div>
 
 <div class="use-member-toggle">
-  <label class="toggle">
-    <input type="checkbox" [(ngModel)]="useMemberDetails" (ngModelChange)="onUseMemberDetailsChange()">
-    <span class="slider"></span>
-  </label>
-  <span>השתמש בפרטי חבר הקהילה לטובת החשבונית</span>
+  <app-toggle-switch
+    [(ngModel)]="useMemberDetails"
+    (toggleChange)="onUseMemberDetailsChange($event)"
+    label="השתמש בפרטי חבר הקהילה לטובת החשבונית">
+  </app-toggle-switch>
 </div>
 
 <form class="payer-form">

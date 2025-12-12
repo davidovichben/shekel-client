@@ -104,6 +104,31 @@ input[type="radio"]
   cursor: pointer
   outline: none
 
+.btn-action
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 0.5rem
+  padding: 0.5rem 1rem
+  background: $bg-action-button
+  color: $text-action-button
+  border: none
+  border-radius: 6px
+  font-size: 0.85rem
+  cursor: pointer
+  font-family: 'Heebo', sans-serif
+  white-space: nowrap
+  transition: background 0.2s
+
+  &:hover
+    background: color-mix(in srgb, $bg-action-button 90%, black)
+
+  .btn-icon
+    width: 16px
+    height: 16px
+    display: block
+    flex-shrink: 0
+
 // Shared Tabs
 .tabs-container
   display: flex

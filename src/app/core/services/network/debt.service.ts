@@ -35,10 +35,10 @@ export class DebtService {
       ...debt,
       id: debt.id || debt._id,
       fullName: debt.fullName || debt.memberName || debt.full_name || debt.member_name || debt.name || '',
-      gregorianDate: this.formatDate(debt.gregorianDate || debt.gregorian_date || debt.date),
+      gregorianDate: this.formatDate(debt.gregorianDate || debt.gregorian_date || debt.due_date || debt.dueDate || debt.date),
       debtType: debt.debtType || debt.type || debt.debt_type || '',
       lastReminder: debt.lastReminder ? this.formatDate(debt.lastReminder) : null,
-      lastReminderSentAt: debt.lastReminderSentAt ? this.formatDate(debt.lastReminderSentAt) : null,
+      lastReminderSentAt: (debt.lastReminderSentAt || debt.last_reminder_sent_at) ? this.formatDate(debt.lastReminderSentAt || debt.last_reminder_sent_at) : null,
       status: debt.status || 'pending',
       amount: debt.amount ? parseFloat(String(debt.amount)) : 0,
       description: debt.description || '',
@@ -66,6 +66,7 @@ export class DebtService {
         ...response,
         rows: (response.rows || []).map((debt: any) => this.mapDebtFromApi(debt)),
         counts: {
+          ...response.counts,
           totalRows: response.counts?.totalRows || response.counts?.total_rows || response.total || response.count || 0,
           totalPages: response.counts?.totalPages || response.counts?.total_pages || response.totalPages || 1
         }

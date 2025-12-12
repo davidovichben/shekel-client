@@ -6,120 +6,171 @@
   </div>
 
   <!-- Stats Cards -->
-  <div class="stats-grid mb-5">
-    <div class="stat-card">
-      <div class="stat-icon">⤴</div>
-      <div class="stat-label">סכום תרומות החודש</div>
-      <div class="stat-value">18,450 ש"ח</div>
-      <div class="stat-subtitle">-5% מהחודש שעבר</div>
-      <button class="stat-btn">הוסף תרומה</button>
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>טוען נתונים...</p>
     </div>
+  } @else if (error) {
+    <div class="error-state">
+      <p>{{ error }}</p>
+      <button class="btn-primary" (click)="loadDashboardStats()">נסה שוב</button>
+    </div>
+  } @else if (summaryCards) {
+    <div class="stats-grid mb-5">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <img src="assets/img/icons/arrow-up.svg" alt="Arrow Up" />
+        </div>
+        <div class="stat-label">סכום הכנסות החודש</div>
+        <div class="stat-value">{{ formatAmount(summaryCards.donations.amount) }}</div>
+        <div class="stat-subtitle">{{ formatPercentage(summaryCards.donations.changePercent) }} {{ summaryCards.donations.changeLabel }}</div>
+        <button class="stat-btn" (click)="openPaymentDialog()">הוסף תרומה</button>
+      </div>
 
-    <div class="stat-card">
-      <div class="stat-icon">↙</div>
-      <div class="stat-label">סכום הוצאות החודש</div>
-      <div class="stat-value">12,104 ש"ח</div>
-      <div class="stat-subtitle">+2% מהחודש שעבר</div>
-      <button class="stat-btn">הוסף הוצאה</button>
-    </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <img src="assets/img/icons/arrow-down.svg" alt="Arrow Down" />
+        </div>
+        <div class="stat-label">סכום הוצאות החודש</div>
+        <div class="stat-value">{{ formatAmount(summaryCards.expenses.amount) }}</div>
+        <div class="stat-subtitle">{{ formatPercentage(summaryCards.expenses.changePercent) }} {{ summaryCards.expenses.changeLabel }}</div>
+        <button class="stat-btn" (click)="openExpenseDialog()">הוסף הוצאה</button>
+      </div>
 
-    <div class="stat-card">
-      <div class="stat-icon">△</div>
-      <div class="stat-label">סכום חובות פתוחים</div>
-      <div class="stat-value">5,450 ש"ח</div>
-      <div class="stat-subtitle">18 חובות פעילים</div>
-      <button class="stat-btn">שלח דרישת תשלום</button>
-    </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <img src="assets/img/icons/triangle-warning.svg" alt="Triangle Warning" />
+        </div>
+        <div class="stat-label">סכום חובות פתוחים</div>
+        <div class="stat-value">{{ formatAmount(summaryCards.openDebts.amount) }}</div>
+        <div class="stat-subtitle">{{ summaryCards.openDebts.count }} {{ summaryCards.openDebts.label }}</div>
+        <button class="stat-btn" (click)="openReminderDialog()">שלח דרישת תשלום</button>
+      </div>
 
-    <div class="stat-card">
-      <div class="stat-icon">ש"ח</div>
-      <div class="stat-label">מאזן כספי מתחילת החודש</div>
-      <div class="stat-value">234 ש"ח</div>
-      <div class="stat-subtitle">הכנסות מחות הוצאות</div>
-      <button class="stat-btn">הפק דוח</button>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <span class="shekel-symbol">₪</span>
+        </div>
+        <div class="stat-label">מאזן כספי מתחילת החודש</div>
+        <div class="stat-value">{{ formatAmount(summaryCards.monthlyBalance.amount) }}</div>
+        <div class="stat-subtitle">{{ summaryCards.monthlyBalance.label }}</div>
+        <button class="stat-btn" (click)="generateReport('balance')">הפק דוח</button>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Charts Section -->
-  <div class="charts-section">
-    <div class="chart-card balance-chart">
-      <h3>מאזן החודש אחרון</h3>
-      <p class="chart-subtitle">הכנסות מול הוצאות בחודש הקודם (ינואר)</p>
-      <div class="chart-placeholder">
-        <div class="bar-chart">
-          <div class="bar income h-4/5">
-            <span>3118 ש"ח</span>
+  @if (!isLoading && !error) {
+    <div class="charts-section">
+      @if (semiAnnualTrend) {
+        <div class="chart-card review-chart">
+          <h3>סקירה חצי שנתית:</h3>
+          <div class="toggle-container">
+            <span>מאזן הוצאות והכנסות</span>
           </div>
-          <div class="bar expense h-3/5">
-            <span>1487 ש"ח</span>
+          @let maxTrend = getMaxTrendValue();
+          <div class="monthly-bars-container">
+            <div class="monthly-bars">
+            @for (month of semiAnnualTrend.months; track month.month; let i = $index) {
+              <div class="month-bar">
+                <div class="trend-bar" [style.height]="getTrendBarHeight(month, maxTrend)" [style.background-color]="getTrendBarColor(i)"></div>
+              </div>
+            }
+            </div>
+            <div class="month-labels">
+              @for (month of semiAnnualTrend.months; track month.month) {
+                <div class="month-label-item">
+                  <span class="amount">{{ formatAmountWithoutShekel(getTrendTotal(month)) }}</span>
+                  <span class="month">{{ formatMonthLabel(month.month) }}</span>
+                </div>
+              }
+            </div>
           </div>
         </div>
-        <div class="chart-legend">
-          <span><span class="dot income"></span> הכנסות</span>
-          <span><span class="dot expense"></span> הוצאות</span>
-        </div>
-        <div class="balance-result">מאזן: 1631 ש״ח ביתרה</div>
-      </div>
-    </div>
+      }
 
-    <div class="chart-card pie-chart-card">
-      <h3>התפלגות החובות לבית הכנסת</h3>
-      <p class="chart-subtitle">חובות ידועים שהצטברו עד היום בשקלים</p>
-      <div class="pie-chart-container">
-        <div class="pie-chart">
-          <span class="pie-value">2549 ש"ח</span>
+      @if (debtDistribution) {
+        <div class="chart-card pie-chart-card">
+          <h3>התפלגות החובות לבית הכנסת</h3>
+          <p class="chart-subtitle">חובות ידועים שהצטברו עד היום בשקלים</p>
+          @let sortedCategories = getSortedDebtCategories();
+          <div class="pie-chart-container">
+            <div class="donut-chart-wrapper">
+              <svg class="donut-chart" width="120" height="120" viewBox="0 0 120 120">
+                @for (category of sortedCategories; track category.type; let i = $index) {
+                  <circle
+                    [attr.cx]="60"
+                    [attr.cy]="60"
+                    [attr.r]="48"
+                    fill="none"
+                    [attr.stroke]="getDebtCategoryColor(category, i, sortedCategories.length)"
+                    [attr.stroke-width]="12"
+                    [attr.stroke-dasharray]="getDebtCategoryDashArray(category)"
+                    [attr.stroke-dashoffset]="getDebtCategoryDashOffset(category, sortedCategories, i)"
+                    stroke-linecap="butt"
+                    transform="rotate(-90 60 60)" />
+                }
+              </svg>
+              <div class="donut-center">
+                <span class="pie-value">{{ formatAmountNoSpace(debtDistribution.total) }}</span>
+              </div>
+            </div>
+            <div class="pie-legend">
+              @for (category of sortedCategories; track category.type; let i = $index) {
+                <div class="legend-item">
+                  <span class="dot" [style.background-color]="getDebtCategoryColor(category, i, sortedCategories.length)"></span>
+                  <span class="legend-label">{{ category.label }}</span>
+                </div>
+              }
+            </div>
+          </div>
         </div>
-        <div class="pie-legend">
-          <span><span class="dot gray"></span> נדרים</span>
-          <span><span class="dot light-gray"></span> עליות</span>
-          <span><span class="dot dark"></span> דמי חבר</span>
-        </div>
-      </div>
-    </div>
+      }
 
-    <div class="chart-card review-chart">
-      <h3>סקירה חצי שנתית:</h3>
-      <div class="toggle-container">
-        <span>מאזן הוצאות והכנסות</span>
-        <label class="toggle">
-          <input type="checkbox">
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="monthly-bars">
-        <div class="month-bar">
-          <div class="bar-fill h-[70%]"></div>
-          <span class="amount">35,874</span>
-          <span class="month">01/25</span>
+      @if (lastMonthBalance) {
+        <div class="chart-card balance-chart">
+          @if (lastMonthBalance.changePercent !== undefined) {
+            <div class="balance-change">{{ formatPercentage(lastMonthBalance.changePercent) }} {{ lastMonthBalance.changeLabel || 'מהחודש שעבר' }}</div>
+          }
+          <h3>מאזן החודש אחרון</h3>
+          <p class="chart-subtitle">הכנסות מול הוצאות בחודש הקודם</p>
+          <div class="chart-placeholder">
+            @let maxBalance = getMaxBarHeight();
+            <div class="bar-chart">
+              <div class="bar-row income">
+                <div class="bar-container">
+                  <div class="bar" [style.width]="getBarWidth(lastMonthBalance.income, maxBalance)"></div>
+                  <span class="bar-value">{{ formatAmountNoSpace(lastMonthBalance.income) }}</span>
+                </div>
+              </div>
+              <div class="bar-row expense">
+                <div class="bar-container">
+                  <div class="bar" [style.width]="getBarWidth(lastMonthBalance.expenses, maxBalance)"></div>
+                  <span class="bar-value">{{ formatAmountNoSpace(lastMonthBalance.expenses) }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="balance-footer">
+              <div class="balance-result" [class.negative]="isNegativeBalance(lastMonthBalance.balance)">
+                מאזן: {{ formatAmountNoSpace(lastMonthBalance.balance) }} {{ lastMonthBalance.label }}
+              </div>
+              <div class="balance-legend">
+                <span class="legend-item">
+                  <span class="dot income"></span>
+                  <span class="legend-text">הכנסות</span>
+                </span>
+                <span class="legend-item">
+                  <span class="dot expense"></span>
+                  <span class="legend-text">הוצאות</span>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="month-bar">
-          <div class="bar-fill h-[70%]"></div>
-          <span class="amount">35,874</span>
-          <span class="month">02/25</span>
-        </div>
-        <div class="month-bar">
-          <div class="bar-fill h-[70%]"></div>
-          <span class="amount">35,874</span>
-          <span class="month">03/25</span>
-        </div>
-        <div class="month-bar">
-          <div class="bar-fill h-[70%]"></div>
-          <span class="amount">35,874</span>
-          <span class="month">04/25</span>
-        </div>
-        <div class="month-bar">
-          <div class="bar-fill h-[70%]"></div>
-          <span class="amount">35,874</span>
-          <span class="month">05/25</span>
-        </div>
-        <div class="month-bar">
-          <div class="bar-fill h-[70%]"></div>
-          <span class="amount">35,874</span>
-          <span class="month">06/25</span>
-        </div>
-      </div>
+      }
     </div>
-  </div>
+  }
 
   <!-- Bottom Section -->
   <div class="bottom-section">
@@ -129,77 +180,82 @@
       <p>דוחות שימושיים מוכנים להפקה מהירה בלחיצה</p>
       <div class="report-item">
         <span>דוח הוצאות לתקופה</span>
-        <button class="report-btn">הפק דוח 📄</button>
+        <span class="dashed-line"></span>
+        <button class="report-btn" (click)="generateReport('expenses')">
+          <img src="assets/img/icons/document-icon.svg" alt="Document" class="report-icon">
+          הפק דוח
+        </button>
       </div>
       <div class="report-item">
         <span>דוח תרומות והכנסות</span>
-        <button class="report-btn">הפק דוח 📄</button>
+        <span class="dashed-line"></span>
+        <button class="report-btn" (click)="generateReport('donations')">
+          <img src="assets/img/icons/document-icon.svg" alt="Document" class="report-icon">
+          הפק דוח
+        </button>
       </div>
       <div class="report-item">
         <span>דוח חובות הקהילה</span>
-        <button class="report-btn">הפק דוח 📄</button>
+        <span class="dashed-line"></span>
+        <button class="report-btn" (click)="generateReport('debts')">
+          <img src="assets/img/icons/document-icon.svg" alt="Document" class="report-icon">
+          הפק דוח
+        </button>
       </div>
       <div class="report-item">
         <span>דוח מאזן כספי</span>
-        <button class="report-btn">הפק דוח 📄</button>
+        <span class="dashed-line"></span>
+        <button class="report-btn" (click)="generateReport('balance')">
+          <img src="assets/img/icons/document-icon.svg" alt="Document" class="report-icon">
+          הפק דוח
+        </button>
       </div>
     </div>
 
     <!-- Recent Debts Table -->
     <div class="recent-debts">
       <h3>חובות אחרונים</h3>
-      <p>כל החובות האחרונים של חברי הקהילה לבית הכנסת</p>
-      <table>
-        <thead>
-          <tr>
-            <th>שם מלא</th>
-            <th>תיאור חוב</th>
-            <th>סכום</th>
-            <th>סטטוס</th>
-            <th>תאריך עברי</th>
-            <th>תאריך לועזי</th>
-            <th>פעולה</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>דוד בן יאיר חזן</td>
-            <td>עלייה לתורה</td>
-            <td>300 ש"ח</td>
-            <td><span class="status unpaid">לא שולם</span></td>
-            <td>כה' אב תשפ״ה</td>
-            <td>11/05/2025</td>
-            <td><button class="action-btn">שלח תזכורת 📧</button></td>
-          </tr>
-          <tr>
-            <td>מאיר הכהן</td>
-            <td>נדר שבת</td>
-            <td>500 ש"ח</td>
-            <td><span class="status unpaid">לא שולם</span></td>
-            <td>ג' אלול תשפ״ה</td>
-            <td>15/06/2025</td>
-            <td><button class="action-btn">שלח תזכורת 📧</button></td>
-          </tr>
-          <tr>
-            <td>ידידיה לוי</td>
-            <td>דמי חבר</td>
-            <td>18 ש"ח</td>
-            <td><span class="status paid">שולם</span></td>
-            <td>ז' תשרי תשפ״ה</td>
-            <td>10/06/2025</td>
-            <td><button class="action-btn">שלח חשבונית 📄</button></td>
-          </tr>
-          <tr>
-            <td>נועם שמר</td>
-            <td>הוצאות ספר תורה</td>
-            <td>900 ש"ח</td>
-            <td><span class="status unpaid">לא שולם</span></td>
-            <td>יד' תשרי תשפ״ה</td>
-            <td>26/10/2025</td>
-            <td><button class="action-btn">שלח תזכורת 📧</button></td>
-          </tr>
-        </tbody>
-      </table>
+      <p>החובות הפתוחים האחרונים של חברי הקהילה לבית הכנסת</p>
+      @if (isLoadingDebts) {
+        <div class="loading-debts">טוען חובות...</div>
+      } @else if (recentDebts.length === 0) {
+        <div class="no-debts">אין חובות להצגה</div>
+      } @else {
+        <table>
+          <thead>
+            <tr>
+              <th>שם מלא</th>
+              <th>תיאור חוב</th>
+              <th>סכום</th>
+              <th>סטטוס</th>
+              <th>תאריך עברי</th>
+              <th>תאריך לועזי</th>
+              <th>שלח תזכורת</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (debt of recentDebts; track debt.id) {
+              <tr>
+                <td>{{ debt.fullName }}</td>
+                <td>{{ debt.description }}</td>
+                <td>{{ debt.amount }}₪</td>
+                <td>
+                  <span class="status" [class.unpaid]="debt.status === 'pending'" [class.paid]="debt.status === 'paid'">
+                    {{ getStatusLabel(debt.status) }}
+                  </span>
+                </td>
+                <td>{{ getHebrewDate(debt) }}</td>
+                <td>{{ formatGregorianDate(debt.gregorianDate) }}</td>
+                <td>
+                  <button class="reminder-btn" (click)="sendReminder(debt)" [disabled]="isStatusPaid(debt.status)">
+                    <img src="assets/img/icons/message-icon.svg" alt="Send Reminder" class="reminder-icon">
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
     </div>
   </div>
 </div>

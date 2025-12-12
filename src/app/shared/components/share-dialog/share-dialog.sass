@@ -1,0 +1,124 @@
+@use '../../../../variables' as *
+
+.share-dialog
+  padding: 0
+  background: white
+  border-radius: 12px
+  overflow: hidden
+  direction: rtl
+  position: relative
+  min-width: 500px
+
+.close-btn
+  position: absolute
+  top: 1rem
+  left: 1rem
+  background: transparent
+  border: none
+  cursor: pointer
+  padding: 0.5rem
+  display: flex
+  align-items: center
+  justify-content: center
+  width: 32px
+  height: 32px
+  border-radius: 50%
+  transition: background 0.2s
+  z-index: 10
+
+  &:hover
+    background: $gray-100
+
+  img
+    width: 20px
+    height: 20px
+
+.dialog-content
+  padding: 2.5rem 1.5rem 1.5rem
+  background-color: white
+  display: flex
+  flex-direction: column
+  align-items: center
+
+.dialog-title
+  margin: 0 0 0.5rem 0
+  font-size: 1.25rem
+  font-weight: 600
+  color: $gray-900
+  font-family: 'Heebo', sans-serif
+  text-align: center
+
+.subtitle
+  margin: 0 0 1.5rem 0
+  color: $gray-500
+  font-size: 0.9rem
+  font-family: 'Heebo', sans-serif
+  text-align: center
+
+.error-message
+  margin: 0 0 1rem 0
+  padding: 0.75rem 1rem
+  background: $error-light
+  color: $error
+  border-radius: 8px
+  font-size: 0.9rem
+  text-align: center
+  width: 100%
+
+.loading-message
+  margin: 0 0 1rem 0
+  color: $gray-700
+  font-size: 0.9rem
+  text-align: center
+
+.share-buttons
+  display: flex
+  gap: 1rem
+  justify-content: center
+  align-items: center
+  width: 100%
+
+.share-btn
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: center
+  gap: 0.5rem
+  width: 208px
+  padding: 0.75rem 1.25rem
+  border: none
+  border-radius: 8px
+  font-size: 0.9rem
+  cursor: pointer
+  font-family: 'Heebo', sans-serif
+  transition: background 0.2s, opacity 0.2s
+
+  &:hover:not(:disabled)
+    opacity: 0.9
+
+  &:active:not(:disabled)
+    opacity: 0.8
+
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed
+
+  .btn-icon
+    display: block
+    width: 19px
+    height: 19px
+    flex-shrink: 0
+
+.whatsapp-btn
+  background: $success-green
+  color: white
+
+  &:hover:not(:disabled)
+    background: color-mix(in srgb, $success-green 90%, black)
+
+.email-btn
+  background: $gray-500
+  color: white
+
+  &:hover:not(:disabled)
+    background: color-mix(in srgb, $gray-500 90%, black)

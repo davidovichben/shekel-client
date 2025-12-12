@@ -7,6 +7,7 @@ import { AdditionalFiltersComponent } from '../../shared/components/additional-f
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { ExportDialogComponent, ExportDialogResult } from '../../shared/components/export-dialog/export-dialog';
+import { ShareDialogComponent } from '../../shared/components/share-dialog/share-dialog';
 import { ExpenseFormComponent } from './expense-form/expense-form';
 import { ExpenseService } from '../../core/services/network/expense.service';
 import { Expense, ExpenseStatus, ExpenseType, ExpenseStats } from '../../core/entities/expense.entity';
@@ -78,27 +79,22 @@ export class ExpensesComponent implements OnInit {
   }
 
   private loadTabCounts(): void {
-    // All expenses count
+    // Make a single request - API returns counts for all statuses in response.counts
     this.expenseService.getAll({ page: 1, limit: 1 }).subscribe({
       next: (response) => {
-        const allCount = response.counts?.totalRows || 0;
+        // API returns: { counts: { all: 13, pending: 11, paid: 2, totalRows: 2, totalPages: 2 } }
+        const counts = response.counts || {};
+        
+        const allCount = counts['all'] || 0;
+        const pendingCount = counts['pending'] || 0;
+        const paidCount = counts['paid'] || 0;
+
         this.tabs.find(t => t.id === 'all')!.count = allCount;
-      }
-    });
-
-    // Pending expenses count
-    this.expenseService.getAll({ status: 'pending', page: 1, limit: 1 }).subscribe({
-      next: (response) => {
-        const pendingCount = response.counts?.totalRows || 0;
         this.tabs.find(t => t.id === 'pending')!.count = pendingCount;
-      }
-    });
-
-    // Paid expenses count
-    this.expenseService.getAll({ status: 'paid', page: 1, limit: 1 }).subscribe({
-      next: (response) => {
-        const paidCount = response.counts?.totalRows || 0;
         this.tabs.find(t => t.id === 'paid')!.count = paidCount;
+      },
+      error: (error) => {
+        console.error('Error loading tab counts:', error);
       }
     });
   }
@@ -154,6 +150,12 @@ export class ExpensesComponent implements OnInit {
         this.expenses = response.rows;
         this.totalExpenses = response.counts?.totalRows || response.rows.length;
         this.totalPages = response.counts?.totalPages || Math.ceil(this.totalExpenses / this.itemsPerPage);
+        
+        // Update tab count for current active tab
+        const currentTab = this.tabs.find(t => t.id === this.activeTab);
+        if (currentTab) {
+          currentTab.count = this.totalExpenses;
+        }
         
         // Use totalSum from API if available, otherwise calculate from rows
         if (response.totalSum && parseFloat(String(response.totalSum)) > 0) {
@@ -356,7 +358,7 @@ export class ExpensesComponent implements OnInit {
     const selectedIds = Array.from(this.selectedExpenses);
     const selectedExpenseNames = this.expenses
       .filter(e => selectedIds.includes(e.id))
-      .map(e => `${e.description || 'ללא תיאור'} - ${e.amount} ש"ח`);
+      .map(e => `${e.description || 'ללא תיאור'} - ${e.amount} ₪`);
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '500px',
@@ -418,7 +420,7 @@ export class ExpensesComponent implements OnInit {
       <tr>
         <td>${e.description || 'ללא תיאור'}</td>
         <td>${this.getExpenseTypeLabel(e.type)}</td>
-        <td>${e.amount} ש"ח</td>
+        <td>${e.amount} ₪</td>
         <td>${this.formatGregorianDate(e.date)}</td>
         <td>${this.getStatusLabel(e.status)}</td>
       </tr>
@@ -463,8 +465,44 @@ export class ExpensesComponent implements OnInit {
 
   private bulkShare(): void {
     const selectedIds = Array.from(this.selectedExpenses);
-    console.log('Bulk share for expenses:', selectedIds);
-    // TODO: Implement bulk share functionality
+    
+    if (selectedIds.length === 0) {
+      // No expenses selected, show message
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '400px',
+        panelClass: 'confirm-dialog-panel',
+        backdropClass: 'confirm-dialog-backdrop',
+        enterAnimationDuration: '0ms',
+        exitAnimationDuration: '0ms',
+        data: {
+          title: 'אין הוצאות נבחרות',
+          message: 'נא לבחור הוצאות לשיתוף',
+          confirmText: 'סגור'
+        }
+      });
+      return;
+    }
+
+    this.openShareDialog(selectedIds);
+  }
+
+  shareExpense(expense: Expense): void {
+    this.openShareDialog([expense.id]);
+  }
+
+  private openShareDialog(expenseIds: string[]): void {
+    const dialogRef = this.dialog.open(ShareDialogComponent, {
+      width: '600px',
+      panelClass: 'share-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        entityType: 'expenses',
+        selectedIds: expenseIds,
+        title: expenseIds.length === 1 ? 'שתף הוצאה' : 'שתף הוצאות'
+      }
+    });
   }
 
   openCreateDialog(): void {
@@ -522,7 +560,7 @@ export class ExpensesComponent implements OnInit {
           },
           {
             text: 'כן, מחק',
-            icon: 'trash-icon',
+            icon: 'trash-white-icon',
             type: 'primary',
             action: 'confirm'
           }
@@ -564,6 +602,11 @@ export class ExpensesComponent implements OnInit {
         console.error('Error downloading receipt:', error);
       }
     });
+  }
+
+  onGenerateReport(): void {
+    // Open export dialog for report generation
+    this.openExportDialog();
   }
 
   openExportDialog(): void {

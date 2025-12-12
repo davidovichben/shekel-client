@@ -247,8 +247,12 @@
   color: $text-muted
   transition: color 0.2s
 
-  &:hover
+  &:hover:not(:disabled)
     color: $text-dark
+
+  &:disabled
+    opacity: 0.4
+    cursor: not-allowed
 
 .table-footer
   text-align: center

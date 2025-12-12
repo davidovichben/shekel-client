@@ -1,0 +1,38 @@
+<div class="share-dialog">
+  <button class="close-btn" (click)="onCancel()">
+    <img src="assets/img/icons/close.svg" alt="Close" />
+  </button>
+  <div class="dialog-content">
+    <h2 class="dialog-title">{{ data.title || 'שתף' }}</h2>
+    <p class="subtitle">בחר את שיטת השיתוף בעזרתה תרצה להעביר את המידע</p>
+
+    @if (error) {
+      <div class="error-message">
+        {{ error }}
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="loading-message">
+        מייצר קובץ PDF...
+      </div>
+    }
+
+    <div class="share-buttons">
+      <button 
+        class="share-btn whatsapp-btn" 
+        (click)="onShareWhatsApp()"
+        [disabled]="isLoading">
+        <img src="assets/img/icons/whatsapp.svg" alt="WhatsApp" class="btn-icon" />
+        שיתוף בוואטסאפ
+      </button>
+      <button 
+        class="share-btn email-btn" 
+        (click)="onShareEmail()"
+        [disabled]="isLoading">
+        <img src="assets/img/icons/email.svg" alt="Email" class="btn-icon" />
+        שיתוף באימייל
+      </button>
+    </div>
+  </div>
+</div>

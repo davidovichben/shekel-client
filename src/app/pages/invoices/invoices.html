@@ -83,7 +83,7 @@
         </td>
         <td class="clickable" (click)="navigateToInvoice(invoice)">{{ invoice.payerName }}</td>
         <td>{{ invoice.invoiceNumber }}</td>
-        <td><span class="amount">{{ invoice.totalAmount }} ש"ח</span></td>
+        <td><span class="amount">{{ invoice.totalAmount }} ₪</span></td>
         <td>{{ invoice.type }}</td>
         <td>{{ invoice.hebrewDate }}</td>
         <td>{{ invoice.gregorianDate }}</td>
@@ -99,7 +99,7 @@
 
   <!-- Footer -->
   <div class="table-footer">
-    <span class="footer-message">(נמצאו {{ totalInvoices }} רשומות, סה"כ סכום החשבוניות כהן הוא: <span class="bold">{{ getTotalAmount() }} ש"ח</span>)</span>
+    <span class="footer-message">(נמצאו {{ totalInvoices }} רשומות, סה"כ סכום החשבוניות כהן הוא: <span class="bold">{{ getTotalAmount() }} ₪</span>)</span>
     <!-- Pagination -->
     <div class="pagination">
       <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">

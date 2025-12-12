@@ -3,7 +3,7 @@
   <div class="tab-header">
     <div class="header-right">
       <h2>חובות פתוחים:</h2>
-      <span class="total-amount">סך כל החובות הפתוחים: <span class="amount-value">{{ totalAmount }} ש"ח</span></span>
+      <span class="total-amount">סך כל החובות הפתוחים: <span class="amount-value">{{ totalAmount }} ₪</span></span>
     </div>
   </div>
 
@@ -84,7 +84,7 @@
               </td>
               <td>{{ debt.description || 'נדר שבת דברים' }}</td>
               <td>{{ getDebtTypeLabel(debt.description) }}</td>
-              <td>{{ debt.amount }} ש"ח</td>
+              <td>{{ debt.amount }} ₪</td>
               <td>
                 <span class="status-badge" [class.unpaid]="debt.status === 'pending' || debt.status === 'overdue'">
                   {{ getStatusLabel(debt.status) }}

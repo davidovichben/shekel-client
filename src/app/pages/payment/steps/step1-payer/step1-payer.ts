@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MemberAutocompleteComponent } from '../../../../shared/components/member-autocomplete/member-autocomplete';
+import { ToggleSwitchComponent } from '../../../../shared/components/toggle-switch/toggle-switch';
 import { Member } from '../../../../core/entities/member.entity';
 
 export interface PayerDetails {
@@ -16,7 +17,7 @@ export interface PayerDetails {
 @Component({
   selector: 'app-step1-payer',
   standalone: true,
-  imports: [CommonModule, FormsModule, MemberAutocompleteComponent],
+  imports: [CommonModule, FormsModule, MemberAutocompleteComponent, ToggleSwitchComponent],
   templateUrl: './step1-payer.html',
   styleUrls: ['./step1-payer.sass']
 })
@@ -67,7 +68,12 @@ export class Step1PayerComponent {
     this.payerDetailsChange.emit(this.payerDetails);
   }
 
-  onUseMemberDetailsChange(): void {
+  onUseMemberDetailsChange(value?: boolean): void {
+    // If value is provided from toggleChange event, update useMemberDetails
+    if (value !== undefined) {
+      this.useMemberDetails = value;
+    }
+    
     if (this.useMemberDetails && this.selectedMember) {
       this.loadMemberDetails(this.selectedMember);
     } else if (!this.useMemberDetails) {

@@ -108,8 +108,10 @@
     background: $btn-primary-hover
 
   .btn-icon
-    width: 16px
-    height: 16px
+    width: 14px !important
+    height: 14px !important
+    // Ensure white icon is visible - remove any filters that might darken it
+    filter: none !important
 
 .btn-cancel
   background: $btn-cancel-light
@@ -117,6 +119,10 @@
 
   &:hover
     background: #e57373
+    color: white
+
+    .btn-icon
+      filter: brightness(0) invert(1) // Force white color on hover
 
   .btn-icon
     width: 14px

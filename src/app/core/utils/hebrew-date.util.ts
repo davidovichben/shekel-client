@@ -92,9 +92,8 @@ export function convertToHebrewDate(dateString: string | null | undefined): stri
     const yearNum = parseInt(year, 10);
     const yearHebrew = convertYearToHebrew(yearNum);
 
-    // Format: "day month|year" - we'll split by | in the component
-    // Day and month on top, year on bottom
-    return `${dayHebrew}' ${monthHebrew}|${yearHebrew}`;
+    // Format: "day month year" - single line
+    return `${dayHebrew}' ${monthHebrew} ${yearHebrew}`;
   } catch (error) {
     console.error('Error converting to Hebrew date:', error);
     return dateString; // Return original if conversion fails

@@ -49,6 +49,12 @@ export class MemberAutocompleteComponent implements OnInit, OnChanges {
 
     // Load initial list
     this.searchMembers('');
+
+    // If memberId is already set, load the member
+    if (this.memberId && !this.initialMemberLoaded) {
+      this.initialMemberLoaded = true;
+      this.loadMemberById(this.memberId);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

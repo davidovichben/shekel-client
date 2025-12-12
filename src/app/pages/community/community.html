@@ -74,7 +74,7 @@
         </td>
         <td class="col-fullname clickable" (click)="navigateToMember(member)">{{ member.fullName }}</td>
         <td>{{ getMemberTypeName(member.type) }}</td>
-        <td [class.negative]="+member.balance < 0"><span class="balance">{{ member.balance }} ש"ח</span></td>
+        <td [class.negative]="+member.balance < 0"><span class="balance">{{ member.balance }} ₪</span></td>
         <td class="ltr">{{ member.mobile }}</td>
         <td>{{ member.lastMessageDate || '--' }}</td>
         <td>
@@ -100,7 +100,7 @@
 
   <!-- Footer -->
   <div class="table-footer">
-    <span class="footer-message">(נמצאו {{ totalMembers }} רשומות, סה"כ יתרות החשבון בהן הוא: <span class="bold">{{ getTotalBalance() }} ש"ח</span>)</span>
+    <span class="footer-message">(נמצאו {{ totalMembers }} רשומות, סה"כ יתרות החשבון בהן הוא: <span class="bold">{{ getTotalBalance() }} ₪</span>)</span>
     <!-- Pagination -->
     <div class="pagination">
       <button class="page-btn" (click)="onPageChange(1)" [disabled]="currentPage === 1">

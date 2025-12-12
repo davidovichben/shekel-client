@@ -3,7 +3,7 @@
   <div class="tab-header">
     <div class="header-right">
       <h2>ארכיון תשלומים:</h2>
-      <span class="total-amount">סך כל התשלומים: <span class="amount-value">{{ totalAmount }} ש"ח</span></span>
+      <span class="total-amount">סך כל התשלומים: <span class="amount-value">{{ totalAmount }} ₪</span></span>
     </div>
   </div>
 
@@ -71,7 +71,7 @@
               </td>
               <td>{{ payment.description || 'נדר שבת דברים' }}</td>
               <td>{{ getDebtTypeLabel(payment.description) }}</td>
-              <td>{{ payment.amount }}ש"ח</td>
+              <td>{{ payment.amount }}₪</td>
               <td>
                 <span class="status-badge" [class.paid]="payment.status === 'paid'">
                   {{ getStatusLabel(payment.status) }}

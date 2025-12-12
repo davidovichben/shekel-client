@@ -7,6 +7,7 @@ import { AdditionalFiltersComponent } from '../../shared/components/additional-f
 import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { ExportDialogComponent, ExportDialogResult } from '../../shared/components/export-dialog/export-dialog';
+import { ShareDialogComponent } from '../../shared/components/share-dialog/share-dialog';
 import { IncomeService } from '../../core/services/network/income.service';
 import { Income, IncomeStatus, IncomeCategory, PaymentType } from '../../core/entities/income.entity';
 import { ChipComponent, ChipVariant } from '../../shared/components/chip/chip';
@@ -80,27 +81,22 @@ export class IncomesComponent implements OnInit {
   }
 
   private loadTabCounts(): void {
-    // All incomes count
+    // Make a single request - API returns counts for all statuses in response.counts
     this.incomeService.getAll({ page: 1, limit: 1 }).subscribe({
       next: (response) => {
-        const allCount = response.counts?.totalRows || 0;
+        // API returns: { counts: { all: X, pending: Y, paid: Z, totalRows: N, totalPages: M } }
+        const counts = response.counts || {};
+        
+        const allCount = counts['all'] || 0;
+        const pendingCount = counts['pending'] || 0;
+        const paidCount = counts['paid'] || 0;
+
         this.tabs.find(t => t.id === 'all')!.count = allCount;
-      }
-    });
-
-    // Collected incomes count (paid status)
-    this.incomeService.getAll({ status: 'paid', page: 1, limit: 1 }).subscribe({
-      next: (response) => {
-        const collectedCount = response.counts?.totalRows || 0;
-        this.tabs.find(t => t.id === 'collected')!.count = collectedCount;
-      }
-    });
-
-    // Future incomes count (pending status)
-    this.incomeService.getAll({ status: 'pending', page: 1, limit: 1 }).subscribe({
-      next: (response) => {
-        const pendingCount = response.counts?.totalRows || 0;
+        this.tabs.find(t => t.id === 'collected')!.count = paidCount;
         this.tabs.find(t => t.id === 'pending')!.count = pendingCount;
+      },
+      error: (error) => {
+        console.error('Error loading tab counts:', error);
       }
     });
   }
@@ -260,11 +256,20 @@ export class IncomesComponent implements OnInit {
   }
 
   getPaymentTypeLabel(paymentType: PaymentType | string): string {
-    const labels: Record<PaymentType, string> = {
-      [PaymentType.Credit]: 'אשראי',
-      [PaymentType.StandingOrder]: 'ה. קבע'
+    // Normalize the payment type value to handle API variations
+    const normalizedType = String(paymentType).toLowerCase();
+    
+    // Map all possible payment type values to Hebrew labels
+    const labels: Record<string, string> = {
+      'credit': 'אשראי',
+      'credit_card': 'אשראי',
+      'creditcard': 'אשראי',
+      'standing_order': 'ה. קבע',
+      'standingorder': 'ה. קבע',
+      'masav': 'ה. קבע'
     };
-    return labels[paymentType as PaymentType] || (paymentType as string);
+    
+    return labels[normalizedType] || labels[paymentType as PaymentType] || (paymentType as string);
   }
 
   getStatusLabel(status: IncomeStatus | string): string {
@@ -436,7 +441,7 @@ export class IncomesComponent implements OnInit {
       <tr>
         <td>${i.description || 'ללא תיאור'}</td>
         <td>${this.getCategoryLabel(i.category)}</td>
-        <td>${i.amount} ש"ח</td>
+        <td>${i.amount} ₪</td>
         <td>${this.formatGregorianDate(i.date)}</td>
         <td>${this.getStatusLabel(i.status)}</td>
       </tr>
@@ -480,14 +485,48 @@ export class IncomesComponent implements OnInit {
   }
 
   private bulkShare(ids: string[]): void {
-    console.log('Bulk share incomes:', ids);
-    // TODO: Implement bulk share functionality
+    if (ids.length === 0) {
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '400px',
+        panelClass: 'confirm-dialog-panel',
+        backdropClass: 'confirm-dialog-backdrop',
+        enterAnimationDuration: '0ms',
+        exitAnimationDuration: '0ms',
+        data: {
+          title: 'אין הכנסות נבחרות',
+          message: 'נא לבחור הכנסות לשיתוף',
+          confirmText: 'סגור'
+        }
+      });
+      return;
+    }
+
+    this.openShareDialog(ids);
+  }
+
+  shareIncome(income: Income): void {
+    this.openShareDialog([income.id]);
+  }
+
+  private openShareDialog(incomeIds: string[]): void {
+    this.dialog.open(ShareDialogComponent, {
+      width: '600px',
+      panelClass: 'share-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        entityType: 'incomes',
+        selectedIds: incomeIds,
+        title: incomeIds.length === 1 ? 'שתף הכנסה' : 'שתף הכנסות'
+      }
+    });
   }
 
   private bulkCopy(ids: string[]): void {
     const selectedIncomes = this.incomes.filter(i => ids.includes(i.id));
     const text = selectedIncomes.map(i =>
-      `${i.description || 'ללא תיאור'} - ${this.getCategoryLabel(i.category)} - ${i.amount} ש"ח - ${this.formatGregorianDate(i.date)}`
+      `${i.description || 'ללא תיאור'} - ${this.getCategoryLabel(i.category)} - ${i.amount} ₪ - ${this.formatGregorianDate(i.date)}`
     ).join('\n');
 
     navigator.clipboard.writeText(text).then(() => {

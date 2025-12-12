@@ -9,6 +9,8 @@ export interface ReminderDialogData {
   memberName?: string;
   hasNonDebtors?: boolean;
   memberBalance?: number;
+  initialMessage?: string;
+  debtStatus?: string; // 'pending', 'paid', 'overdue', 'cancelled'
 }
 
 export interface ReminderDialogResult {
@@ -31,9 +33,19 @@ export class ReminderDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ReminderDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ReminderDialogData
-  ) {}
+  ) {
+    // If initial message is provided, use it instead of default
+    if (data.initialMessage) {
+      this.message = data.initialMessage;
+    }
+  }
 
   get showWarning(): boolean {
+    // If debt status is provided, check if it's paid (not active)
+    if (this.data.debtStatus) {
+      return this.data.debtStatus === 'paid' || this.data.debtStatus === 'cancelled';
+    }
+    // Otherwise, check member balance (for member reminders)
     if (this.data.memberName) {
       return (this.data.memberBalance ?? 0) >= 0;
     }
