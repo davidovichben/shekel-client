@@ -1,0 +1,75 @@
+@use '../../../../../../variables' as *
+
+.notification-item
+  padding: 4px 20px
+
+.notification-header
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+
+.notification-date
+  font-size: 13px
+  font-weight: 700
+  color: $chart-gray-medium
+  direction: rtl
+
+.btn-mark-read
+  display: flex
+  align-items: center
+  gap: 6px
+  margin-top: 8px
+  background: $bg-table-header
+  border: none
+  border-radius: 20px
+  padding: 6px 14px
+  font-size: 13px
+  color: $text-purplish
+  cursor: pointer
+  font-family: 'Heebo', sans-serif
+  transition: all 0.2s
+
+  i
+    font-size: 14px
+    color: $accent-green
+
+  &:hover:not(:disabled)
+    background: color-mix(in srgb, $bg-table-header 90%, black)
+
+  &:disabled
+    cursor: not-allowed
+    opacity: 0.7
+
+  &.loading i
+    color: $text-purplish
+
+.notification-title
+  font-size: 15px
+  font-weight: 700
+  color: $text-purplish
+  margin-top: 15px
+  margin-bottom: 10px
+  font-family: 'Heebo', sans-serif
+
+.notification-content
+  font-size: 14px
+  color: $text-purplish
+  line-height: 1.6
+  margin-bottom: 14px
+
+.notification-action
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  font-size: 14px
+  color: $accent-green
+  text-decoration: none
+  font-weight: 600
+  cursor: pointer
+
+  &:hover
+    text-decoration: underline
+
+  img
+    width: 14px
+    height: 14px

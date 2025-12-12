@@ -10,6 +10,11 @@ import { InvoicesComponent } from './pages/invoices/invoices';
 import { ExpensesComponent } from './pages/expenses/expenses';
 import { IncomesComponent } from './pages/incomes/incomes';
 import { SystemSettingsComponent } from './pages/system-settings/system-settings';
+import { GeneralTabComponent } from './pages/system-settings/tabs/general-tab/general-tab';
+import { CategoriesTabComponent } from './pages/system-settings/tabs/categories-tab/categories-tab';
+import { PackagesTabComponent } from './pages/system-settings/tabs/packages-tab/packages-tab';
+import { NotificationsTabComponent } from './pages/system-settings/tabs/notifications-tab/notifications-tab';
+import { SecurityTabComponent } from './pages/system-settings/tabs/security-tab/security-tab';
 import { memberResolver } from './core/resolvers/member.resolver';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -30,7 +35,18 @@ export const routes: Routes = [
       { path: 'expenses', component: ExpensesComponent },
       { path: 'incomes', component: IncomesComponent },
       { path: 'invoices', component: InvoicesComponent },
-      { path: 'settings', component: SystemSettingsComponent }
+      {
+        path: 'settings',
+        component: SystemSettingsComponent,
+        children: [
+          { path: '', redirectTo: 'general', pathMatch: 'full' },
+          { path: 'general', component: GeneralTabComponent },
+          { path: 'categories', component: CategoriesTabComponent },
+          { path: 'packages', component: PackagesTabComponent },
+          { path: 'notifications', component: NotificationsTabComponent },
+          { path: 'security', component: SecurityTabComponent }
+        ]
+      }
     ]
   }
 ];

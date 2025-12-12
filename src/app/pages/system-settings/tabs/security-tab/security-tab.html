@@ -1,0 +1,56 @@
+<div class="security-tab">
+  <div class="card-header">
+    <h2>אבטחה ושחזור</h2>
+  </div>
+
+  <div class="card-content">
+    <!-- Password Reset Section -->
+    <div class="section">
+      <h3 class="section-title">פרטי החשבון איתם נרשמת למערכת</h3>
+      <p class="section-description">
+        במידה ותרצה לשנות את הסיסמה שלך ניתן לעשות זאת באמצעות שליחת קישור לשחזור לדוא"ל איתו נרשמת בלבד.
+      </p>
+
+      <div class="email-row">
+        <label>כתובת דואר אלקטרוני</label>
+        <div class="email-input-group">
+          <button
+            class="btn-send-reset"
+            (click)="onSendPasswordReset()"
+            [disabled]="isSendingReset || !email">
+            @if (isSendingReset) {
+              שולח...
+            } @else {
+              שלח לי מייל לשינוי סיסמה
+            }
+          </button>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            placeholder="כתובת אימייל"
+            readonly
+          />
+        </div>
+      </div>
+
+      @if (resetEmailSent) {
+        <div class="success-message">
+          <i class="fa-solid fa-check-circle"></i>
+          מייל לשחזור סיסמה נשלח בהצלחה
+        </div>
+      }
+    </div>
+
+    <!-- Delete Account Section -->
+    <div class="section delete-section">
+      <h3 class="section-title">מחק חשבון</h3>
+      <p class="section-description">
+        מחיקת החשבון היא פעולה בלתי הפיכה, תבטל את המנוי ותמחק את כל הנתונים של חשבון זה מבלי יכולת לשחזרם.
+      </p>
+
+      <button class="btn-delete-account" (click)="onDeleteAccount()">
+        מחק את החשבון שלי
+      </button>
+    </div>
+  </div>
+</div>

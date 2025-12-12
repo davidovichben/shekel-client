@@ -1,0 +1,25 @@
+<div class="notification-item" [class.read]="notification.is_read">
+  <div class="notification-header">
+    <span class="notification-date">{{ notification.created_at | date:'dd/MM/yyyy' }} | {{ notification.created_at | date:'HH:mm' }}</span>
+    @if (!notification.is_read) {
+      <button class="btn-mark-read" (click)="onMarkAsRead()" [disabled]="isLoading" [class.loading]="isLoading">
+        @if (isLoading) {
+          <i class="fa-solid fa-spinner fa-spin"></i>
+        } @else {
+          <i class="fa-solid fa-circle-check"></i>
+        }
+        סמן כנקרא
+      </button>
+    }
+  </div>
+  <div class="notification-title">{{ notification.title }}</div>
+  <div class="notification-content">{{ notification.content }}</div>
+  <a class="notification-action" (click)="onActionClick()">
+    @if (notification.type === 'member') {
+      עבור לכרטיס חבר קהילה
+    } @else if (notification.type === 'income') {
+      עבור לעמוד הכנסות
+    }
+    <img src="/assets/img/icons/external.svg">
+  </a>
+</div>

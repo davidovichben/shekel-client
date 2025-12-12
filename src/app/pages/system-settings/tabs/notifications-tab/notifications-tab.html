@@ -1,0 +1,131 @@
+<div class="notifications-tab">
+  <div class="card-header">
+    <h2>התראות והודעות</h2>
+  </div>
+
+  <div class="card-content">
+    <div class="messages-layout">
+      <!-- Right side - Notifications list -->
+      <div class="notifications-section">
+        <div class="sub-tabs">
+          <button
+            class="sub-tab"
+            [class.active]="activeSubTab === 'new'"
+            [disabled]="isLoading"
+            (click)="setSubTab('new')">
+            הודעות חדשות
+          </button>
+          <button
+            class="sub-tab"
+            [class.active]="activeSubTab === 'archive'"
+            [disabled]="isLoading"
+            (click)="setSubTab('archive')">
+            ארכיון הודעות
+          </button>
+        </div>
+
+        @if (notifications.length && !isLoading && activeSubTab === 'new') {
+          <div class="notifications-header">
+            <button class="btn-mark-all" (click)="markAllAsRead()" [disabled]="isMarkingAll">
+              @if (isMarkingAll) {
+                <i class="fa-solid fa-spinner fa-spin"></i>
+              }
+              סמן הכל כנקרא
+            </button>
+          </div>
+        }
+
+        <div class="notifications-list">
+          @if (isLoading) {
+            <div class="loading-spinner">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              <p>טוען...</p>
+            </div>
+          } @else {
+            @for (notification of notifications; track notification.id) {
+              <app-notification-item
+                [notification]="notification"
+                [isLoading]="markingReadId === notification.id"
+                (markAsRead)="markAsRead($event)"
+                (openMemberCard)="onOpenMemberCard($event)">
+              </app-notification-item>
+            } @empty {
+              <div class="no-notifications">
+                <i class="fa-regular fa-bell-slash"></i>
+                <p>{{ activeSubTab === 'new' ? 'אין הודעות חדשות' : 'אין הודעות בארכיון' }}</p>
+              </div>
+            }
+          }
+        </div>
+
+        @if (totalPages > 1 && !isLoading) {
+          <div class="pagination">
+            <button
+              class="pagination-btn"
+              [disabled]="currentPage === 1"
+              (click)="prevPage()">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <div class="pagination-pages">
+              @for (page of getPageNumbers(); track page) {
+                <button
+                  class="pagination-page"
+                  [class.active]="page === currentPage"
+                  (click)="goToPage(page)">
+                  {{ page }}
+                </button>
+              }
+            </div>
+            <button
+              class="pagination-btn"
+              [disabled]="currentPage === totalPages"
+              (click)="nextPage()">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Left side - Message template editor -->
+      <div class="template-section">
+        <div class="template-card">
+          <div class="template-header">
+            <h3>פורמט הודעת תזכורת קבועה לתשלום</h3>
+          </div>
+          <p class="template-description">
+            זהו פורמט ברירת המחדל להודעה לתזכורת תשלום לחבר קהילה שקיים לו חוב.
+            השדה [סכום החוב] מתמלא באופן אוטומטי לפי הנתונים של כל מתפלל ויש להשאירו כחלק מהטקסט של הודעה כמו שהוא.
+          </p>
+
+          <div class="template-form">
+            <label>תוכן ההודעה:</label>
+            <textarea
+              [(ngModel)]="reminderTemplate.content"
+              rows="10"
+              placeholder="הזן את תוכן ההודעה...">
+            </textarea>
+          </div>
+
+          <div class="template-actions">
+            <button class="btn-reset" (click)="onResetTemplate()" [disabled]="isResettingTemplate || isSavingTemplate">
+              @if (isResettingTemplate) {
+                <i class="fa-solid fa-spinner fa-spin"></i>
+              }
+              אפס לברירת מחדל
+            </button>
+            <button class="btn-save" [class.success]="templateSaved" (click)="onSaveTemplate()" [disabled]="isSavingTemplate || isResettingTemplate">
+              @if (isSavingTemplate) {
+                <i class="fa-solid fa-spinner fa-spin"></i>
+              } @else if (templateSaved) {
+                <i class="fa-solid fa-check"></i>
+              } @else {
+                <img src="/assets/img/icons/floppy.svg">
+              }
+              {{ templateSaved ? 'נשמר בהצלחה' : 'שמור שינויים' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

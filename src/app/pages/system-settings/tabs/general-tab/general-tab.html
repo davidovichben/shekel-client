@@ -126,3 +126,16 @@
     </button>
   </div>
 </div>
+
+@if (showSaveSuccess) {
+  <div class="dialog-overlay" (click)="closeSuccessDialog()">
+    <div class="success-dialog" (click)="$event.stopPropagation()">
+      <div class="success-icon">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <h3>ההגדרות נשמרו בהצלחה</h3>
+      <p>כל השינויים שביצעת נשמרו במערכת</p>
+      <button class="btn-close-dialog" (click)="closeSuccessDialog()">סגור</button>
+    </div>
+  </div>
+}

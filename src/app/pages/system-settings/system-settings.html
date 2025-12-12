@@ -7,80 +7,17 @@
   <div class="settings-layout">
     <div class="settings-tabs">
       @for (tab of tabs; track tab.id) {
-        <button
+        <a
           class="tab-item"
-          [class.active]="activeTab === tab.id"
-          (click)="setActiveTab(tab.id)">
+          [routerLink]="tab.route"
+          routerLinkActive="active">
           {{ tab.label }}
-        </button>
+        </a>
       }
     </div>
 
     <div class="settings-card">
-      @if (activeTab === 'general') {
-        <app-general-tab
-          [settings]="settings"
-          [isSaving]="isSaving"
-          (save)="onSave()">
-        </app-general-tab>
-      }
-
-      @if (activeTab === 'categories') {
-        <div class="card-header">
-          <h2>ניהול קטגוריות</h2>
-        </div>
-
-        <div class="card-content">
-          <div class="category-section">
-            <div class="category-title">סוגי חברים בקהילה</div>
-            <div class="category-input-row">
-              <input type="text" [(ngModel)]="newMemberType" placeholder="שם סוג החברות">
-              <button class="btn-add" (click)="addMemberType()">הוסף פריט</button>
-            </div>
-            <div class="category-list">
-              @for (type of memberTypes; track type) {
-                <div class="category-item">
-                  <span>{{ type }}</span>
-                  <button class="btn-remove" (click)="removeMemberType(type)">
-                    <i class="fa-solid fa-times"></i>
-                  </button>
-                </div>
-              }
-            </div>
-          </div>
-
-          <div class="category-section">
-            <div class="category-title">סוגי הוצאות</div>
-            <div class="category-input-row">
-              <input type="text" [(ngModel)]="newExpenseType" placeholder="שם סוג הוצאה">
-              <button class="btn-add" (click)="addExpenseType()">הוסף פריט</button>
-            </div>
-            <div class="category-list">
-              @for (type of expenseTypes; track type) {
-                <div class="category-item">
-                  <span>{{ type }}</span>
-                  <button class="btn-remove" (click)="removeExpenseType(type)">
-                    <i class="fa-solid fa-times"></i>
-                  </button>
-                </div>
-              }
-            </div>
-          </div>
-        </div>
-      }
+      <router-outlet></router-outlet>
     </div>
   </div>
 </div>
-
-@if (showSaveSuccess) {
-  <div class="dialog-overlay" (click)="closeSuccessDialog()">
-    <div class="success-dialog" (click)="$event.stopPropagation()">
-      <div class="success-icon">
-        <i class="fa-solid fa-check"></i>
-      </div>
-      <h3>ההגדרות נשמרו בהצלחה</h3>
-      <p>כל השינויים שביצעת נשמרו במערכת</p>
-      <button class="btn-close-dialog" (click)="closeSuccessDialog()">סגור</button>
-    </div>
-  </div>
-}
