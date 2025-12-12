@@ -1,0 +1,38 @@
+@use '../../../variables' as *
+
+.splash-container
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  background: $primary-bg
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 10000
+  opacity: 1
+  transition: opacity 0.5s ease-out
+
+  &.fade-out
+    opacity: 0
+
+.splash-content
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 1.5rem
+  animation: pulse 2s ease-in-out infinite
+
+.splash-logo
+  width: 150px
+  height: 150px
+  object-fit: contain
+
+@keyframes pulse
+  0%, 100%
+    transform: scale(1)
+    opacity: 1
+  50%
+    transform: scale(1.05)
+    opacity: 0.9

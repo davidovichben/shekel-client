@@ -22,8 +22,8 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(1)]]
     });
   }
 
@@ -39,24 +39,23 @@ export class LoginComponent {
     const credentials = this.loginForm.value;
 
     this.authService.login(credentials).subscribe({
-      next: (response) => {
+      next: () => {
         this.isLoading.set(false);
-        console.log('Login successful', response);
-        // Navigate to home or dashboard after successful login
-        this.router.navigate(['/']);
+        this.router.navigate(['/splash']);
       },
       error: (error) => {
         this.isLoading.set(false);
-        this.errorMessage.set(
-          error.error?.message || 'Login failed. Please check your credentials and try again.'
-        );
-        console.error('Login error:', error);
+        if (error.status === 422) {
+          this.errorMessage.set('אימייל או סיסמה שגויים');
+        } else {
+          this.errorMessage.set(error.error?.message || 'שגיאה בהתחברות, נסה שוב מאוחר יותר');
+        }
       }
     });
   }
 
-  get username() {
-    return this.loginForm.get('username');
+  get email() {
+    return this.loginForm.get('email');
   }
 
   get password() {

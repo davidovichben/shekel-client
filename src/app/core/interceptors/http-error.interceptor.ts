@@ -11,7 +11,10 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (!isDialogOpen) {
+      // Skip dialog for client errors that should be handled by components
+      const skipDialogStatuses = [401, 403, 422];
+
+      if (!isDialogOpen && !skipDialogStatuses.includes(error.status)) {
         isDialogOpen = true;
 
         const dialogRef = dialog.open(NetworkErrorDialogComponent, {

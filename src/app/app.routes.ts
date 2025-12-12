@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
+import { SplashComponent } from './pages/splash/splash';
 import { LayoutComponent } from './pages/layout/layout';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { CommunityComponent } from './pages/community/community';
@@ -10,12 +11,15 @@ import { ExpensesComponent } from './pages/expenses/expenses';
 import { IncomesComponent } from './pages/incomes/incomes';
 import { SystemSettingsComponent } from './pages/system-settings/system-settings';
 import { memberResolver } from './core/resolvers/member.resolver';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'splash', component: SplashComponent, canActivate: [authGuard] },
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },

@@ -1,8 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { UserService } from '../../../core/services/local/user.service';
+import { AuthService } from '../../../core/services/network/auth.service';
 import { GenericService, SearchResults, SearchResultItem } from '../../../core/services/network/generic.service';
 import { MemberService } from '../../../core/services/network/member.service';
 import { IncomeService } from '../../../core/services/network/income.service';
@@ -12,15 +15,17 @@ import { DebtFormComponent } from '../../debts/debt-form/debt-form';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatMenuModule],
   templateUrl: './header.html',
   styleUrl: './header.sass'
 })
 export class HeaderComponent implements OnInit {
   private http = inject(HttpClient);
+  private router = inject(Router);
   private genericService = inject(GenericService);
   private memberService = inject(MemberService);
   private incomeService = inject(IncomeService);
+  private authService = inject(AuthService);
   private dialog = inject(MatDialog);
   userService = inject(UserService);
 
@@ -190,5 +195,16 @@ export class HeaderComponent implements OnInit {
     setTimeout(() => {
       this.showDropdown = false;
     }, 200);
+  }
+
+  onLogout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

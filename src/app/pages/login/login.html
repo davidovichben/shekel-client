@@ -1,5 +1,7 @@
 <div class="login-container">
   <div class="login-card">
+    <h1 class="login-title">התחברות</h1>
+
     @if (errorMessage()) {
       <div class="error-message">
         {{ errorMessage() }}
@@ -8,34 +10,38 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="email">אימייל</label>
         <input
-          id="username"
-          type="text"
-          formControlName="username"
-          placeholder="Enter your username"
-          [class.invalid]="username?.invalid && username?.touched"
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="הזן את האימייל שלך"
+          [class.invalid]="email?.invalid && email?.touched"
         />
-        @if (username?.invalid && username?.touched) {
-          <div class="error-text">Username is required</div>
+        @if (email?.invalid && email?.touched) {
+          <div class="error-text">
+            @if (email?.errors?.['required']) {
+              שדה אימייל הוא חובה
+            } @else if (email?.errors?.['email']) {
+              נא להזין אימייל תקין
+            }
+          </div>
         }
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">סיסמה</label>
         <input
           id="password"
           type="password"
           formControlName="password"
-          placeholder="Enter your password"
+          placeholder="הזן את הסיסמה שלך"
           [class.invalid]="password?.invalid && password?.touched"
         />
         @if (password?.invalid && password?.touched) {
           <div class="error-text">
             @if (password?.errors?.['required']) {
-              Password is required
-            } @else if (password?.errors?.['minlength']) {
-              Password must be at least 6 characters
+              שדה סיסמה הוא חובה
             }
           </div>
         }
@@ -43,9 +49,9 @@
 
       <button type="submit" [disabled]="isLoading()">
         @if (isLoading()) {
-          <span>Logging in...</span>
+          <span>מתחבר...</span>
         } @else {
-          <span>Login</span>
+          <span>התחבר</span>
         }
       </button>
     </form>

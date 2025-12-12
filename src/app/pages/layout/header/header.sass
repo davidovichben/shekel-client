@@ -22,6 +22,8 @@
   justify-content: space-between
   padding: 15px
   background: $bg-light-grey
+  position: relative
+  z-index: 100
 
 .header-right
   .date-info
@@ -165,6 +167,13 @@
   display: flex
   align-items: center
   gap: 0.75rem
+  cursor: pointer
+  padding: 0.5rem
+  border-radius: 8px
+  transition: background-color 0.2s
+
+  &:hover
+    background: rgba(0, 0, 0, 0.05)
 
 .user-avatar
   width: 36px
