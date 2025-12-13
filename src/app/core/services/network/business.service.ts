@@ -51,4 +51,8 @@ export class BusinessService {
   saveMessageTemplate(messageTemplate: string): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/message-template`, { message_template: messageTemplate });
   }
+
+  delete(): Observable<void> {
+    return this.http.delete<void>(this.apiUrl);
+  }
 }

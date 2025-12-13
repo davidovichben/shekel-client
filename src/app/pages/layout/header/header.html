@@ -53,30 +53,96 @@
       </svg>
       אתר בית הכנסת
     </button>
-    <div class="notification-bell">
+    <div class="notification-bell" (click)="toggleNotifications()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
         <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
       </svg>
-      <span class="notification-dot"></span>
+      @if (totalNotifications > 0) {
+        <span class="notification-dot"></span>
+      }
+    </div>
+
+    <!-- Notification Dropdown -->
+    <div class="notification-dropdown" [class.open]="showNotifications">
+      <div class="notification-dropdown-header">
+        <h3>הודעות</h3>
+        @if (notifications.length > 0) {
+          <button class="btn-mark-all" (click)="markAllAsRead()" [disabled]="isMarkingAllRead">
+            @if (isMarkingAllRead) {
+              <i class="fa-solid fa-spinner fa-spin"></i>
+            }
+            סמן הכל כנקרא
+          </button>
+        }
+      </div>
+
+      <div class="notification-dropdown-content">
+        @if (isLoadingNotifications) {
+          <div class="notification-loading">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          </div>
+        } @else if (notifications.length === 0) {
+          <div class="notification-empty">
+            <p>אין הודעות חדשות</p>
+          </div>
+        } @else {
+          @for (notification of notifications; track notification.id) {
+            <div class="notification-item">
+              <div class="notification-item-content">
+                <div class="notification-item-header">
+                  <span class="notification-title">{{ notification.title }}</span>
+                  <span class="notification-time">{{ formatNotificationTime(notification.created_at) }}</span>
+                </div>
+                <a class="notification-link" (click)="onNotificationAction(notification)">
+                  @if (notification.type === 'member') {
+                    עבור לכרטיס חבר קהילה
+                  } @else {
+                    עבור לעמוד הכנסות
+                  }
+                  <img src="/assets/img/icons/external.svg">
+                </a>
+              </div>
+              <button class="notification-mark-btn" (click)="markAsRead(notification)" [class.marking]="markingReadId === notification.id">
+                <span class="mark-circle">
+                  @if (markingReadId === notification.id) {
+                    <svg class="checkmark" viewBox="0 0 24 24">
+                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                  }
+                </span>
+              </button>
+            </div>
+          }
+        }
+      </div>
+
+      @if (totalNotifications > 7) {
+        <div class="notification-dropdown-footer">
+          <a class="show-more-link" (click)="goToNotifications()">הצג עוד</a>
+        </div>
+      }
     </div>
     <div class="vertical-divider"></div>
-    <div class="user-info" [matMenuTriggerFor]="userMenu">
-      <div class="user-avatar">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-        </svg>
-      </div>
-      <div class="user-details">
+    <div class="user-info">
+      <div class="user-row">
+        <div class="user-avatar">
+          @if (userService.user()?.avatar) {
+            <img [src]="userService.user()?.avatar" alt="avatar">
+          } @else {
+            <img src="/assets/img/icons/user_default_avatar.svg" alt="avatar">
+          }
+        </div>
         <span class="user-name">{{ userService.user()?.name }}</span>
-        <span class="user-badge">PRO</span>
+      </div>
+      <div class="user-row">
+        @if (packageName) {
+          <span class="user-badge">{{ packageName }}</span>
+        }
+        <span class="user-email">{{ userService.user()?.email }}</span>
       </div>
     </div>
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item (click)="onLogout()">
-        <span>התנתק</span>
-      </button>
-    </mat-menu>
+    <button class="logout-btn" (click)="onLogout()">צא מהחשבון</button>
   </div>
 </header>
 
