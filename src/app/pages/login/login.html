@@ -1,59 +1,89 @@
 <div class="login-container">
-  <div class="login-card">
-    <h1 class="login-title">התחברות</h1>
-
-    @if (errorMessage()) {
-      <div class="error-message">
-        {{ errorMessage() }}
+  <div class="login-wrapper">
+    <!-- Logo and Welcome Section -->
+    <div class="header-section">
+      <div class="logo-container">
+        <img src="assets/img/icons/logo.svg" alt="Logo" class="logo">
       </div>
-    }
+      <h2 class="welcome-title">ברוך הבא למערכת שקל הקודש</h2>
+      <p class="welcome-description">המערכת שתהפוך את ניהול בית הכנסת והקהילה שלך לקלה ופשוטה יותר.</p>
+    </div>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="email">אימייל</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="הזן את האימייל שלך"
-          [class.invalid]="email?.invalid && email?.touched"
-        />
-        @if (email?.invalid && email?.touched) {
-          <div class="error-text">
-            @if (email?.errors?.['required']) {
-              שדה אימייל הוא חובה
-            } @else if (email?.errors?.['email']) {
-              נא להזין אימייל תקין
+    <!-- Login Section -->
+    <div class="login-section">
+      <h3 class="section-title">כבר יש לך חשבון?</h3>
+      <p class="section-subtitle">מלא את הפרטים מטה:</p>
+
+      <div class="login-card">
+        @if (errorMessage()) {
+          <div class="error-message">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="email">דוא"ל:</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder=""
+              [class.invalid]="email?.invalid && email?.touched"
+            />
+            @if (email?.invalid && email?.touched) {
+              <div class="error-text">
+                @if (email?.errors?.['required']) {
+                  שדה אימייל הוא חובה
+                } @else if (email?.errors?.['email']) {
+                  נא להזין אימייל תקין
+                }
+              </div>
             }
+          </div>
+
+          <div class="form-group">
+            <label for="password">סיסמה:</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder=""
+              [class.invalid]="password?.invalid && password?.touched"
+            />
+            @if (password?.invalid && password?.touched) {
+              <div class="error-text">
+                @if (password?.errors?.['required']) {
+                  שדה סיסמה הוא חובה
+                }
+              </div>
+            }
+          </div>
+
+          <button type="submit" class="btn-login" [disabled]="isLoading()">
+            @if (isLoading()) {
+              <span>מתחבר...</span>
+            } @else {
+              <span>הכנס למערכת</span>
+            }
+          </button>
+        </form>
+
+        @if (errorMessage()) {
+          <div class="password-recovery">
+            <span class="recovery-question">הסיסמה שהזנת שגויה, נותרו לך עוד 2 נסיונות, במידה ותכשל החשבון יינעל וכדי לפתוח אותו תזדקק לתמיכה.</span>
+            <span class="recovery-question">שכחת סיסמה?</span>
+            <a href="#" class="recovery-link">שלח מייל לשחזור סיסמה</a>
           </div>
         }
       </div>
+    </div>
 
-      <div class="form-group">
-        <label for="password">סיסמה</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          placeholder="הזן את הסיסמה שלך"
-          [class.invalid]="password?.invalid && password?.touched"
-        />
-        @if (password?.invalid && password?.touched) {
-          <div class="error-text">
-            @if (password?.errors?.['required']) {
-              שדה סיסמה הוא חובה
-            }
-          </div>
-        }
-      </div>
-
-      <button type="submit" [disabled]="isLoading()">
-        @if (isLoading()) {
-          <span>מתחבר...</span>
-        } @else {
-          <span>התחבר</span>
-        }
-      </button>
-    </form>
+    <!-- Registration Section -->
+    <div class="registration-section">
+      <h3 class="section-title">עדיין אין לך חשבון?</h3>
+      <p class="section-subtitle">עבור להרשמה קצרה וחינמית והכנס בתוך דקות.</p>
+      <button type="button" class="btn-register">הרשם בחינם</button>
+    </div>
   </div>
 </div>

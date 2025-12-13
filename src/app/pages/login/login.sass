@@ -5,78 +5,192 @@
   justify-content: center
   align-items: center
   min-height: 100vh
-  background-color: #f5f5f5
+  background-color: white
   direction: rtl
+  padding: 2rem 1rem
+
+.login-wrapper
+  width: 100%
+  max-width: 500px
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 2rem
+
+// Header Section
+.header-section
+  text-align: center
+  width: 100%
+
+  .logo-container
+    display: flex
+    align-items: center
+    justify-content: center
+    margin-bottom: 1.5rem
+
+    .logo
+      height: 36px
+      width: auto
+      flex-shrink: 0
+
+  .welcome-title
+    font-size: 28px
+    color: $primary-bg
+    font-family: 'Heebo', sans-serif
+    font-weight: 700
+
+  .welcome-description
+    margin: 0
+    font-size: 0.9rem
+    color: $primary-bg
+    font-family: 'Heebo', sans-serif
+
+// Login Section
+.login-section
+  width: 100%
+  text-align: center
+
+  .section-title
+    font-size: 20px
+    color: $text-purplish
+    font-family: 'Heebo', sans-serif
+    font-weight: 600
+
+  .section-subtitle
+    margin: 0 0 1rem 0
+    font-size: 20px
+    color: $text-purplish
+    font-family: 'Heebo', sans-serif
 
 .login-card
-  background: white
-  padding: 2rem
-  border-radius: 8px
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1)
+  background: $bg-light-grey
+  padding: 1.5rem
+  padding-bottom: 4rem
+  border-radius: 12px
   width: 100%
-  max-width: 400px
-
-.login-title
-  margin: 0 0 1.5rem 0
-  color: $primary-bg
-  text-align: center
-  font-family: 'Heebo', sans-serif
-  font-weight: 700
-
-.error-message
-  background-color: #fee
-  color: #c33
-  padding: 0.75rem
-  border-radius: 4px
-  margin-bottom: 1rem
-  border: 1px solid #fcc
-
-.form-group
-  margin-bottom: 1.5rem
-
-label
-  display: block
-  margin-bottom: 0.5rem
-  color: #555
-  font-weight: 500
-
-input
-  width: 100%
-  padding: 0.75rem
-  border: 1px solid #ddd
-  border-radius: 4px
-  font-size: 1rem
-  transition: border-color 0.3s
   box-sizing: border-box
+  position: relative
 
-  &:focus
-    outline: none
-    border-color: #4CAF50
+  .error-message
+    background-color: transparent
+    color: $primary-bg
+    padding: 0.75rem 0
+    border-radius: 4px
+    margin-bottom: 1rem
+    font-size: 0.8rem
+    font-family: 'Heebo', sans-serif
+    text-align: center
 
-  &.invalid
-    border-color: #c33
+  .password-recovery
+    text-align: center
+    margin-top: 95px
+    font-size: 0.8rem
+    font-family: 'Heebo', sans-serif
+    position: absolute
+    left: 50%
+    transform: translateX(-50%)
+    width: 100%
 
-.error-text
-  color: #c33
-  font-size: 0.875rem
-  margin-top: 0.25rem
+    .recovery-question
+      color: $primary-bg
+      margin-left: 0.25rem
 
-button
+    .recovery-link
+      color: $text-purplish
+      text-decoration: none
+      font-weight: 500
+
+      &:hover
+        text-decoration: underline
+
+  .form-group
+    margin-bottom: 1.25rem
+    text-align: right
+
+    label
+      display: block
+      margin-bottom: 0.5rem
+      color: $text-purplish
+      font-weight: 500
+      font-family: 'Heebo', sans-serif
+      font-size: 0.85rem
+
+    input
+      width: 100%
+      padding: 0.75rem
+      border: none
+      border-radius: 8px
+      font-size: 0.9rem
+      transition: border-color 0.3s
+      box-sizing: border-box
+      background: white
+      font-family: 'Heebo', sans-serif
+
+      &:focus
+        outline: none
+        box-shadow: 0 0 0 2px rgba($primary-bg, 0.2)
+
+      &.invalid
+        border: 1px solid $error
+
+    .error-text
+      color: $error
+      font-size: 0.8rem
+      margin-top: 0.25rem
+      font-family: 'Heebo', sans-serif
+
+  .btn-login
+    position: absolute
+    bottom: -25px
+    left: 50%
+    transform: translateX(-50%)
+    width: calc(50% - 1.5rem)
+    padding: 0.75rem
+    background-color: $primary-bg
+    color: white
+    border: none
+    border-radius: 40px
+    font-size: 0.9rem
+    font-weight: 500
+    cursor: pointer
+    transition: background-color 0.3s
+    font-family: 'Heebo', sans-serif
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+
+    &:hover:not(:disabled)
+      background-color: $primary-bg-hover
+
+    &:disabled
+      background-color: $gray-300
+      cursor: not-allowed
+
+// Registration Section
+.registration-section
   width: 100%
-  padding: 0.75rem
-  background-color: $primary-bg
-  color: white
-  border: none
-  border-radius: 4px
-  font-size: 1rem
-  font-weight: 500
-  cursor: pointer
-  transition: background-color 0.3s
-  font-family: 'Heebo', sans-serif
+  margin-top: 60px
+  text-align: center
 
-  &:hover:not(:disabled)
-    background-color: $primary-bg-hover
+  .section-title
+    font-size: 1.1rem
+    color: $text-purplish
+    font-weight: 600
 
-  &:disabled
-    background-color: #ccc
-    cursor: not-allowed
+  .section-subtitle
+    margin: 0 0 1rem 0
+    font-size: 0.85rem
+    color: $text-purplish
+
+  .btn-register
+    padding: 0.75rem 2rem
+    background-color: $badge-pro
+    color: white
+    border: none
+    border-radius: 30px
+    font-size: 0.9rem
+    font-weight: 500
+    cursor: pointer
+    transition: background-color 0.3s
+    font-family: 'Heebo', sans-serif
+
+    &:hover
+      background-color: color-mix(in srgb, $badge-pro 90%, black)
