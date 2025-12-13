@@ -142,21 +142,23 @@
             </div>
 
             <!-- Addable Columns -->
-            <div class="config-section">
-              <label class="section-label">עמודות שניתן להוסיף לדוח זה:</label>
-              <div class="addable-columns">
-                @for (column of availableColumns; track column.id) {
-                  <label class="column-checkbox">
-                    <input
-                      type="checkbox"
-                      [checked]="false"
-                      (change)="addColumn(column.id)"
-                    />
-                    <span>{{ column.label }}</span>
-                  </label>
-                }
+            @if (availableColumns.length > 0) {
+              <div class="config-section">
+                <label class="section-label">עמודות שניתן להוסיף לדוח זה:</label>
+                <div class="addable-columns">
+                  @for (column of availableColumns; track column.id) {
+                    <label class="column-checkbox">
+                      <input
+                        type="checkbox"
+                        [checked]="false"
+                        (change)="addColumn(column.id)"
+                      />
+                      <span>{{ column.label }}</span>
+                    </label>
+                  }
+                </div>
               </div>
-            </div>
+            }
           </div>
         </div>
 
