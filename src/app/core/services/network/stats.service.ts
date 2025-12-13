@@ -1,14 +1,26 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { DashboardStats, LastMonthBalance } from '../../entities/dashboard.entity';
+import { DashboardStats, LastMonthBalance } from '../../entities/stats.entity';
 import { environment } from '../../../../environments/environment';
+
+export interface SearchResultItem {
+  id: string;
+  name: string;
+}
+
+export interface SearchResults {
+  members: SearchResultItem[];
+  debts: SearchResultItem[];
+  receipts: SearchResultItem[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
-export class DashboardService {
-  private apiUrl = `${environment.apiUrl}/dashboard`;
+export class StatsService {
+  private baseUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/stats`;
   private reportsUrl = `${environment.apiUrl}/reports`;
 
   constructor(private http: HttpClient) {}
@@ -29,7 +41,7 @@ export class DashboardService {
     if (month) {
       params = params.set('month', month);
     }
-    return this.http.get<any>(`${this.apiUrl}/stats`, { params }).pipe(
+    return this.http.get<any>(`${this.apiUrl}`, { params }).pipe(
       map((response) => {
         // Map lastMonthBalance if it exists
         if (response.lastMonthBalance) {
@@ -38,6 +50,10 @@ export class DashboardService {
         return response as DashboardStats;
       })
     );
+  }
+
+  getFinancialData(month?: string): Observable<DashboardStats> {
+    return this.getStats(month);
   }
 
   generateExpenseReport(): Observable<Blob> {
@@ -54,5 +70,9 @@ export class DashboardService {
 
   generateBalanceReport(): Observable<Blob> {
     return this.http.get(`${this.reportsUrl}/balance`, { responseType: 'blob' });
+  }
+
+  search(q: string): Observable<SearchResults> {
+    return this.http.get<SearchResults>(`${this.baseUrl}/search`, { params: { q } });
   }
 }

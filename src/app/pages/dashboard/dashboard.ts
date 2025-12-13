@@ -1,9 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { DashboardService } from '../../core/services/network/dashboard.service';
+import { StatsService } from '../../core/services/network/stats.service';
 import { DebtService } from '../../core/services/network/debt.service';
-import { DashboardStats, SummaryCards, LastMonthBalance, DebtDistribution, SemiAnnualTrend } from '../../core/entities/dashboard.entity';
+import { DashboardStats, SummaryCards, LastMonthBalance, DebtDistribution, SemiAnnualTrend } from '../../core/entities/stats.entity';
 import { Debt, DebtStatus } from '../../core/entities/debt.entity';
 import { firstValueFrom } from 'rxjs';
 import { PaymentComponent } from '../payment/payment';
@@ -19,7 +19,7 @@ import { convertToHebrewDate } from '../../core/utils/hebrew-date.util';
   styleUrl: './dashboard.sass'
 })
 export class DashboardComponent implements OnInit {
-  private dashboardService = inject(DashboardService);
+  private statsService = inject(StatsService);
   private debtService = inject(DebtService);
   private dialog = inject(MatDialog);
 
@@ -41,7 +41,7 @@ export class DashboardComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this.dashboardService.getStats().subscribe({
+    this.statsService.getStats().subscribe({
       next: (data) => {
         this.summaryCards = data.summaryCards;
         this.lastMonthBalance = data.lastMonthBalance;
@@ -273,16 +273,16 @@ export class DashboardComponent implements OnInit {
       
       switch (type) {
         case 'expenses':
-          blob = await firstValueFrom(this.dashboardService.generateExpenseReport());
+          blob = await firstValueFrom(this.statsService.generateExpenseReport());
           break;
         case 'donations':
-          blob = await firstValueFrom(this.dashboardService.generateDonationsReport());
+          blob = await firstValueFrom(this.statsService.generateDonationsReport());
           break;
         case 'debts':
-          blob = await firstValueFrom(this.dashboardService.generateDebtsReport());
+          blob = await firstValueFrom(this.statsService.generateDebtsReport());
           break;
         case 'balance':
-          blob = await firstValueFrom(this.dashboardService.generateBalanceReport());
+          blob = await firstValueFrom(this.statsService.generateBalanceReport());
           break;
         default:
           throw new Error('Invalid report type');

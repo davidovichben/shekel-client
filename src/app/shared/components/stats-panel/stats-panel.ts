@@ -1,35 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { StatsData, StatsType } from '../../../core/entities/stats.entity';
 
-export interface StatsData {
-  monthlyTotal: {
-    amount: string;
-    month?: string;
-    currency?: string;
-  };
-  categoryDistribution: Array<{
-    type: string;
-    label: string;
-    amount: string;
-    percentage: number;
-  }>;
-  trend: Array<{
-    month: string;
-    amount: string;
-  }>;
-  unpaidExpenses?: {
-    total: string;
-    percentage: number;
-    month?: string;
-  };
-  uncollectedIncome?: {
-    total: string;
-    percentage: number;
-    month?: string;
-  };
-}
-
-export type StatsType = 'expenses' | 'incomes';
+export type { StatsData, StatsType } from '../../../core/entities/stats.entity';
 
 @Component({
   selector: 'app-stats-panel',

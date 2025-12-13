@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../../../core/services/local/user.service';
 import { AuthService } from '../../../core/services/network/auth.service';
-import { GenericService, SearchResults, SearchResultItem } from '../../../core/services/network/generic.service';
+import { GenericService } from '../../../core/services/network/generic.service';
+import { StatsService, SearchResults, SearchResultItem } from '../../../core/services/network/stats.service';
 import { BusinessService } from '../../../core/services/network/business.service';
 import { MemberService } from '../../../core/services/network/member.service';
 import { IncomeService } from '../../../core/services/network/income.service';
@@ -25,6 +26,7 @@ export class HeaderComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private genericService = inject(GenericService);
+  private statsService = inject(StatsService);
   private memberService = inject(MemberService);
   private incomeService = inject(IncomeService);
   private notificationService = inject(NotificationService);
@@ -150,7 +152,7 @@ export class HeaderComponent implements OnInit {
   onSearch(query: string): void {
     this.searchText = query;
     if (query.trim().length > 1) {
-      this.genericService.search(query).subscribe({
+      this.statsService.search(query).subscribe({
         next: (results) => {
           this.searchResults = results;
           this.showDropdown = this.hasResults();
