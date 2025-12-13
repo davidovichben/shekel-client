@@ -59,8 +59,6 @@ export interface ConfirmDialogData {
             <button class="btn-confirm" (click)="onConfirm()" type="button">
               @if (data.confirmIcon) {
                 <img [src]="'assets/img/icons/' + data.confirmIcon" [alt]="data.confirmText" class="btn-icon" />
-              } @else if (data.cancelText) {
-                <img src="assets/img/icons/trash-white.svg" alt="מחק" class="btn-icon" />
               }
               {{ data.confirmText }}
             </button>

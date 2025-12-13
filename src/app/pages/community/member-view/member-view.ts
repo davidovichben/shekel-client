@@ -91,7 +91,6 @@ export class MemberViewComponent implements OnInit {
         title: 'סגירת כרטיס חבר',
         message: 'האם אתה בטוח שברצונך לסגור את כרטיס החבר?',
         confirmText: 'סגור',
-        confirmIcon: 'close.svg',
         cancelText: 'ביטול'
       }
     });
