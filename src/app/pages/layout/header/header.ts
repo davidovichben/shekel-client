@@ -55,6 +55,9 @@ export class HeaderComponent implements OnInit {
   isMarkingAllRead = false;
   markingReadId: string | null = null;
 
+  // User menu
+  showUserMenu = false;
+
   private hebrewDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
   private hebrewNumbers = ['', 'א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ז׳', 'ח׳', 'ט׳', 'י׳', 'י״א', 'י״ב', 'י״ג', 'י״ד', 'ט״ו', 'ט״ז', 'י״ז', 'י״ח', 'י״ט', 'כ׳', 'כ״א', 'כ״ב', 'כ״ג', 'כ״ד', 'כ״ה', 'כ״ו', 'כ״ז', 'כ״ח', 'כ״ט', 'ל׳'];
 
@@ -252,10 +255,19 @@ export class HeaderComponent implements OnInit {
     });
   }
 
+  // User menu methods
+  toggleUserMenu(): void {
+    this.showUserMenu = !this.showUserMenu;
+    if (this.showUserMenu) {
+      this.showNotifications = false;
+    }
+  }
+
   // Notifications methods
   toggleNotifications(): void {
     this.showNotifications = !this.showNotifications;
     if (this.showNotifications) {
+      this.showUserMenu = false;
       this.loadNotifications();
     }
   }
@@ -372,6 +384,11 @@ export class HeaderComponent implements OnInit {
     if (notificationBell && !notificationBell.contains(target) &&
         notificationDropdown && !notificationDropdown.contains(target)) {
       this.showNotifications = false;
+    }
+
+    const userSection = this.elementRef.nativeElement.querySelector('.user-section');
+    if (userSection && !userSection.contains(target)) {
+      this.showUserMenu = false;
     }
   }
 }

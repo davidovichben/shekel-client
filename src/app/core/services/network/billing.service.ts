@@ -38,6 +38,10 @@ export interface ChargeBillingResponse {
   }>; // Array of paid debt objects (only present when debts are paid)
 }
 
+export interface IframeResponse {
+  iframe_url: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -75,7 +79,21 @@ export class BillingService {
       });
     }
     formData.append('receipt_pdf', pdfFile, 'receipt.pdf');
-    
+
     return this.http.post<ChargeBillingResponse>(`${this.apiUrl}/charge`, formData);
+  }
+
+  /**
+   * Get Tranzila iframe URL from backend
+   */
+  getIframeUrl(): Observable<IframeResponse> {
+    return this.http.post<IframeResponse>(`${this.apiUrl}/iframe`, { amount: 50 });
+  }
+
+  /**
+   * Get Tranzila iframe URL for member payment
+   */
+  getMemberPaymentIframeUrl(memberId: string, amount: number, type?: string): Observable<IframeResponse> {
+    return this.http.post<IframeResponse>(`${this.apiUrl}/member-payment`, { member_id: memberId, amount, type });
   }
 }

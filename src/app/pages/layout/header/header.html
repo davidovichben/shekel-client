@@ -124,8 +124,8 @@
       }
     </div>
     <div class="vertical-divider"></div>
-    <div class="user-info">
-      <div class="user-row">
+    <div class="user-section">
+      <div class="user-trigger" (click)="toggleUserMenu()">
         <div class="user-avatar">
           @if (userService.user()?.avatar) {
             <img [src]="userService.user()?.avatar" alt="avatar">
@@ -133,16 +133,38 @@
             <img src="/assets/img/icons/user_default_avatar.svg" alt="avatar">
           }
         </div>
-        <span class="user-name">{{ userService.user()?.name }}</span>
+        <div class="user-info-compact">
+          <span class="user-name">{{ userService.user()?.name }}</span>
+          @if (packageName) {
+            <span class="user-badge">{{ packageName }}</span>
+          }
+        </div>
       </div>
-      <div class="user-row">
-        @if (packageName) {
-          <span class="user-badge">{{ packageName }}</span>
-        }
-        <span class="user-email">{{ userService.user()?.email }}</span>
+      <div class="user-dropdown-overlay" [class.open]="showUserMenu" (click)="showUserMenu = false"></div>
+      <div class="user-dropdown" [class.open]="showUserMenu">
+        <div class="user-dropdown-content">
+          <button class="logout-btn" (click)="onLogout()">צא מהחשבון</button>
+          <div class="user-dropdown-right">
+            <div class="dropdown-row">
+              <span class="dropdown-user-name">{{ userService.user()?.name }}</span>
+              <div class="dropdown-avatar">
+                @if (userService.user()?.avatar) {
+                  <img [src]="userService.user()?.avatar" alt="avatar">
+                } @else {
+                  <img src="/assets/img/icons/user_default_avatar.svg" alt="avatar">
+                }
+              </div>
+            </div>
+            <div class="dropdown-row">
+              <span class="dropdown-user-email">{{ userService.user()?.email }}</span>
+              @if (packageName) {
+                <span class="dropdown-badge">{{ packageName }}</span>
+              }
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <button class="logout-btn" (click)="onLogout()">צא מהחשבון</button>
   </div>
 </header>
 

@@ -2,7 +2,8 @@ import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GenericService, Package as ApiPackage } from '../../../../core/services/network/generic.service';
 import { BusinessService, Business } from '../../../../core/services/network/business.service';
-import { TranzilaPaymentComponent, TranzilaConfig, TranzilaResponse } from '../../../../shared/components/tranzila-payment/tranzila-payment';
+import { BillingService } from '../../../../core/services/network/billing.service';
+import { TranzilaPaymentComponent, TranzilaResponse } from '../../../../shared/components/tranzila-payment/tranzila-payment';
 
 export interface Package {
   id: string;
@@ -32,6 +33,7 @@ export interface CurrentSubscription {
 export class PackagesTabComponent implements OnInit {
   private genericService = inject(GenericService);
   private businessService = inject(BusinessService);
+  private billingService = inject(BillingService);
 
   currentSubscription: CurrentSubscription = {
     packageId: null,
@@ -44,10 +46,8 @@ export class PackagesTabComponent implements OnInit {
   packages: Package[] = [];
   isLoading = true;
   showChangeCardDialog = false;
-
-  tranzilaConfig: TranzilaConfig = {
-    mode: 'store-card'
-  };
+  isLoadingIframe = false;
+  iframeUrl: string | null = null;
 
   @Output() changeCard = new EventEmitter<void>();
   @Output() selectPackage = new EventEmitter<Package>();
@@ -180,6 +180,19 @@ export class PackagesTabComponent implements OnInit {
 
   onChangeCard(): void {
     this.showChangeCardDialog = true;
+    this.isLoadingIframe = true;
+    this.iframeUrl = null;
+
+    this.billingService.getIframeUrl().subscribe({
+      next: (response) => {
+        this.iframeUrl = response.iframe_url;
+        this.isLoadingIframe = false;
+      },
+      error: (error) => {
+        console.error('Error loading iframe URL:', error);
+        this.isLoadingIframe = false;
+      }
+    });
   }
 
   onSelectPackage(pkg: Package): void {
@@ -203,5 +216,6 @@ export class PackagesTabComponent implements OnInit {
 
   closeChangeCardDialog(): void {
     this.showChangeCardDialog = false;
+    this.iframeUrl = null;
   }
 }

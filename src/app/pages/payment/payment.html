@@ -70,12 +70,12 @@
   } @else {
     <div class="dialog-content">
       <!-- Left Side: Transaction Summary -->
-      <div class="summary-wrapper">
+      <div class="summary-wrapper" [class.hidden]="currentStep === 2 && step2ValidationState.paymentComplete">
         <div class="summary-section">
           <h3>סיכום פרטי העסקה</h3>
           <div class="summary-row">
             <span class="label">תיאור העסקה:</span>
-            <span class="value">{{ transaction.description || '-------' }}</span>
+            <span class="value">{{ transaction.description || '-' }}</span>
           </div>
           <div class="summary-row">
             <span class="label">סכום לתשלום:</span>
@@ -139,7 +139,8 @@
                 [memberId]="memberId"
                 [payerName]="getPayerFullName()"
                 (paymentDetailsChange)="onPaymentDetailsChange($event)"
-                (validationStateChange)="onStep2ValidationStateChange($event)">
+                (validationStateChange)="onStep2ValidationStateChange($event)"
+                (continue)="onContinue()">
               </app-step2-payment>
             }
             @case (3) {
@@ -153,7 +154,7 @@
           }
         </div>
 
-        @if (currentStep > 1) {
+        @if (currentStep > 1 && !(currentStep === 2 && step2ValidationState.paymentComplete)) {
           <button class="btn-back" (click)="onBack()">
             <i class="fa-solid fa-arrow-right"></i>
             חזרה לשלב הקודם

@@ -1,118 +1,138 @@
 <div class="payment-details-form">
-  <div class="form-row">
-    <div class="form-group">
-      <label>סכום לחיוב</label>
-      <div class="amount-input">
-        <input type="number" [(ngModel)]="paymentDetails.amount" name="amount" min="0.01" max="100000" step="0.01" (ngModelChange)="onAmountChange()" (focus)="onFocus($event)" placeholder="0">
-        <span class="currency">₪</span>
+  @if (chargeSuccess || newCardSaved) {
+    <div class="charge-complete-view">
+      <div class="card-saved-success">
+        <i class="fa-solid fa-check-circle"></i>
+        <span>החיוב בוצע בהצלחה</span>
+        <p>ניתן להמשיך לשלב הבא</p>
+      </div>
+      <button class="btn-continue" (click)="onContinue()">
+        <span>המשך לפרטי חשבונית</span>
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+    </div>
+  } @else if (!paymentSubmitted && !(useNewCard && iframeUrl)) {
+    <div class="form-row">
+      <div class="form-group">
+        <label>סכום לחיוב</label>
+        <div class="amount-input">
+          <input type="number" [(ngModel)]="paymentDetails.amount" name="amount" min="0.01" max="100000" step="0.01" (ngModelChange)="onAmountChange()" (focus)="onFocus($event)" placeholder="0">
+          <span class="currency">₪</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>מספר תשלומים</label>
+        <input type="number" [(ngModel)]="paymentDetails.installments" name="installments" min="1" max="32" (ngModelChange)="onInstallmentsChange()" (focus)="onFocus($event)" placeholder="0">
       </div>
     </div>
-    <div class="form-group">
-      <label>מספר תשלומים</label>
-      <input type="number" [(ngModel)]="paymentDetails.installments" name="installments" min="1" max="32" (ngModelChange)="onInstallmentsChange()" (focus)="onFocus($event)" placeholder="0">
+
+    <div class="form-group full-width">
+      <label>תיאור עסקה</label>
+      <input type="text" [(ngModel)]="paymentDetails.description" name="description" (ngModelChange)="onInputChange()">
     </div>
-  </div>
 
-  <div class="form-group full-width">
-    <label>תיאור עסקה</label>
-    <input type="text" [(ngModel)]="paymentDetails.description" name="description" (ngModelChange)="onInputChange()">
-  </div>
-
-  <div class="payment-method-section">
-    <label class="section-label">אמצעי תשלום:</label>
-    <div class="payment-method-options">
-      <label class="radio-option">
-        <input type="radio" name="paymentMethod" value="credit" [(ngModel)]="paymentDetails.paymentMethod" (ngModelChange)="onPaymentMethodChange()">
-        <span>כרטיס אשראי</span>
-      </label>
-      <label class="radio-option">
-        <input type="radio" name="paymentMethod" value="standingOrder" [(ngModel)]="paymentDetails.paymentMethod" (ngModelChange)="onPaymentMethodChange()">
-        <span>חיוב מס"ב</span>
-      </label>
-    </div>
-  </div>
-
-  @if (paymentDetails.paymentMethod === 'credit') {
-    <div class="credit-card-section">
-      <div class="use-saved-card-toggle">
-        <label class="toggle">
-          <input type="checkbox" [(ngModel)]="useNewCard" (ngModelChange)="onUseNewCardChange()">
-          <span class="slider"></span>
+    <div class="payment-method-section">
+      <label class="section-label">אמצעי תשלום:</label>
+      <div class="payment-method-options">
+        <label class="radio-option">
+          <input type="radio" name="paymentMethod" value="credit" [(ngModel)]="paymentDetails.paymentMethod" (ngModelChange)="onPaymentMethodChange()">
+          <span>כרטיס אשראי</span>
         </label>
-        <span>השתמש בכרטיס אשראי חדש</span>
+        <label class="radio-option">
+          <input type="radio" name="paymentMethod" value="standingOrder" [(ngModel)]="paymentDetails.paymentMethod" (ngModelChange)="onPaymentMethodChange()">
+          <span>חיוב מס"ב</span>
+        </label>
       </div>
+    </div>
 
-      @if (useNewCard) {
-        <div class="new-card-form">
-          <div class="form-group">
-            <label>מספר כרטיס</label>
-            <div class="card-number-input">
-              <img src="assets/img/icons/credit_card.svg" alt="" class="input-icon">
-              <input type="text" [(ngModel)]="newCard.cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
-            </div>
-          </div>
+    @if (paymentDetails.paymentMethod === 'credit' && paymentDetails.amount > 0) {
+      <div class="credit-card-section">
+        <div class="use-saved-card-toggle">
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="useNewCard" (ngModelChange)="onUseNewCardChange()">
+            <span class="slider"></span>
+          </label>
+          <span>השתמש בכרטיס אשראי חדש</span>
+        </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>תוקף</label>
-              <input type="text" [(ngModel)]="newCard.expiry" name="expiry" placeholder="12/26" maxlength="5">
-            </div>
-            <div class="form-group">
-              <label>CVV</label>
-              <input type="text" [(ngModel)]="newCard.cvv" name="cvv" placeholder="123" maxlength="4">
-            </div>
-          </div>
-
-          <div class="save-card-section">
-            <div class="save-card-toggle">
-              <label class="toggle">
-                <input type="checkbox" [(ngModel)]="newCard.saveCard">
-                <span class="slider"></span>
-              </label>
-              <span>שמור את פרטי הכרטיס לרכישות עתידיות</span>
-              <span class="recommended-badge">מומלץ</span>
-            </div>
-            <p class="save-card-note">למען שמירה על אבטחת סליקה הפרטים השמורים הם 4 הספרות האחרונות וסוג הכרטיס בלבד, לאחר התשלום תוכל לראות את הכרטיס ברשימת כרטיסי הלקוח.</p>
-          </div>
-
-          <button
-            type="button"
-            class="btn-save-card"
-            [class.saved]="newCardSaved"
-            [disabled]="!isNewCardFormValid() || savingCard || newCardSaved"
-            (click)="saveNewCard()">
-            @if (savingCard) {
-              <span class="btn-spinner"></span>
-              שומר...
-            } @else if (newCardSaved) {
-              <i class="fa-solid fa-check"></i>
-              כרטיס נשמר בהצלחה
+        @if (useNewCard) {
+          <div class="new-card-form">
+            @if (isLoadingIframe) {
+              <div class="iframe-loading">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>טוען טופס תשלום...</span>
+              </div>
             } @else {
-              שמור כרטיס
+              <div class="iframe-error">
+                <span>שגיאה בטעינת טופס התשלום</span>
+                <button class="btn-retry" (click)="loadIframeUrl()">נסה שוב</button>
+              </div>
             }
-          </button>
-        </div>
-      } @else if (isLoadingCards) {
-        <div class="loading-cards">
-          <i class="fa-solid fa-spinner fa-spin"></i>
-          <span>טוען כרטיסי אשראי...</span>
-        </div>
-      } @else if (savedCards.length > 0) {
-        <div class="saved-cards">
-          @for (card of savedCards; track card.id) {
-            <app-credit-card
-              [card]="card"
-              [selected]="selectedCardId === card.id"
-              (select)="selectCard($event)">
-            </app-credit-card>
+          </div>
+        } @else if (isLoadingCards) {
+          <div class="loading-cards">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <span>טוען כרטיסי אשראי...</span>
+          </div>
+        } @else if (savedCards.length > 0) {
+          <div class="saved-cards">
+            @for (card of savedCards; track card.id) {
+              <app-credit-card
+                [card]="card"
+                [selected]="selectedCardId === card.id"
+                (select)="selectCard($event)">
+              </app-credit-card>
+            }
+          </div>
+          @if (selectedCardId) {
+            <button class="btn-charge" (click)="chargeSelectedCard()" [disabled]="isCharging || !selectedCardId">
+              @if (isCharging) {
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>מבצע חיוב...</span>
+              } @else {
+                <i class="fa-solid fa-credit-card"></i>
+                <span>בצע חיוב</span>
+              }
+            </button>
+            @if (chargeError) {
+              <div class="charge-error">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>{{ chargeError }}</span>
+              </div>
+            }
           }
-        </div>
-      } @else if (memberId && !isLoadingCards) {
-        <div class="no-cards-message">
-          <p>לא נמצאו כרטיסי אשראי שמורים עבור חבר זה</p>
-          <p>אנא הוסף כרטיס אשראי חדש</p>
-        </div>
-      }
+        } @else if (memberId && !isLoadingCards) {
+          <div class="no-cards-message">
+            <p>לא נמצאו כרטיסי אשראי שמורים עבור חבר זה</p>
+            <p>אנא הוסף כרטיס אשראי חדש</p>
+          </div>
+        }
+      </div>
+    }
+  } @else if (useNewCard && iframeUrl && !paymentSubmitted) {
+    <div class="iframe-view">
+      <button class="btn-back" (click)="onBackToForm()">
+        <i class="fa-solid fa-arrow-right"></i>
+        <span>חזרה</span>
+      </button>
+      <app-tranzila-payment
+        [url]="iframeUrl"
+        height="350px"
+        (paymentSuccess)="onCardStored($event)"
+        (paymentError)="onCardStoreError($event)">
+      </app-tranzila-payment>
+    </div>
+  } @else if (!newCardSaved) {
+    <div class="payment-processing">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      <span>מאמת תשלום...</span>
+      <p>אנא המתן בזמן שאנו מאמתים את התשלום</p>
+    </div>
+  } @else {
+    <div class="card-saved-success">
+      <i class="fa-solid fa-check-circle"></i>
+      <span>כרטיס האשראי נשמר בהצלחה</span>
+      <p>ניתן להמשיך לשלב הבא</p>
     </div>
   }
 </div>

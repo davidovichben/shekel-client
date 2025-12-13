@@ -91,17 +91,32 @@
   <div class="dialog-overlay" (click)="closeChangeCardDialog()">
     <div class="change-card-dialog" (click)="$event.stopPropagation()">
       <div class="dialog-header">
-        <h3>החלפת כרטיס אשראי</h3>
+        <div class="dialog-title-section">
+          <h3>החלפת כרטיס אשראי</h3>
+          <p class="charge-notice">לצורך אימות הכרטיס יבוצע חיוב של 1 ₪</p>
+        </div>
         <button class="btn-close" (click)="closeChangeCardDialog()">
           <i class="fa-solid fa-times"></i>
         </button>
       </div>
       <div class="dialog-content">
-        <app-tranzila-payment
-          [config]="tranzilaConfig"
-          (paymentSuccess)="onCardStored($event)"
-          (paymentError)="onCardStoreError($event)">
-        </app-tranzila-payment>
+        @if (isLoadingIframe) {
+          <div class="iframe-loading">
+            <div class="spinner"></div>
+            <span>טוען טופס תשלום...</span>
+          </div>
+        } @else if (iframeUrl) {
+          <app-tranzila-payment
+            [url]="iframeUrl"
+            (paymentSuccess)="onCardStored($event)"
+            (paymentError)="onCardStoreError($event)">
+          </app-tranzila-payment>
+        } @else {
+          <div class="iframe-error">
+            <span>שגיאה בטעינת טופס התשלום</span>
+            <button class="btn-retry" (click)="onChangeCard()">נסה שוב</button>
+          </div>
+        }
       </div>
     </div>
   </div>

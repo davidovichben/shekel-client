@@ -172,6 +172,64 @@
   flex-wrap: wrap
   animation: fadeIn 0.3s ease-out
 
+.btn-charge
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  width: fit-content
+  padding: 12px 24px
+  margin-top: 16px
+  border: none
+  border-radius: 8px
+  font-size: 14px
+  font-weight: 600
+  cursor: pointer
+  background: $header-bg
+  color: white
+  transition: all 0.2s ease
+
+  &:hover:not(:disabled)
+    filter: brightness(0.95)
+
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed
+
+  i
+    font-size: 14px
+
+.charge-success
+  display: flex
+  align-items: center
+  gap: 8px
+  width: fit-content
+  padding: 12px 20px
+  margin-top: 16px
+  background: #e8f5e9
+  border-radius: 8px
+  color: #2e7d32
+  font-size: 14px
+  font-weight: 500
+
+  i
+    font-size: 16px
+
+.charge-error
+  display: flex
+  align-items: center
+  gap: 8px
+  width: fit-content
+  padding: 10px 16px
+  margin-top: 12px
+  background: #ffebee
+  border-radius: 8px
+  color: #c62828
+  font-size: 13px
+
+  i
+    font-size: 14px
+
 .new-card-form
   display: flex
   flex-direction: column
@@ -287,3 +345,179 @@
 @keyframes spin
   to
     transform: rotate(360deg)
+
+.iframe-loading,
+.iframe-error
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  gap: 12px
+  min-height: 200px
+  color: $gray-700
+
+  span
+    font-size: 14px
+
+  i
+    font-size: 24px
+    color: $header-bg
+
+.iframe-error
+  .btn-retry
+    background: $header-bg
+    color: white
+    border: none
+    border-radius: 6px
+    padding: 8px 16px
+    font-size: 14px
+    cursor: pointer
+
+    &:hover
+      filter: brightness(0.95)
+
+.card-saved-message
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  padding: 12px
+  margin-top: 12px
+  background: #e8f5e9
+  border-radius: 8px
+  color: #2e7d32
+  font-size: 14px
+  font-weight: 500
+
+  i
+    font-size: 18px
+
+.charge-complete-view
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  min-height: 300px
+  animation: fadeIn 0.3s ease-out
+
+.card-saved-success
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  gap: 12px
+  padding: 40px 20px
+  text-align: center
+
+  i
+    font-size: 64px
+    color: #28a745
+
+  span
+    font-size: 20px
+    font-weight: 600
+    color: $text-dark
+
+  p
+    margin: 0
+    font-size: 14px
+    color: $gray-700
+
+.btn-continue
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  padding: 14px 32px
+  border: none
+  border-radius: 8px
+  font-size: 16px
+  font-weight: 600
+  cursor: pointer
+  background: $header-bg
+  color: white
+  transition: all 0.2s ease
+
+  &:hover
+    filter: brightness(0.95)
+
+  i
+    font-size: 14px
+
+.iframe-view
+  display: flex
+  flex-direction: column
+  gap: 12px
+
+.btn-back
+  display: flex
+  align-items: center
+  gap: 6px
+  padding: 8px 16px
+  border: 1px solid $gray-300
+  border-radius: 8px
+  background: white
+  color: $text-dark
+  font-size: 14px
+  cursor: pointer
+  width: fit-content
+  transition: all 0.2s ease
+
+  &:hover
+    background: $gray-100
+    border-color: $gray-500
+
+  i
+    font-size: 12px
+
+.iframe-instruction
+  margin: 8px 0
+  font-size: 13px
+  color: $gray-700
+  text-align: center
+
+.btn-payment-submitted
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  width: 100%
+  padding: 14px 20px
+  border: none
+  border-radius: 8px
+  font-size: 15px
+  font-weight: 600
+  cursor: pointer
+  background: #28a745
+  color: white
+  transition: all 0.2s ease
+
+  &:hover
+    background: #218838
+
+  i
+    font-size: 16px
+
+.payment-processing
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  gap: 16px
+  padding: 60px 20px
+  text-align: center
+  animation: fadeIn 0.3s ease-out
+
+  i
+    font-size: 48px
+    color: $header-bg
+
+  span
+    font-size: 18px
+    font-weight: 600
+    color: $text-dark
+
+  p
+    margin: 0
+    font-size: 14px
+    color: $gray-700
