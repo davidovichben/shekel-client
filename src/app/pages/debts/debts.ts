@@ -518,7 +518,7 @@ export class DebtsComponent implements OnInit {
         <head>
           <title>חובות - הדפסה</title>
           <style>
-            body { font-family: 'Heebo', sans-serif; padding: 20px; direction: rtl; }
+            body { font-family: 'Assistant', sans-serif; padding: 20px; direction: rtl; }
             table { width: 100%; border-collapse: collapse; margin-top: 20px; }
             th, td { padding: 10px; text-align: right; border: 1px solid #ddd; }
             th { background-color: #f5f5f5; font-weight: bold; }

@@ -16,29 +16,92 @@
     margin: 0 0 16px
     font-size: 18px
     font-weight: 700
-    color: $text-dark
-    font-family: 'Heebo', sans-serif
-    font-weight: 700
+    color: $primary-bg
+    font-family: $font-family
 
 .search-box
+  position: relative
+  display: flex
+  align-items: center
+  background: white
+  border: 1px solid $gray-300
+  border-radius: 6px
+  padding: 10px 14px
+  gap: 10px
+
+  .search-icon
+    display: flex
+    align-items: center
+    justify-content: center
+    color: $gray-500
+    flex-shrink: 0
+
+  input
+    flex: 1
+    border: none
+    outline: none
+    background: transparent
+    font-size: 14px
+    color: $text-dark
+    font-family: $font-family
+    direction: rtl
+    text-align: right
+
+    &::placeholder
+      color: $gray-500
+
   .autocomplete-dropdown
+    position: absolute
+    top: 100%
+    left: 0
+    right: 0
+    margin-top: 4px
+    background: white
+    border: 1px solid $gray-300
+    border-radius: 6px
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+    z-index: 1000
     max-height: none
     overflow-y: visible
-    border: none
-    border-radius: 0
-    box-shadow: none
-    margin-top: 0
 
   .search-results-list
     max-height: 200px
     overflow-y: auto
 
   .autocomplete-option
-    border-bottom: none
+    display: flex
+    align-items: center
+    gap: 8px
+    width: 100%
+    padding: 10px 14px
+    text-align: right
+    background: none
+    border: none
+    border-bottom: 1px solid $gray-100
+    cursor: pointer
+    font-size: 14px
+    color: $text-dark
+    font-family: $font-family
+    box-sizing: border-box
+
+    &:last-child
+      border-bottom: none
+
+    &:hover:not(:disabled)
+      background: $gray-100
+
+    &:disabled
+      cursor: not-allowed
 
     &.adding
       opacity: 0.7
       cursor: wait
+
+    span
+      flex: 1
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
 
     .option-spinner
       width: 14px
@@ -47,13 +110,33 @@
       border-top-color: $header-bg
       border-radius: 50%
       animation: spin 0.6s linear infinite
+      flex-shrink: 0
 
 .add-group-option
-  color: $header-bg
+  display: flex
+  align-items: center
+  gap: 8px
+  width: 100%
+  padding: 10px 14px
+  text-align: right
+  background: none
+  border: none
+  border-top: 1px solid $gray-100
+  cursor: pointer
+  font-size: 14px
+  color: $primary-bg
   font-weight: 500
+  font-family: $font-family
+  box-sizing: border-box
+
+  &:hover
+    background: $gray-100
 
   svg
-    color: $header-bg
+    width: 16px
+    height: 16px
+    flex-shrink: 0
+    color: $primary-bg
 
 .create-group-input
   display: flex
@@ -111,9 +194,8 @@
     margin: 0 0 8px
     font-size: 16px
     font-weight: 700
-    color: $text-dark
-    font-family: 'Heebo', sans-serif
-    font-weight: 700
+    color: $primary-bg
+    font-family: $font-family
 
 .groups-description
   margin: 0 0 16px
@@ -138,6 +220,10 @@
   font-size: 14px
   color: $text-dark
   transition: all 0.3s ease
+  cursor: pointer
+
+  &:hover
+    background: $bg-light
 
   &.removing
     opacity: 0.5

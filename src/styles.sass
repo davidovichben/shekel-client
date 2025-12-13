@@ -1,4 +1,5 @@
 @use 'variables' as *
+@use 'fonts'
 
 html, body
   margin: 0
@@ -8,10 +9,10 @@ html, body
   overflow-x: hidden
 
 *
-  font-family: 'Heebo', sans-serif
+  font-family: $font-family
 
 body
-  font-family: 'Heebo', sans-serif
+  font-family: $font-family
   direction: rtl
   background-color: white
 
@@ -38,11 +39,11 @@ input[type="radio"]
     line-height: 18px
 
 .semi-bold
-  font-family: 'Heebo', sans-serif
+  font-family: $font-family
   font-weight: 600
 
 .bold
-  font-family: 'Heebo', sans-serif
+  font-family: $font-family
   font-weight: 700
 
 // Shared Page Styles
@@ -62,7 +63,7 @@ input[type="radio"]
     margin: 0 0 0.25rem
     font-size: 1.5rem
     color: #0b1a51
-    font-family: 'Heebo', sans-serif
+    font-family: $font-family
     font-weight: 700
 
   p
@@ -84,7 +85,7 @@ input[type="radio"]
   border-radius: 8px
   font-size: 0.9rem
   cursor: pointer
-  font-family: 'Heebo', sans-serif
+  font-family: $font-family
 
   &:hover
     background: $header-bg-hover
@@ -116,7 +117,7 @@ input[type="radio"]
   border-radius: 6px
   font-size: 0.85rem
   cursor: pointer
-  font-family: 'Heebo', sans-serif
+  font-family: $font-family
   white-space: nowrap
   transition: background 0.2s
 
@@ -161,7 +162,7 @@ input[type="radio"]
   &.active
     color: $btn-primary
     border-bottom-color: $btn-primary
-    font-family: 'Heebo', sans-serif
+    font-family: $font-family
     font-weight: 600
 
   .count
@@ -178,7 +179,8 @@ input[type="radio"]
   font-size: 0.75rem
   color: $text-dark
   cursor: pointer
-  font-family: 'OpenSansBold', sans-serif
+  font-family: $font-family
+  font-weight: 700
 
   i
     position: relative
@@ -268,7 +270,8 @@ input[type="radio"]
   border-radius: 8px
   font-size: 0.85rem
   color: $text-dark
-  font-family: 'OpenSansBold', sans-serif
+  font-family: $font-family
+  font-weight: 700
 
 .action-icon
   background: none
@@ -305,7 +308,7 @@ input[type="radio"]
     background: $bg-table-header
     color: #666
     font-weight: bold
-    font-family: 'Heebo', sans-serif
+    font-family: $font-family
     font-weight: 700
 
   .col-number
@@ -412,7 +415,7 @@ input[type="radio"]
   padding: 48px !important
   color: $text-dark
   font-size: 1.1rem
-  font-family: 'Heebo', sans-serif
+  font-family: $font-family
   font-weight: 700
 
 // Shared Tags
@@ -987,8 +990,26 @@ input.invalid
   .mat-mdc-menu-item
     direction: rtl
     text-align: right
-    font-family: 'Heebo', sans-serif
+    font-family: $font-family
     background: white
 
     &:hover
       background: #f5f5f5 !important
+
+// Group Dialog Panel
+::ng-deep .group-dialog-panel
+  .mat-mdc-dialog-container
+    padding: 0 !important
+    border-radius: 12px !important
+    overflow: hidden !important
+
+  .mdc-dialog__surface
+    border-radius: 12px !important
+    overflow: hidden !important
+
+  .mat-mdc-dialog-surface
+    border-radius: 12px !important
+    overflow: hidden !important
+
+::ng-deep .cdk-overlay-backdrop.cdk-overlay-backdrop-showing.group-dialog-backdrop
+  background: $bg-light !important

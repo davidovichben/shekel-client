@@ -15,6 +15,7 @@ export interface ConfirmDialogData {
   description?: string;
   buttons?: DialogButton[];
   confirmText?: string;
+  confirmIcon?: string; // Optional icon for confirm button
   cancelText?: string;
   cancelDisabled?: boolean;
   items?: string[];
@@ -56,7 +57,9 @@ export interface ConfirmDialogData {
           }
           @if (data.confirmText) {
             <button class="btn-confirm" (click)="onConfirm()" type="button">
-              @if (data.cancelText) {
+              @if (data.confirmIcon) {
+                <img [src]="'assets/img/icons/' + data.confirmIcon" [alt]="data.confirmText" class="btn-icon" />
+              } @else if (data.cancelText) {
                 <img src="assets/img/icons/trash-white.svg" alt="מחק" class="btn-icon" />
               }
               {{ data.confirmText }}

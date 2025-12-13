@@ -1,9 +1,11 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Member } from '../../../../../core/entities/member.entity';
 import { MemberGroupService } from '../../../../../core/services/network/member-group.service';
 import { GroupService, Group } from '../../../../../core/services/network/group.service';
+import { GroupDialogComponent } from '../../../group-dialog/group-dialog';
 
 @Component({
   selector: 'app-member-groups',
@@ -15,6 +17,7 @@ import { GroupService, Group } from '../../../../../core/services/network/group.
 export class MemberGroupsComponent implements OnInit {
   private memberGroupService = inject(MemberGroupService);
   private groupService = inject(GroupService);
+  private dialog = inject(MatDialog);
 
   @Input() member: Member | null = null;
 
@@ -185,5 +188,28 @@ export class MemberGroupsComponent implements OnInit {
 
   isRemoving(groupId: string): boolean {
     return this.removingGroupIds.has(groupId);
+  }
+
+  openGroupDialog(group: Group): void {
+    const dialogRef = this.dialog.open(GroupDialogComponent, {
+      width: '450px',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
+      panelClass: 'group-dialog-panel',
+      backdropClass: 'group-dialog-backdrop',
+      autoFocus: false,
+      data: {
+        groupId: group.id,
+        groupName: group.name
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Reload groups if changes were made
+        this.loadMemberGroups();
+      }
+    });
   }
 }

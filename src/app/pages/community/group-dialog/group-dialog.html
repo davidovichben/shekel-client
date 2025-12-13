@@ -1,0 +1,98 @@
+<div class="group-dialog">
+  <app-dialog-header
+    [title]="getDialogTitle()"
+    [variant]="'default'"
+    [closeIconPath]="'assets/img/icons/close.svg'"
+    (close)="onClose()">
+  </app-dialog-header>
+
+  <div class="dialog-content">
+    @if (isLoading) {
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+    } @else {
+      @if (isEditMode) {
+        <!-- Edit Mode -->
+        <div class="edit-mode">
+          <div class="form-group">
+            <label>
+              שם הקבוצה
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="groupName"
+              placeholder="משפחת לוי המורחבת"
+              [disabled]="isSaving">
+          </div>
+
+          <div class="form-group">
+            <label>חפש והוסף לקבוצה חברי קהילה</label>
+            <app-member-autocomplete
+              [memberId]="selectedMemberId"
+              [memberName]="selectedMemberName"
+              placeholder="חפש והוסף לקבוצה חברי קהילה"
+              (memberSelected)="onMemberSelected($event)">
+            </app-member-autocomplete>
+          </div>
+
+          <div class="members-section">
+            <div class="members-list">
+              @for (member of members; track member.id) {
+                <div class="member-tag" [class.removing]="isRemovingMember.has(member.id)">
+                  <span>{{ member.fullName }}</span>
+                  <button
+                    class="remove-btn"
+                    (click)="removeMember(member)"
+                    [disabled]="isRemovingMember.has(member.id)">
+                    @if (isRemovingMember.has(member.id)) {
+                      <div class="remove-spinner"></div>
+                    } @else {
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                      </svg>
+                    }
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- View Mode -->
+        <div class="view-mode">
+          <div class="members-section">
+            <div class="members-list">
+              @for (member of members; track member.id) {
+                <div class="member-tag">
+                  <span>{{ member.fullName }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="dialog-footer">
+    @if (isEditMode) {
+      <button class="btn-save" (click)="onSave()" [disabled]="!groupName.trim() || isSaving">
+        @if (isSaving) {
+          <div class="btn-spinner"></div>
+        } @else {
+          <img src="assets/img/icons/floppy.svg" alt="שמור" class="btn-icon">
+        }
+        שמור
+      </button>
+    } @else {
+      <button class="btn-edit" (click)="onEdit()">
+        <img src="assets/img/icons/edit.svg" alt="עריכה" class="btn-icon">
+      </button>
+    }
+  </div>
+</div>
+

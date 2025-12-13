@@ -384,7 +384,7 @@ export class CommunityComponent implements OnInit {
       <head>
         <title>הדפסת חברים</title>
         <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
+          body { font-family: 'Assistant', sans-serif; padding: 20px; }
           table { width: 100%; border-collapse: collapse; }
           th, td { border: 1px solid #ccc; padding: 8px; text-align: right; }
           th { background: #f5f5f5; }

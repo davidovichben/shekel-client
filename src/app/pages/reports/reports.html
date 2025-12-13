@@ -59,27 +59,29 @@
           <!-- Right Column: Filters -->
           <div class="config-column-right">
             <!-- Date Range -->
-            <div class="config-section">
-              <label class="section-label">טווח תאריכים:</label>
-              <div class="date-range">
-                <div class="date-field">
-                  <label class="field-label">מתאריך:</label>
-                  <app-date-picker
-                    [value]="reportConfig.dateFrom"
-                    placeholder="בחר תאריך"
-                    (valueChange)="onDateFromChange($event)"
-                  />
-                </div>
-                <div class="date-field">
-                  <label class="field-label">עד תאריך:</label>
-                  <app-date-picker
-                    [value]="reportConfig.dateTo"
-                    placeholder="בחר תאריך"
-                    (valueChange)="onDateToChange($event)"
-                  />
+            @if (!isMemberReport()) {
+              <div class="config-section">
+                <label class="section-label">טווח תאריכים:</label>
+                <div class="date-range">
+                  <div class="date-field">
+                    <label class="field-label">מתאריך:</label>
+                    <app-date-picker
+                      [value]="reportConfig.dateFrom"
+                      placeholder="בחר תאריך"
+                      (valueChange)="onDateFromChange($event)"
+                    />
+                  </div>
+                  <div class="date-field">
+                    <label class="field-label">עד תאריך:</label>
+                    <app-date-picker
+                      [value]="reportConfig.dateTo"
+                      placeholder="בחר תאריך"
+                      (valueChange)="onDateToChange($event)"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            }
 
             <!-- Sort Results -->
             <div class="config-section">
@@ -88,7 +90,7 @@
                 [options]="sortOptions"
                 [(value)]="reportConfig.sortBy"
                 (valueChange)="onSortChange($event)"
-                prefix="מיין לפי:"
+                prefix="מיין לפי"
               />
             </div>
 
@@ -103,19 +105,21 @@
                 />
               </div>
             } @else {
-              <div class="config-section">
-                <label class="section-label">סינונים נוספים:</label>
-                <div class="filters">
-                  @for (filter of filterOptions; track filter.value) {
-                    <app-custom-select
-                      [options]="getFilterOptions(filter.value)"
-                      [(value)]="reportConfig.filters[filter.value]"
-                      (valueChange)="onFilterChange(filter.value, $event)"
-                      [prefix]="filter.label"
-                    />
-                  }
+              @if (filterOptions.length > 0) {
+                <div class="config-section">
+                  <label class="section-label">סינונים נוספים:</label>
+                  <div class="filters">
+                    @for (filter of filterOptions; track filter.value) {
+                      <app-custom-select
+                        [options]="getFilterOptions(filter.value)"
+                        [(value)]="reportConfig.filters[filter.value]"
+                        (valueChange)="onFilterChange(filter.value, $event)"
+                        [prefix]="filter.label"
+                      />
+                    }
+                  </div>
                 </div>
-              </div>
+              }
             }
 
             <!-- Result Limit -->

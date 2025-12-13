@@ -1,5 +1,10 @@
 @use '../../../../variables' as *
 
+.autocomplete-input
+  position: relative
+  width: 100%
+  z-index: 1
+
 .autocomplete-wrapper
   position: relative
   width: 100%
@@ -18,7 +23,7 @@
     direction: rtl
     background: white
     min-height: 40px
-    font-family: 'Heebo', sans-serif
+    font-family: $font-family
 
     &:focus
       outline: none
@@ -52,7 +57,7 @@
   border: 1px solid $gray-300
   border-radius: 8px
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
-  z-index: 100
+  z-index: 1000
   max-height: 200px
   overflow-y: auto
 

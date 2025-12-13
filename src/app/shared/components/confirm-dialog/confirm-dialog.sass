@@ -110,8 +110,8 @@
   .btn-icon
     width: 14px !important
     height: 14px !important
-    // Ensure white icon is visible - remove any filters that might darken it
-    filter: none !important
+    // Make icon white for visibility on dark blue background
+    filter: brightness(0) invert(1) !important
 
 .btn-cancel
   background: $btn-cancel-light

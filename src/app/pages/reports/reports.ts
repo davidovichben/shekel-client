@@ -164,22 +164,81 @@ export class ReportsComponent implements OnInit {
       label: opt.label
     }));
 
-    // Use filters from API
-    this.filterOptions = config.filters.map(filter => ({
+    // Handle report-specific filter logic
+    let filtersToShow = config.filters;
+    
+    // Remove income_type filter for community/external donation reports
+    // and set the filter value automatically
+    if (this.selectedReportType === 'donations_community' || this.selectedReportType === 'donations_external') {
+      // Filter out income_type, income_category, category, or any similar filter keys
+      filtersToShow = config.filters.filter(filter => {
+        const key = filter.key.toLowerCase();
+        return key !== 'income_type' && key !== 'income_category' && key !== 'category' && key !== 'type';
+      });
+      
+      // Set the income_type filter value automatically based on report type
+      if (this.selectedReportType === 'donations_community') {
+        this.reportConfig.filters['income_type'] = 'community_donations';
+        // Also try alternative keys
+        this.reportConfig.filters['income_category'] = 'community_donations';
+        this.reportConfig.filters['category'] = 'community_donations';
+      } else if (this.selectedReportType === 'donations_external') {
+        this.reportConfig.filters['income_type'] = 'external_donations';
+        // Also try alternative keys
+        this.reportConfig.filters['income_category'] = 'external_donations';
+        this.reportConfig.filters['category'] = 'external_donations';
+      }
+    }
+
+    // Use filtered filters from API
+    this.filterOptions = filtersToShow.map(filter => ({
       value: filter.key,
       label: filter.label
     }));
 
     // Initialize filter values
-    this.reportConfig.filters = {};
     config.filters.forEach(filter => {
-      this.reportConfig.filters[filter.key] = '';
+      // Only initialize if not already set (for community/external donations)
+      if (!this.reportConfig.filters.hasOwnProperty(filter.key)) {
+        this.reportConfig.filters[filter.key] = '';
+      }
     });
+
+    // Set default dates for monthly reports
+    if (this.selectedReportType === 'income_monthly' || this.selectedReportType === 'expenses_monthly') {
+      const { firstDay, lastDay } = this.getCurrentMonthDates();
+      this.reportConfig.dateFrom = firstDay;
+      this.reportConfig.dateTo = lastDay;
+    } else if (this.isMemberReport()) {
+      // Member reports don't use date ranges - set to null
+      this.reportConfig.dateFrom = null;
+      this.reportConfig.dateTo = null;
+    } else {
+      // Reset dates for other reports
+      this.reportConfig.dateFrom = null;
+      this.reportConfig.dateTo = null;
+    }
 
     // Set default sort if available
     if (this.sortOptions.length > 0 && !this.reportConfig.sortBy) {
       this.reportConfig.sortBy = this.sortOptions[0].value;
     }
+  }
+
+  private getCurrentMonthDates(): { firstDay: string; lastDay: string } {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    // First day of current month
+    const firstDay = new Date(year, month, 1);
+    const firstDayStr = firstDay.toISOString().split('T')[0];
+    
+    // Last day of current month
+    const lastDay = new Date(year, month + 1, 0);
+    const lastDayStr = lastDay.toISOString().split('T')[0];
+    
+    return { firstDay: firstDayStr, lastDay: lastDayStr };
   }
 
   getFilterOptions(filterKey: string): { value: string; label: string }[] {
@@ -268,6 +327,13 @@ export class ReportsComponent implements OnInit {
 
   isDebtsByDebtorReport(): boolean {
     return this.selectedReportType === 'debts_by_debtor';
+  }
+
+  isMemberReport(): boolean {
+    return this.selectedReportType === 'members_active' ||
+           this.selectedReportType === 'members_recent' ||
+           this.selectedReportType === 'members_no_donation' ||
+           this.selectedReportType === 'members_no_auto_payment';
   }
 
   generateReport(): void {
