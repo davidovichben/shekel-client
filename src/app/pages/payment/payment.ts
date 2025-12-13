@@ -61,7 +61,7 @@ export class PaymentComponent implements OnInit {
   };
 
   paymentDetails: PaymentDetails = {
-    amount: 10,
+    amount: 0,
     installments: 1,
     description: '',
     paymentMethod: 'credit'
@@ -69,7 +69,8 @@ export class PaymentComponent implements OnInit {
 
   step2ValidationState: Step2ValidationState = {
     isValid: false,
-    newCardSaved: false
+    newCardSaved: false,
+    paymentComplete: false
   };
 
   transaction: TransactionSummary = {
@@ -101,8 +102,9 @@ export class PaymentComponent implements OnInit {
     }
     if (this.data?.amount !== undefined) {
       this.paymentDetails.amount = this.data.amount;
-      this.updateTransactionSummary();
     }
+    // Always update transaction summary with initial values
+    this.updateTransactionSummary();
   }
 
   onClose(): void {

@@ -1,17 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-
-export type TranzilaMode = 'store-card' | 'charge';
-
-export interface TranzilaConfig {
-  mode: TranzilaMode;
-  sum?: number; // Required for 'charge' mode
-  orderId?: string;
-  contact?: string;
-  email?: string;
-  phone?: string;
-}
 
 export interface TranzilaResponse {
   success: boolean;
@@ -21,6 +10,8 @@ export interface TranzilaResponse {
   index?: string;
   error?: string;
   cardLastFour?: string;
+  expMonth?: string;
+  expYear?: string;
 }
 
 @Component({
@@ -30,32 +21,34 @@ export interface TranzilaResponse {
   templateUrl: './tranzila-payment.html',
   styleUrl: './tranzila-payment.sass'
 })
-export class TranzilaPaymentComponent implements OnInit, OnDestroy {
+export class TranzilaPaymentComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('paymentFrame') paymentFrame!: ElementRef<HTMLIFrameElement>;
 
-  @Input() config!: TranzilaConfig;
+  @Input() url!: string;
   @Input() width = '100%';
   @Input() height = '400px';
 
   @Output() paymentSuccess = new EventEmitter<TranzilaResponse>();
   @Output() paymentError = new EventEmitter<TranzilaResponse>();
-  @Output() paymentCancel = new EventEmitter<void>();
 
   iframeUrl: SafeResourceUrl | null = null;
   isLoading = true;
-
-  private readonly TERMINAL = 'test3030';
-  private readonly TERMINAL_PW = '5650500';
-  private readonly CURRENCY = 1; // Shekels
-  private readonly BASE_URL = 'https://direct.tranzila.com';
 
   private messageHandler: ((event: MessageEvent) => void) | null = null;
 
   constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    this.buildIframeUrl();
     this.setupMessageListener();
+    if (this.url) {
+      this.setIframeUrl(this.url);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['url'] && this.url) {
+      this.setIframeUrl(this.url);
+    }
   }
 
   ngOnDestroy(): void {
@@ -64,132 +57,159 @@ export class TranzilaPaymentComponent implements OnInit, OnDestroy {
     }
   }
 
-  private buildIframeUrl(): void {
-    const params = new URLSearchParams({
-      supplier: this.TERMINAL,
-      TranzilaPW: this.TERMINAL_PW,
-      currency: this.CURRENCY.toString(),
-      lang: 'il',
-      nologo: '1',
-      cred_type: '1',
-      trBgColor: 'FAFAFA',
-      trTextColor: '333333',
-      trButtonColor: '0B1A51'
-    });
-
-    if (this.config.mode === 'store-card') {
-      // Store card mode - verification only with token generation (J5)
-      // Use minimal sum for verification (1 ILS)
-      params.set('sum', '1');
-      params.set('tranmode', 'VK');
-      params.set('buttonLabel', 'שמור כרטיס');
-      params.set('pdesc', 'שמירת כרטיס אשראי');
-    } else {
-      // Charge mode - actual payment
-      if (!this.config.sum || this.config.sum <= 0) {
-        console.error('Sum is required for charge mode');
-        return;
-      }
-      params.set('sum', this.config.sum.toString());
-      params.set('tranmode', 'AK');
-      params.set('buttonLabel', 'שלם');
-      params.set('pdesc', 'תשלום');
+  private setIframeUrl(url: string): void {
+    // Ensure postMessage parameters are included for Tranzila response
+    const urlObj = new URL(url);
+    if (!urlObj.searchParams.has('ppnewwin')) {
+      urlObj.searchParams.set('ppnewwin', 'postmessage');
     }
-
-    if (this.config.orderId) {
-      params.set('order_id', this.config.orderId);
+    if (!urlObj.searchParams.has('ppmsg')) {
+      urlObj.searchParams.set('ppmsg', '1');
     }
-
-    if (this.config.contact) {
-      params.set('contact', this.config.contact);
-    }
-
-    if (this.config.email) {
-      params.set('email', this.config.email);
-    }
-
-    if (this.config.phone) {
-      params.set('phone', this.config.phone);
-    }
-
-    params.set('ppnewwin', 'no');
-
-    const url = `${this.BASE_URL}/${this.TERMINAL}/iframenew.php?${params.toString()}`;
-    this.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    const finalUrl = urlObj.toString();
+    console.log('Tranzila iframe URL:', finalUrl);
+    this.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(finalUrl);
+    this.isLoading = true;
   }
 
   private setupMessageListener(): void {
     this.messageHandler = (event: MessageEvent) => {
-      // Verify origin is from Tranzila
-      if (!event.origin.includes('tranzila.com')) {
+      // Log ALL postMessage events for debugging
+      console.log('=== PostMessage received ===');
+      console.log('Origin:', event.origin);
+      console.log('Data type:', typeof event.data);
+      console.log('Data:', event.data);
+      console.log('Data stringified:', JSON.stringify(event.data));
+
+      if (!event.data) {
+        console.log('No data in message, ignoring');
         return;
       }
 
-      try {
-        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-        this.handleTranzilaResponse(data);
-      } catch (e) {
-        // If not JSON, try to parse as URL params or handle as string response
-        if (typeof event.data === 'string') {
-          this.parseStringResponse(event.data);
+      // Check for tranzilaEvent format (custom integration)
+      if (event.data.tranzilaEvent) {
+        console.log('Found tranzilaEvent:', event.data.tranzilaEvent);
+        this.handleTranzilaEvent(event.data.tranzilaEvent);
+        return;
+      }
+
+      // Check if the data itself has type/event properties (alternative format)
+      if (event.data.type || event.data.event || event.data.status) {
+        console.log('Found event data directly:', event.data);
+        this.handleTranzilaEvent(event.data);
+        return;
+      }
+
+      // Accept messages from tranzila.com domains for legacy format
+      if (event.origin.includes('tranzila.com')) {
+        console.log('Tranzila origin message:', event.data);
+        try {
+          let data: any;
+          if (typeof event.data === 'string') {
+            try {
+              data = JSON.parse(event.data);
+            } catch {
+              if (event.data.includes('=')) {
+                data = this.parseUrlParams(event.data);
+              } else {
+                return;
+              }
+            }
+          } else {
+            data = event.data;
+          }
+          this.handleTranzilaResponse(data);
+        } catch (e) {
+          console.error('Error processing Tranzila response:', e);
         }
       }
     };
 
     window.addEventListener('message', this.messageHandler);
+    console.log('Tranzila postMessage listener set up');
+  }
+
+  private parseUrlParams(queryString: string): Record<string, string> {
+    const params = new URLSearchParams(queryString);
+    const result: Record<string, string> = {};
+    params.forEach((value, key) => {
+      result[key] = value;
+    });
+    return result;
+  }
+
+  private handleTranzilaEvent(eventData: any): void {
+    console.log('handleTranzilaEvent:', eventData);
+
+    const eventType = eventData.type || eventData.event;
+    const data = eventData.data || eventData;
+
+    if (eventType === 'paymentSuccess' || eventType === 'success' || data.status === 'ok') {
+      const response: TranzilaResponse = {
+        success: true,
+        txId: data.txId || data.transactionId || data.index,
+        token: data.token || data.TranzilaTK,
+        authNr: data.authNr || data.auth_nr,
+        index: data.index,
+        cardLastFour: data.cardLastFour || data.last4,
+        expMonth: data.expMonth,
+        expYear: data.expYear
+      };
+      console.log('Emitting paymentSuccess from tranzilaEvent:', response);
+      this.paymentSuccess.emit(response);
+    } else if (eventType === 'paymentError' || eventType === 'error' || data.status === 'error') {
+      const response: TranzilaResponse = {
+        success: false,
+        error: data.error || data.message || 'Payment failed'
+      };
+      console.log('Emitting paymentError from tranzilaEvent:', response);
+      this.paymentError.emit(response);
+    } else if (eventType === 'formSubmitted' || eventType === 'submitted') {
+      // Form was submitted, emit success to trigger processing state
+      const response: TranzilaResponse = {
+        success: true
+      };
+      console.log('Form submitted, emitting paymentSuccess:', response);
+      this.paymentSuccess.emit(response);
+    }
   }
 
   private handleTranzilaResponse(data: any): void {
-    if (data.Response === '000' || data.success === true || data.response === '000') {
+    console.log('handleTranzilaResponse called with:', data);
+
+    const responseCode = data.Response || data.response || data.ResponseCode || data.CCode;
+    console.log('Response code:', responseCode);
+
+    const isSuccess = responseCode === '000' || responseCode === '0' || responseCode === 0 ||
+                      data.success === true || data.success === 'true' ||
+                      (data.TranzilaTK && !responseCode); // Token present without error code
+
+    console.log('Is success:', isSuccess);
+
+    if (isSuccess) {
       const response: TranzilaResponse = {
         success: true,
-        txId: data.txId || data.TxId || data.ConfirmationCode,
-        token: data.Token || data.token || data.TranzilaTK,
-        authNr: data.AuthNr || data.authnr,
+        txId: data.ConfirmationCode || data.txId || data.TxId || data.index || data.Index,
+        token: data.TranzilaTK || data.Token || data.token,
+        authNr: data.AuthNr || data.authnr || data.auth_nr,
         index: data.Index || data.index,
-        cardLastFour: data.last4 || data.ccno?.slice(-4)
+        cardLastFour: data.ccno ? data.ccno.slice(-4) : (data.last4 || data.card_last_4 || data.cardLastFour),
+        expMonth: data.expmonth || data.exp_month || data.expMonth,
+        expYear: data.expyear || data.exp_year || data.expYear
       };
+      console.log('Emitting paymentSuccess:', response);
       this.paymentSuccess.emit(response);
     } else {
       const response: TranzilaResponse = {
         success: false,
-        error: data.error || data.Error || data.Response || 'Payment failed'
+        error: data.error || data.Error || data.errmsg || data.ErrMsg || `Transaction failed (code: ${responseCode})`
       };
+      console.log('Emitting paymentError:', response);
       this.paymentError.emit(response);
-    }
-  }
-
-  private parseStringResponse(data: string): void {
-    // Try to parse as URL query string
-    if (data.includes('=')) {
-      const params = new URLSearchParams(data);
-      const responseCode = params.get('Response') || params.get('response');
-
-      if (responseCode === '000') {
-        const response: TranzilaResponse = {
-          success: true,
-          txId: params.get('txId') || params.get('ConfirmationCode') || undefined,
-          token: params.get('Token') || params.get('TranzilaTK') || undefined,
-          authNr: params.get('AuthNr') || undefined,
-          index: params.get('Index') || undefined,
-          cardLastFour: params.get('last4') || undefined
-        };
-        this.paymentSuccess.emit(response);
-      } else if (responseCode) {
-        const response: TranzilaResponse = {
-          success: false,
-          error: `Transaction failed with code: ${responseCode}`
-        };
-        this.paymentError.emit(response);
-      }
     }
   }
 
   onIframeLoad(): void {
     this.isLoading = false;
-  }
-
-  cancel(): void {
-    this.paymentCancel.emit();
   }
 }
