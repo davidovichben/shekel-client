@@ -9,6 +9,8 @@ export interface ChargeBillingRequest {
   description?: string;
   type?: string; // Receipt type: vows, community_donations, external_donations, ascensions, online_donations, membership_fees, other
   createReceipt?: boolean; // Set to true to generate and save a PDF receipt
+  debt_id?: number; // ID of a single debt to pay
+  debt_ids?: number[]; // Array of debt IDs for bulk payment
 }
 
 export interface ChargeBillingResponse {
@@ -29,6 +31,11 @@ export interface ChargeBillingResponse {
     type: string;
     pdf_file?: string | null; // PDF file path if createReceipt was true
   };
+  paidDebts?: Array<{
+    id: number;
+    amount: string;
+    description: string;
+  }>; // Array of paid debt objects (only present when debts are paid)
 }
 
 @Injectable({
@@ -57,6 +64,15 @@ export class BillingService {
     }
     if (request.type) {
       formData.append('type', request.type);
+    }
+    if (request.debt_id !== undefined) {
+      formData.append('debt_id', request.debt_id.toString());
+    }
+    if (request.debt_ids && request.debt_ids.length > 0) {
+      // Append each debt_id separately for FormData (most APIs parse this as an array)
+      request.debt_ids.forEach((id) => {
+        formData.append('debt_ids[]', id.toString());
+      });
     }
     formData.append('receipt_pdf', pdfFile, 'receipt.pdf');
     

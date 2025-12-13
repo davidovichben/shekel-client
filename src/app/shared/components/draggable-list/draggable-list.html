@@ -1,0 +1,26 @@
+<div class="draggable-list">
+  @for (item of items; track item.id; let i = $index) {
+    <div
+      class="draggable-item"
+      [class.dragging]="draggedIndex === i"
+      draggable="true"
+      (dragstart)="onDragStart($event, item, i)"
+      (dragover)="onDragOver($event, i)"
+      (drop)="onDrop($event, i)"
+      (dragend)="onDragEnd()"
+    >
+      <div class="drag-handle">
+        <img src="assets/img/icons/drag-handle.svg" alt="Drag" />
+      </div>
+      <span class="item-label">{{ item.label }}</span>
+      @if (item.required) {
+        <img src="assets/img/icons/lock.svg" alt="Required" class="item-icon lock-icon" />
+      } @else {
+        <button type="button" class="remove-btn" (click)="removeItem(item)">
+          <img src="assets/img/icons/close.svg" alt="Remove" class="item-icon" />
+        </button>
+      }
+    </div>
+  }
+</div>
+

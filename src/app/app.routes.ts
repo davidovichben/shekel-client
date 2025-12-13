@@ -9,6 +9,7 @@ import { DebtsComponent } from './pages/debts/debts';
 import { InvoicesComponent } from './pages/invoices/invoices';
 import { ExpensesComponent } from './pages/expenses/expenses';
 import { IncomesComponent } from './pages/incomes/incomes';
+import { ReportsComponent } from './pages/reports/reports';
 import { SystemSettingsComponent } from './pages/system-settings/system-settings';
 import { GeneralTabComponent } from './pages/system-settings/tabs/general-tab/general-tab';
 import { CategoriesTabComponent } from './pages/system-settings/tabs/categories-tab/categories-tab';
@@ -35,6 +36,7 @@ export const routes: Routes = [
       { path: 'expenses', component: ExpensesComponent },
       { path: 'incomes', component: IncomesComponent },
       { path: 'invoices', component: InvoicesComponent },
+      { path: 'reports', component: ReportsComponent },
       {
         path: 'settings',
         component: SystemSettingsComponent,

@@ -1,0 +1,201 @@
+<div class="reports-page">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>דוחות</h1>
+    <p>כאן תמצא את כל סוגי הדוחות שניתן להפיק במערכת זו.</p>
+  </div>
+
+  <!-- Two Column Layout -->
+  <div class="reports-layout">
+    <!-- Right Column: Report Type Selection -->
+    <div class="report-menu">
+      @if (isLoadingCategories) {
+        <div class="loading-message">טוען קטגוריות...</div>
+      } @else if (reportCategories.length === 0) {
+        <div class="empty-message">לא נמצאו קטגוריות</div>
+      } @else {
+        @for (category of reportCategories; track category.id) {
+          <div class="category-section">
+            <h3 class="category-title">{{ category.label }}</h3>
+            <ul class="report-list">
+              @for (report of category.reports; track report.id) {
+                <li>
+                  <button
+                    type="button"
+                    class="report-type-btn"
+                    [class.active]="selectedReportType === report.id"
+                    (click)="selectReportType(report.id)"
+                  >
+                    @if (selectedReportType === report.id) {
+                      <img src="assets/img/icons/report-connector.svg" alt="" class="connector" />
+                    }
+                    <span>{{ report.label }}</span>
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Left Column: Report Configuration -->
+    <div class="report-config">
+      @if (error) {
+        <div class="error-message">{{ error }}</div>
+      }
+      
+      @if (selectedReportType) {
+        @if (isLoadingConfig) {
+          <div class="loading-message">טוען הגדרות דוח...</div>
+        } @else {
+          <!-- Report Name -->
+          <div class="config-header">
+            <h2 class="report-name">שם טבלה: {{ reportConfig.reportName }}</h2>
+          </div>
+
+        <!-- Two Column Layout for Config -->
+        <div class="config-content">
+          <!-- Right Column: Filters -->
+          <div class="config-column-right">
+            <!-- Date Range -->
+            <div class="config-section">
+              <label class="section-label">טווח תאריכים:</label>
+              <div class="date-range">
+                <div class="date-field">
+                  <label class="field-label">מתאריך:</label>
+                  <app-date-picker
+                    [value]="reportConfig.dateFrom"
+                    placeholder="בחר תאריך"
+                    (valueChange)="onDateFromChange($event)"
+                  />
+                </div>
+                <div class="date-field">
+                  <label class="field-label">עד תאריך:</label>
+                  <app-date-picker
+                    [value]="reportConfig.dateTo"
+                    placeholder="בחר תאריך"
+                    (valueChange)="onDateToChange($event)"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Sort Results -->
+            <div class="config-section">
+              <label class="section-label">מיון תוצאות:</label>
+              <app-custom-select
+                [options]="sortOptions"
+                [(value)]="reportConfig.sortBy"
+                (valueChange)="onSortChange($event)"
+                prefix="מיין לפי:"
+              />
+            </div>
+
+            <!-- Additional Filters or Member Select -->
+            @if (isDebtsByDebtorReport()) {
+              <div class="config-section">
+                <label class="section-label">חייב:</label>
+                <app-member-autocomplete
+                  [memberName]="selectedMemberName"
+                  (memberSelected)="onMemberSelected($event)"
+                  placeholder="חיפוש חייב..."
+                />
+              </div>
+            } @else {
+              <div class="config-section">
+                <label class="section-label">סינונים נוספים:</label>
+                <div class="filters">
+                  @for (filter of filterOptions; track filter.value) {
+                    <app-custom-select
+                      [options]="getFilterOptions(filter.value)"
+                      [(value)]="reportConfig.filters[filter.value]"
+                      (valueChange)="onFilterChange(filter.value, $event)"
+                      [prefix]="filter.label"
+                    />
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Result Limit -->
+            <div class="config-section">
+              <label class="section-label">הגבלת מספר תוצאות:</label>
+              <app-custom-select
+                [options]="resultLimitOptions"
+                [(value)]="reportConfig.resultLimit"
+                (valueChange)="onResultLimitChange($event)"
+              />
+            </div>
+          </div>
+
+          <!-- Left Column: Columns -->
+          <div class="config-column-left">
+            <!-- Column Ordering -->
+            <div class="config-section">
+              <label class="section-label">סדר העמודות שיוצגו בדוח:</label>
+              <app-draggable-list
+                [items]="getDraggableColumns()"
+                (itemRemoved)="removeColumn($event)"
+                (orderChanged)="reorderColumns($event)"
+              />
+            </div>
+
+            <!-- Addable Columns -->
+            <div class="config-section">
+              <label class="section-label">עמודות שניתן להוסיף לדוח זה:</label>
+              <div class="addable-columns">
+                @for (column of availableColumns; track column.id) {
+                  <label class="column-checkbox">
+                    <input
+                      type="checkbox"
+                      [checked]="false"
+                      (change)="addColumn(column.id)"
+                    />
+                    <span>{{ column.label }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+          <div class="config-actions">
+            <button 
+              type="button" 
+              class="btn-generate" 
+              (click)="generateReport()"
+              [disabled]="isGeneratingReport || isExporting"
+            >
+              @if (isGeneratingReport) {
+                <div class="btn-spinner"></div>
+                טוען...
+              } @else {
+                הפק דוח
+              }
+            </button>
+            <button 
+              type="button" 
+              class="btn-export" 
+              (click)="exportToHashavshevet()"
+              [disabled]="isGeneratingReport || isExporting"
+            >
+              @if (isExporting) {
+                <div class="btn-spinner"></div>
+                טוען...
+              } @else {
+                יצא לחשבשבת
+              }
+            </button>
+          </div>
+        }
+      } @else {
+        <div class="no-selection">
+          <p>בחר סוג דוח מהתפריט</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+

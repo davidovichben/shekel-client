@@ -1,0 +1,51 @@
+@use '../../../../variables' as *
+
+.date-picker
+  width: 100%
+
+  .date-input-wrapper
+    position: relative
+    width: 100%
+    cursor: pointer
+
+    .date-input
+      position: absolute
+      opacity: 0
+      width: 100%
+      height: 100%
+      cursor: pointer
+      z-index: 2
+
+    .date-display
+      display: flex
+      align-items: center
+      padding: 0.75rem
+      border: 1px solid $border-color
+      border-radius: 8px
+      background: white
+      min-height: 40px
+      direction: rtl
+
+      .date-text
+        color: $text-primary
+        font-family: 'Heebo', sans-serif
+
+      .hebrew-date
+        color: $text-muted
+        font-family: 'Heebo', sans-serif
+        margin-right: 0.5rem
+
+      .placeholder
+        color: $gray-500
+        font-family: 'Heebo', sans-serif
+
+    .date-icon
+      position: absolute
+      left: 0.75rem
+      top: 50%
+      transform: translateY(-50%)
+      font-size: 0.7rem
+      color: #666
+      pointer-events: none
+      z-index: 1
+

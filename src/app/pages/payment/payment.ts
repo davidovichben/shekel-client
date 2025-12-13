@@ -14,6 +14,8 @@ export interface PaymentDialogData {
   memberId?: string;
   memberName?: string;
   amount?: number;
+  debtIds?: string[]; // Array of debt IDs to pay (API will handle status update)
+  isDebtPayment?: boolean; // Flag to indicate if this is a debt payment
 }
 
 interface TransactionSummary {
@@ -130,13 +132,40 @@ export class PaymentComponent implements OnInit {
 
   private updateTransactionSummary(): void {
     const amount = this.paymentDetails.amount || 0;
-    const vat = amount * (this.transaction.vatPercent / 100);
+    
+    // For debt payments:
+    // - Single debt: amount is exact (no VAT to add)
+    // - Bulk debts: amount already includes VAT (× 1.17), so we need to extract subtotal and VAT
+    const isDebtPayment = this.data?.isDebtPayment && this.data?.debtIds;
+    const isBulkDebtPayment = isDebtPayment && this.data.debtIds!.length > 1;
+    
+    let subtotal = amount;
+    let vat = 0;
+    let total = amount;
+    
+    if (isBulkDebtPayment) {
+      // Amount already includes VAT, so calculate subtotal and VAT
+      // total = subtotal × 1.17
+      // subtotal = total / 1.17
+      subtotal = Math.round((amount / 1.17) * 100) / 100;
+      vat = Math.round((amount - subtotal) * 100) / 100;
+      total = amount;
+    } else if (isDebtPayment) {
+      // Single debt: amount is exact, no VAT
+      subtotal = amount;
+      vat = 0;
+      total = amount;
+    } else {
+      // Regular payment: add VAT
+      vat = Math.round(amount * (this.transaction.vatPercent / 100) * 100) / 100;
+      total = Math.round((amount + vat) * 100) / 100;
+    }
 
     this.transaction.description = this.paymentDetails.description;
-    this.transaction.amount = amount;
+    this.transaction.amount = subtotal;
     this.transaction.installments = this.paymentDetails.installments;
-    this.transaction.vat = Math.round(vat * 100) / 100;
-    this.transaction.total = Math.round((amount + vat) * 100) / 100;
+    this.transaction.vat = vat;
+    this.transaction.total = total;
   }
 
   onContinue(event?: Event): void {
@@ -226,13 +255,26 @@ export class PaymentComponent implements OnInit {
     this.chargeError = null;
 
     try {
-      const chargeRequest = {
+      const chargeRequest: any = {
         credit_card_id: creditCardId,
-        amount: this.paymentDetails.amount,
+        amount: this.transaction.total, // Use total amount (includes VAT for bulk debts)
         description: this.paymentDetails.description || undefined,
         type: this.receiptType || 'other',
         createReceipt: this.createReceipt
       };
+
+      // Add debt payment parameters if this is a debt payment
+      if (this.data?.debtIds && this.data.debtIds.length > 0) {
+        if (this.data.debtIds.length === 1) {
+          // Single debt payment
+          chargeRequest.debt_id = parseInt(this.data.debtIds[0]);
+          chargeRequest.amount = this.paymentDetails.amount; // Exact debt amount for single debt
+        } else {
+          // Bulk debt payment
+          chargeRequest.debt_ids = this.data.debtIds.map(id => parseInt(id));
+          chargeRequest.amount = this.transaction.total; // Amount with VAT for bulk debts
+        }
+      }
 
       let response: any;
 
@@ -260,6 +302,10 @@ export class PaymentComponent implements OnInit {
       if (response.success && response.receipt) {
         this.chargeResponse = response;
         this.isProcessing = false;
+        
+        // Debts are automatically updated to paid status by the API
+        // No need to update separately - API handles it via debt_id/debt_ids parameters
+        
         this.currentStep = 4;
       } else {
         throw new Error('תגובת השרת לא תקינה');
@@ -288,6 +334,7 @@ export class PaymentComponent implements OnInit {
       this.isProcessing = false;
     }
   }
+
 
   onReceiptTypeChange(type: string): void {
     this.receiptType = type;

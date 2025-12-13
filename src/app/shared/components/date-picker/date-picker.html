@@ -1,0 +1,23 @@
+<div class="date-picker">
+  <div class="date-input-wrapper" (click)="openDatePicker()">
+    <input
+      type="date"
+      [id]="inputId"
+      [value]="internalValue"
+      (change)="onDateChange($event)"
+      class="date-input"
+    />
+    <div class="date-display">
+      @if (displayValue) {
+        <span class="date-text">{{ displayValue }}</span>
+        @if (hebrewDate) {
+          <span class="hebrew-date">| {{ hebrewDate }}</span>
+        }
+      } @else {
+        <span class="placeholder">{{ placeholder }}</span>
+      }
+    </div>
+    <i class="fa-solid fa-chevron-down date-icon"></i>
+  </div>
+</div>
+

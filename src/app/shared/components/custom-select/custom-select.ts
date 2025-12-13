@@ -26,7 +26,7 @@ export class CustomSelectComponent implements OnChanges, OnInit, AfterViewInit {
 
   isOpen = false;
   internalValue: string = '';
-  menuStyle: { top?: string; right?: string; width?: string } = {};
+  menuStyle: { top?: string; bottom?: string; right?: string; width?: string } = {};
 
   constructor(private elementRef: ElementRef) {}
 
@@ -67,14 +67,36 @@ export class CustomSelectComponent implements OnChanges, OnInit, AfterViewInit {
 
   private updateMenuPosition(): void {
     const trigger = this.elementRef.nativeElement.querySelector('.select-trigger') as HTMLElement;
-    if (!trigger) return;
+    if (!trigger || !this.selectMenu?.nativeElement) return;
 
     const rect = trigger.getBoundingClientRect();
-    this.menuStyle = {
-      top: `${rect.bottom + 4}px`,
-      right: `${window.innerWidth - rect.right}px`,
-      width: `${rect.width}px`
-    };
+    const menu = this.selectMenu.nativeElement;
+    const menuHeight = Math.min(menu.scrollHeight, 200); // max-height is 200px
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    
+    // Check if menu would overflow below, and if there's more space above
+    const shouldOpenUpward = spaceBelow < menuHeight && spaceAbove > spaceBelow;
+    
+    if (shouldOpenUpward) {
+      // Position above the trigger
+      this.menuStyle = {
+        bottom: `${window.innerHeight - rect.top + 4}px`,
+        right: `${window.innerWidth - rect.right}px`,
+        width: `${rect.width}px`
+      };
+      // Remove top if it was set
+      delete this.menuStyle.top;
+    } else {
+      // Position below the trigger (default)
+      this.menuStyle = {
+        top: `${rect.bottom + 4}px`,
+        right: `${window.innerWidth - rect.right}px`,
+        width: `${rect.width}px`
+      };
+      // Remove bottom if it was set
+      delete this.menuStyle.bottom;
+    }
   }
 
   select(option: SelectOption): void {

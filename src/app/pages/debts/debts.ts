@@ -130,7 +130,7 @@ export class DebtsComponent implements OnInit {
       next: (response: any) => {
         // API returns: { counts: { all: X, pending: Y, paid: Z, totalRows: N, totalPages: M } }
         const counts = response.counts || {};
-        
+
         const allCount = counts['all'] || 0;
         const pendingCount = counts['pending'] || 0;
         const paidCount = counts['paid'] || 0;
@@ -155,9 +155,9 @@ export class DebtsComponent implements OnInit {
     this.isLoading = true;
 
     // Build query params based on active tab and filters
-    const params: { 
-      status?: string; 
-      page?: number; 
+    const params: {
+      status?: string;
+      page?: number;
       limit?: number;
       date_from?: string;
       date_to?: string;
@@ -368,7 +368,7 @@ export class DebtsComponent implements OnInit {
 
   formatGregorianDate(dateString: string | null | undefined): string {
     if (!dateString) return '--';
-    
+
     // Handle ISO date format (e.g., "2026-01-01T00:00:00.000000Z")
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -378,7 +378,7 @@ export class DebtsComponent implements OnInit {
       }
       return dateString;
     }
-    
+
     // Format as DD/MM/YYYY for display
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -465,12 +465,12 @@ export class DebtsComponent implements OnInit {
       if (result) {
         const ids = Array.from(this.selectedDebts);
         const deletedNames = [...selectedDebtNames];
-        
+
         // Delete all selected debts
-        const deletePromises = ids.map(id => 
+        const deletePromises = ids.map(id =>
           firstValueFrom(this.debtService.delete(id))
         );
-        
+
         Promise.all(deletePromises).then(() => {
           this.selectedDebts.clear();
           this.loadDebts();
@@ -552,10 +552,10 @@ export class DebtsComponent implements OnInit {
   private bulkSendMessage(): void {
     const selectedIds = Array.from(this.selectedDebts);
     const selectedDebts = this.debts.filter(d => selectedIds.includes(d.id));
-    
+
     // Get unique member IDs from selected debts
     const memberIds = [...new Set(selectedDebts.map(d => d.memberId).filter(id => id))];
-    
+
     const dialogRef = this.dialog.open(ReminderDialogComponent, {
       width: '750px',
       panelClass: 'confirm-dialog-panel',
@@ -572,12 +572,12 @@ export class DebtsComponent implements OnInit {
       if (result && result.message) {
         try {
           // Send reminder for each selected debt
-          const reminderPromises = selectedIds.map(id => 
+          const reminderPromises = selectedIds.map(id =>
             firstValueFrom(this.debtService.sendReminder(id))
           );
-          
+
           await Promise.all(reminderPromises);
-          
+
           this.selectedDebts.clear();
           this.loadDebts();
           this.loadTabCounts();
@@ -602,8 +602,112 @@ export class DebtsComponent implements OnInit {
 
   private bulkGenerateDocument(): void {
     const selectedIds = Array.from(this.selectedDebts);
-    console.log('Bulk generate document for debts:', selectedIds);
-    // TODO: Implement bulk document generation
+    const selectedDebts = this.debts.filter(d => selectedIds.includes(d.id));
+
+    if (selectedDebts.length === 0) {
+      return;
+    }
+
+    // Check if any selected debts are already paid
+    const paidDebts = selectedDebts.filter(d => this.isStatusPaid(d.status));
+    if (paidDebts.length > 0) {
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '500px',
+        panelClass: 'confirm-dialog-panel',
+        backdropClass: 'confirm-dialog-backdrop',
+        enterAnimationDuration: '0ms',
+        exitAnimationDuration: '0ms',
+        data: {
+          title: 'שים לב',
+          message: 'חלק מהחובות שבחרת כבר שולמו, הסר והמשך',
+          confirmText: 'הבנתי'
+        }
+      });
+      return;
+    }
+
+    // Check if all selected debts belong to the same member
+    const memberIds = [...new Set(selectedDebts.map(d => d.memberId).filter(id => id))];
+
+    if (memberIds.length > 1) {
+      // Different members - show error
+      this.dialog.open(ConfirmDialogComponent, {
+        width: '500px',
+        panelClass: 'confirm-dialog-panel',
+        backdropClass: 'confirm-dialog-backdrop',
+        enterAnimationDuration: '0ms',
+        exitAnimationDuration: '0ms',
+        data: {
+          title: 'שים לב',
+          message: 'לא ניתן לבצע תשלום אחד לחברים שונים',
+          confirmText: 'הבנתי'
+        }
+      });
+      return;
+    }
+
+    // All debts belong to the same member
+    const commonMemberId = memberIds[0];
+    const commonMemberName = selectedDebts[0].fullName;
+    
+    // Calculate amount based on single vs bulk payment
+    // Single debt: amount = debt.amount (exact, no VAT)
+    // Bulk debts: amount = sum(debt.amounts) × 1.17 (includes 17% VAT)
+    let totalAmount: number;
+    if (selectedDebts.length === 1) {
+      totalAmount = selectedDebts[0].amount; // Exact amount for single debt
+    } else {
+      const subtotal = selectedDebts.reduce((sum, debt) => sum + debt.amount, 0);
+      totalAmount = Math.round(subtotal * 1.17 * 100) / 100; // Add 17% VAT for bulk debts
+    }
+
+    // Show confirmation dialog
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        title: 'בצע תשלום על החובות הנבחרים',
+        message: 'בלחיצה על כפתור האישור התשלום ייגבה מכל הרשומות הנבחרות.',
+        buttons: [
+          {
+            text: ' אישור וביצוע תשלום',
+            type: 'primary',
+            action: 'confirm'
+          }
+        ]
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Open payment dialog with pre-filled data
+        const paymentDialogRef = this.dialog.open(PaymentComponent, {
+          width: '80%',
+          panelClass: 'payment-dialog-panel',
+          backdropClass: 'payment-dialog-backdrop',
+          autoFocus: false,
+          data: {
+            memberId: commonMemberId,
+            memberName: commonMemberName,
+            amount: totalAmount,
+            debtIds: selectedIds, // Pass all selected debt IDs
+            isDebtPayment: true // Flag to indicate this is a debt payment
+          }
+        });
+
+        // Reload debts after payment dialog closes (in case payment was successful)
+        paymentDialogRef.afterClosed().subscribe(paymentResult => {
+          if (paymentResult) {
+            this.selectedDebts.clear(); // Clear selection after successful payment
+            this.loadDebts();
+            this.loadTabCounts();
+          }
+        });
+      }
+    });
   }
 
   sendReminder(debt: Debt): void {
@@ -611,7 +715,7 @@ export class DebtsComponent implements OnInit {
     if (this.isStatusPaid(debt.status)) {
       return;
     }
-    
+
     // Pre-fill message with debt type and amount
     const debtTypeLabel = this.getDebtTypeLabel(debt.debtType);
     const messageTemplate = `שלום,
@@ -638,7 +742,7 @@ export class DebtsComponent implements OnInit {
       if (result && result.message) {
         try {
           await firstValueFrom(this.debtService.sendReminder(debt.id));
-          
+
           this.loadDebts();
           this.loadTabCounts();
           this.dialog.open(ConfirmDialogComponent, {
@@ -666,7 +770,7 @@ export class DebtsComponent implements OnInit {
       return;
     }
 
-    this.dialog.open(PaymentComponent, {
+    const dialogRef = this.dialog.open(PaymentComponent, {
       width: '80%',
       panelClass: 'payment-dialog-panel',
       backdropClass: 'payment-dialog-backdrop',
@@ -674,7 +778,17 @@ export class DebtsComponent implements OnInit {
       data: {
         memberId: debt.memberId,
         memberName: debt.fullName,
-        amount: debt.amount
+        amount: debt.amount, // Exact debt amount for single debt (no VAT)
+        debtIds: [debt.id], // Pass single debt ID
+        isDebtPayment: true // Flag to indicate this is a debt payment
+      }
+    });
+
+    // Reload debts after payment dialog closes (in case payment was successful)
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadDebts();
+        this.loadTabCounts();
       }
     });
   }
@@ -682,12 +796,12 @@ export class DebtsComponent implements OnInit {
   private bulkCopy(): void {
     const selectedIds = Array.from(this.selectedDebts);
     const selectedDebts = this.debts.filter(d => selectedIds.includes(d.id));
-    
+
     // Format debts as text for clipboard
-    const text = selectedDebts.map(d => 
+    const text = selectedDebts.map(d =>
       `${d.fullName} - ${d.description} - ${d.amount} ₪ - ${d.gregorianDate}`
     ).join('\n');
-    
+
     navigator.clipboard.writeText(text).then(() => {
       console.log('Debts copied to clipboard');
       // TODO: Show success notification
@@ -774,7 +888,7 @@ export class DebtsComponent implements OnInit {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        
+
         // Determine file extension based on fileType
         let extension = fileType || 'xlsx';
         if (extension === 'xls') {
@@ -784,7 +898,7 @@ export class DebtsComponent implements OnInit {
         } else if (extension === 'pdf') {
           extension = 'pdf';
         }
-        
+
         a.download = `debts.${extension}`;
         document.body.appendChild(a);
         a.click();
