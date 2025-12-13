@@ -12,9 +12,10 @@
   flex-direction: column
   flex: 1
   min-height: 0
+  padding-bottom: 30px
 
 .card-header
-  padding: 16px 24px
+  padding: 4px 24px
   border-bottom: 1px solid $border-color
 
   h2
@@ -25,7 +26,7 @@
     font-family: 'Heebo', sans-serif
 
 .card-content
-  padding: 24px
+  padding: 0 24px
   flex: 1
   overflow-y: auto
   min-height: 0
@@ -56,7 +57,6 @@
     font-weight: 500
     color: $text-dark
     margin-bottom: 8px
-    text-align: left
 
 .email-input-group
   display: flex
@@ -123,9 +123,12 @@
   border-top: 1px solid $border-color
 
   .section-title
-    color: $error
+    color: $primary-bg
 
 .btn-delete-account
+  display: flex
+  align-items: center
+  gap: 8px
   background: #f08080
   color: white
   border: none
@@ -137,5 +140,13 @@
   font-family: 'Heebo', sans-serif
   transition: background 0.2s
 
-  &:hover
+  &:hover:not(:disabled)
     background: #e57373
+
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed
+
+.delete-success
+  background: #e8f5e9
+  color: #2e7d32

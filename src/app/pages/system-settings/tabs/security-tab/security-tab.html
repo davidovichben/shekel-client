@@ -14,6 +14,10 @@
       <div class="email-row">
         <label>כתובת דואר אלקטרוני</label>
         <div class="email-input-group">
+          <input
+            type="email"
+            [(ngModel)]="email"
+            placeholder="כתובת אימייל">
           <button
             class="btn-send-reset"
             (click)="onSendPasswordReset()"
@@ -24,12 +28,6 @@
               שלח לי מייל לשינוי סיסמה
             }
           </button>
-          <input
-            type="email"
-            [(ngModel)]="email"
-            placeholder="כתובת אימייל"
-            readonly
-          />
         </div>
       </div>
 
@@ -48,9 +46,21 @@
         מחיקת החשבון היא פעולה בלתי הפיכה, תבטל את המנוי ותמחק את כל הנתונים של חשבון זה מבלי יכולת לשחזרם.
       </p>
 
-      <button class="btn-delete-account" (click)="onDeleteAccount()">
-        מחק את החשבון שלי
+      <button class="btn-delete-account" (click)="onDeleteAccount()" [disabled]="isDeleting || deleteSuccess">
+        @if (isDeleting) {
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          מוחק...
+        } @else {
+          מחק את החשבון שלי
+        }
       </button>
+
+      @if (deleteSuccess) {
+        <div class="success-message delete-success">
+          <i class="fa-solid fa-check-circle"></i>
+          החשבון נמחק בהצלחה. מעביר לדף ההתחברות...
+        </div>
+      }
     </div>
   </div>
 </div>

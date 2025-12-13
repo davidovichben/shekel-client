@@ -157,6 +157,204 @@
     background: #4caf50
     border-radius: 50%
 
+// Notification Dropdown
+.notification-dropdown
+  position: absolute
+  top: 100%
+  left: 120px
+  width: 400px
+  background: white
+  border-radius: 16px
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15)
+  z-index: 1000
+  opacity: 0
+  visibility: hidden
+  transform: translateY(-10px)
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+  overflow: hidden
+
+  &.open
+    opacity: 1
+    visibility: visible
+    transform: translateY(0)
+
+.notification-dropdown-header
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: 16px 20px
+
+  h3
+    margin: 0
+    font-size: 18px
+    font-weight: 700
+    font-family: 'Heebo', sans-serif
+    color: $primary-bg
+
+.btn-mark-all
+  display: flex
+  align-items: center
+  gap: 6px
+  background: $accent-green
+  color: white
+  border: none
+  border-radius: 12px
+  padding: 8px 16px
+  font-size: 13px
+  font-weight: 500
+  cursor: pointer
+  font-family: 'Heebo', sans-serif
+  transition: background 0.2s
+
+  &:hover:not(:disabled)
+    background: color-mix(in srgb, $accent-green 85%, black)
+
+  &:disabled
+    opacity: 0.7
+    cursor: not-allowed
+
+.notification-dropdown-content
+  max-height: 350px
+  overflow-y: auto
+
+.notification-loading,
+.notification-empty
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 10px
+  color: #666
+
+  i
+    font-size: 24px
+
+  p
+    margin: 0
+    font-size: 14px
+    font-family: 'Heebo', sans-serif
+
+.notification-item
+  display: flex
+  flex-direction: row-reverse
+  align-items: flex-start
+  justify-content: flex-end
+  gap: 12px
+  padding: 16px 20px
+  border-bottom: 1px solid #f0f0f0
+  transition: background 0.2s
+
+  &:hover
+    background: #f9f9f9
+
+  &:last-child
+    border-bottom: none
+
+.notification-item-content
+  flex: 1
+
+.notification-item-header
+  display: flex
+  align-items: center
+  justify-content: space-between
+
+.notification-title
+  font-size: 14px
+  font-weight: 600
+  color: #2f3264
+  font-family: 'Heebo', sans-serif
+
+.notification-time
+  font-size: 12px
+  color: #999
+  font-family: 'Heebo', sans-serif
+
+.notification-link
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  font-size: 13px
+  color: #40C7A0
+  font-weight: 500
+  cursor: pointer
+  font-family: 'Heebo', sans-serif
+  text-decoration: none
+
+  &:hover
+    text-decoration: underline
+
+  img
+    width: 12px
+    height: 12px
+
+.notification-mark-btn
+  background: transparent
+  border: none
+  padding: 4px
+  cursor: pointer
+
+  .mark-circle
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 24px
+    height: 24px
+    border: 2px solid #e0e0e0
+    border-radius: 50%
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+
+  .checkmark
+    width: 14px
+    height: 14px
+    fill: white
+    animation: checkmark-pop 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+
+  &:hover .mark-circle
+    border-color: $accent-green
+    background: rgba(64, 199, 160, 0.1)
+
+  &.marking
+    pointer-events: none
+
+    .mark-circle
+      border-color: $accent-green
+      background: $accent-green
+      transform: scale(1.1)
+      animation: pulse-success 0.5s ease-out
+
+@keyframes checkmark-pop
+  0%
+    transform: scale(0)
+    opacity: 0
+  50%
+    transform: scale(1.2)
+  100%
+    transform: scale(1)
+    opacity: 1
+
+@keyframes pulse-success
+  0%
+    box-shadow: 0 0 0 0 rgba(64, 199, 160, 0.4)
+  70%
+    box-shadow: 0 0 0 10px rgba(64, 199, 160, 0)
+  100%
+    box-shadow: 0 0 0 0 rgba(64, 199, 160, 0)
+
+.notification-dropdown-footer
+  padding: 12px 20px
+  text-align: center
+  border-top: 1px solid #f0f0f0
+
+.show-more-link
+  font-size: 14px
+  font-weight: 600
+  color: #667eea
+  cursor: pointer
+  font-family: 'Heebo', sans-serif
+  text-decoration: none
+
+  &:hover
+    text-decoration: underline
+
 .vertical-divider
   width: 1px
   height: 30px
@@ -165,40 +363,40 @@
 
 .user-info
   display: flex
-  align-items: center
-  gap: 0.75rem
-  cursor: pointer
+  flex-direction: column
+  gap: 4px
   padding: 0.5rem
-  border-radius: 8px
-  transition: background-color 0.2s
 
-  &:hover
-    background: rgba(0, 0, 0, 0.05)
+.user-row
+  display: flex
+  align-items: center
+  gap: 8px
 
 .user-avatar
-  width: 36px
-  height: 36px
+  width: 26px
+  height: 26px
   border-radius: 50%
-  background: #e0e0e0
-  display: flex
-  align-items: center
-  justify-content: center
-  color: #9e9e9e
+  overflow: hidden
 
-  svg
-    width: 20px
-    height: 20px
-
-.user-details
-  display: flex
-  flex-direction: column
-  align-items: flex-start
+  img
+    width: 100%
+    height: 100%
+    object-fit: cover
 
 .user-name
-  font-size: 0.8rem
-  color: #333
+  font-size: 0.85rem
+  font-weight: 700
+  color: $primary-bg
+  font-family: 'Heebo', sans-serif
+
+.user-email
+  font-size: 0.75rem
+  color: $icon-color
+  font-family: 'Heebo', sans-serif
 
 .user-badge
+  min-width: 26px
+  text-align: center
   font-size: 0.55rem
   color: white
   background: $primary-bg
@@ -206,3 +404,21 @@
   border-radius: 10px
   font-family: 'Heebo', sans-serif
   font-weight: 700
+  box-sizing: border-box
+  white-space: nowrap
+
+.logout-btn
+  margin-right: 40px
+  background: $error-light
+  color: white
+  border: none
+  border-radius: 12px
+  padding: 8px 16px
+  font-size: 13px
+  font-weight: 500
+  cursor: pointer
+  font-family: 'Heebo', sans-serif
+  transition: background 0.2s
+
+  &:hover
+    background: color-mix(in srgb, $error-light 85%, black)
