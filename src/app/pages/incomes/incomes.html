@@ -38,15 +38,9 @@
         <div class="actions-section">
           <div class="bulk-actions">
             <span>פעולות קולקטיביות:</span>
-            <button class="action-icon" (click)="onBulkAction('share')">
-              <img src="assets/img/icons/share.svg" alt="Share" />
-            </button>
-            <button class="action-icon" (click)="onBulkAction('delete')">
-              <img src="assets/img/icons/trash.svg" alt="Delete" />
-            </button>
-            <button class="action-icon" (click)="onBulkAction('print')">
-              <img src="assets/img/icons/print.svg" alt="Print" />
-            </button>
+            <button type="button" class="action-icon" (click)="onBulkAction('share')"><img src="assets/img/icons/share.svg" alt=""></button>
+            <button type="button" class="action-icon" (click)="onBulkAction('delete')"><img src="assets/img/icons/trash_blue.svg" alt=""></button>
+            <button type="button" class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print_blue.svg" alt=""></button>
           </div>
           <div class="export-action">
             <button class="btn-outline" (click)="openExportDialog()">ייצא לקובץ</button>
@@ -137,7 +131,7 @@
     </div>
 
     <!-- Right Panel: Statistics -->
-    <app-stats-panel [stats]="stats" type="incomes"></app-stats-panel>
+    <app-stats-panel [stats]="stats" [isLoading]="isLoadingStats" type="incomes"></app-stats-panel>
   </div>
 </div>
 

@@ -18,7 +18,8 @@ export class SidebarComponent {
     this.dialog.open(PaymentComponent, {
       width: '80%',
       panelClass: 'payment-dialog-panel',
-      backdropClass: 'payment-dialog-backdrop'
+      backdropClass: 'payment-dialog-backdrop',
+      disableClose: true
     });
   }
 }

@@ -178,6 +178,7 @@ export class NotificationsTabComponent implements OnInit {
           height: '720px',
           panelClass: 'member-view-dialog',
           autoFocus: false,
+          disableClose: true,
           data: { memberId, member }
         });
       }

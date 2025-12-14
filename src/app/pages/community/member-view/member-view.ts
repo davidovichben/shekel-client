@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MemberService } from '../../../core/services/network/member.service';
 import { Member } from '../../../core/entities/member.entity';
 import { MemberGeneralComponent } from './tabs/general/general';
@@ -9,7 +9,6 @@ import { MemberPaymentArchiveComponent } from './tabs/payment-archive/payment-ar
 import { MemberBillingSettingsComponent } from './tabs/billing-settings/billing-settings';
 import { MemberPaymentMethodsComponent } from './tabs/payment-methods/payment-methods';
 import { MemberGroupsComponent } from './tabs/groups/groups';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 export interface MemberViewDialogData {
   memberId: string;
@@ -39,7 +38,6 @@ interface Tab {
 export class MemberViewComponent implements OnInit {
   private memberService = inject(MemberService);
   private dialogRef = inject(MatDialogRef<MemberViewComponent>);
-  private dialog = inject(MatDialog);
   private data: MemberViewDialogData = inject(MAT_DIALOG_DATA);
 
   member: Member | null = null;
@@ -81,25 +79,7 @@ export class MemberViewComponent implements OnInit {
   }
 
   onCloseClick(): void {
-    const confirmDialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '500px',
-      panelClass: 'confirm-dialog-panel',
-      backdropClass: 'confirm-dialog-backdrop',
-      enterAnimationDuration: '0ms',
-      exitAnimationDuration: '0ms',
-      data: {
-        title: 'סגירת כרטיס חבר',
-        message: 'האם אתה בטוח שברצונך לסגור את כרטיס החבר?',
-        confirmText: 'סגור',
-        cancelText: 'ביטול'
-      }
-    });
-
-    confirmDialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.dialogRef.close();
-      }
-    });
+    this.dialogRef.close();
   }
 
   getMemberTypeLabel(type: string): string {

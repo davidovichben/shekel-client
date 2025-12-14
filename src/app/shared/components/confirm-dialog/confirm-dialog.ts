@@ -19,6 +19,7 @@ export interface ConfirmDialogData {
   cancelText?: string;
   cancelDisabled?: boolean;
   items?: string[];
+  icon?: string;
 }
 
 @Component({
@@ -28,6 +29,11 @@ export interface ConfirmDialogData {
   template: `
     <div class="confirm-dialog">
       <div class="dialog-content">
+        @if (data.icon) {
+          <div class="dialog-icon">
+            <img [src]="'assets/img/icons/' + data.icon + '.svg'" alt="" />
+          </div>
+        }
         <h2>{{ data.title }}</h2>
         <p>{{ data.message }}</p>
         @if (data.items && data.items.length > 0) {

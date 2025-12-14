@@ -1,5 +1,4 @@
-<div class="dialog-backdrop">
-  <div class="dialog-container">
+<div class="dialog-container">
     <div class="dialog-header">
       <button class="close-btn" (click)="onClose()">
         <img src="assets/img/icons/close.svg" alt="" class="close-icon">
@@ -34,10 +33,13 @@
           <div class="form-row">
             <div class="form-group">
               <label class="required">סכום:</label>
-              <div class="amount-input">
-                <input type="number" [(ngModel)]="debt.amount" name="amount" placeholder="">
+              <div class="amount-input" [class.disabled]="isPaid">
+                <input type="number" [(ngModel)]="debt.amount" name="amount" placeholder="" [disabled]="isPaid">
                 <span class="currency">₪</span>
               </div>
+              @if (isPaid) {
+                <span class="field-hint">לא ניתן לשנות סכום לאחר תשלום</span>
+              }
             </div>
             <div class="form-group">
               <label class="required">סוג חוב:</label>
@@ -107,5 +109,4 @@
         }
       </div>
     </form>
-  </div>
 </div>

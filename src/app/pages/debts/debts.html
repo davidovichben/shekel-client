@@ -27,6 +27,13 @@
   <!-- Filters and Actions Row -->
   <div class="filters-actions-row">
     <div class="filters-section">
+      <div class="search-box">
+        <input type="text" placeholder="חפש לפי שם חבר או תיאור חוב" [(ngModel)]="searchText" (keyup.enter)="onSearch()">
+        @if (searchText) {
+          <span class="reset-icon" (click)="onResetSearch()"><img src="assets/img/icons/close.svg" alt=""></span>
+        }
+        <span class="search-icon" (click)="onSearch()"><img src="/assets/img/icons/search.svg" alt=""></span>
+      </div>
       <div class="filter-dropdowns">
         <app-custom-select
           [options]="displayRangeOptions"
@@ -36,8 +43,9 @@
         </app-custom-select>
         <app-custom-select
           [options]="sortOptions"
-          [(value)]="sortBy"
-          (valueChange)="onSortChange()"
+          [value]="sortBy"
+          [sortOrder]="sortOrder"
+          (valueChange)="onSortChange($event)"
           prefix="מיין לפי">
         </app-custom-select>
       </div>
@@ -51,15 +59,9 @@
     <div class="actions-section">
       <div class="bulk-actions">
         <span>פעולות קולקטיביות:</span>
-        <button type="button" class="action-icon" (click)="onBulkAction('message')">
-          <img src="assets/img/icons/chat_bubble.svg" alt="Message" />
-        </button>
-        <button type="button" class="action-icon" (click)="onBulkAction('document')">
-          <img src="assets/img/icons/credit_card.svg" alt="Document" />
-        </button>
-        <button type="button" class="action-icon" (click)="onBulkAction('print')">
-          <img src="assets/img/icons/print.svg" alt="Print" />
-        </button>
+        <button type="button" class="action-icon" (click)="onBulkAction('message')"><img src="assets/img/icons/chat_bubble_blue.svg" alt=""></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('document')"><img src="assets/img/icons/credit_card.svg" alt=""></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print_blue.svg" alt=""></button>
       </div>
       <div class="export-action">
         <button class="btn-outline" (click)="openExportDialog()">ייצא לקובץ</button>
@@ -87,7 +89,7 @@
                  [checked]="isDebtSelected(debt.id)"
                  (change)="toggleDebtSelection(debt.id, $event)">
         </td>
-        <td>{{ debt.fullName }}</td>
+        <td class="clickable" (click)="openMemberView(debt)">{{ debt.fullName }}</td>
         <td>{{ debt.description }}</td>
         <td>{{ debt.amount }} ₪</td>
         <td>
@@ -145,4 +147,24 @@
       </button>
     </div>
   </div>
+
+  <!-- Loading Overlay -->
+  @if (isLoadingMember) {
+    <div class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">טוען פרטי חבר...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Sending Reminder Overlay -->
+  @if (isSendingReminder) {
+    <div class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">שולח הודעת תזכורת...</span>
+      </div>
+    </div>
+  }
 </div>

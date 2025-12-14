@@ -228,7 +228,7 @@ input[type="radio"]
   border: 1px solid #e0e0e0
   border-radius: 4px
   padding: 0.5rem 1rem
-  width: 600px
+  width: 400px
 
   .search-icon
     margin-right: 0.5rem
@@ -721,6 +721,12 @@ app-custom-select
 // Global Dialog Styles
 .cdk-overlay-pane.mat-mdc-dialog-panel
   max-width: none !important
+  margin: 0 auto
+
+.cdk-global-overlay-wrapper
+  display: flex !important
+  align-items: center !important
+  justify-content: center !important
 
 .mat-mdc-dialog-container
   direction: rtl
@@ -739,13 +745,21 @@ app-custom-select
     box-shadow: none !important
     animation: dialogScaleIn 0.25s ease-out
 
-// Vow Set Form Dialog - allow overflow for dropdowns
-.vow-set-form-dialog
+// Form Dialog styles - transparent background for Material Dialog
+.debt-form-dialog,
+.expense-form-dialog,
+.vow-set-form-dialog,
+.invoice-form-dialog-panel
+  margin: 0 auto !important
+
   .mat-mdc-dialog-container
+    padding: 0
     overflow: visible !important
 
   .mdc-dialog__surface
     overflow: visible !important
+    background: transparent !important
+    box-shadow: none !important
 
   .dialog-container
     overflow-y: auto

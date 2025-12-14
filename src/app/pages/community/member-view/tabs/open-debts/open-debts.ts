@@ -6,6 +6,7 @@ import { Member } from '../../../../../core/entities/member.entity';
 import { Debt, DebtStatus } from '../../../../../core/entities/debt.entity';
 import { DebtService } from '../../../../../core/services/network/debt.service';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog';
+import { ReminderDialogComponent, ReminderDialogResult } from '../../../../../shared/components/reminder-dialog/reminder-dialog';
 
 @Component({
   selector: 'app-member-open-debts',
@@ -24,6 +25,7 @@ export class MemberOpenDebtsComponent implements OnInit {
   totalDebts = 0;
   totalAmount = 0;
   isLoading = false;
+  isSending = false;
   selectedDebts: Set<string> = new Set();
 
   ngOnInit(): void {
@@ -125,15 +127,56 @@ export class MemberOpenDebtsComponent implements OnInit {
 
   // Row actions
   onSendReminder(debt: Debt): void {
-    this.debtService.sendReminder(debt.id).subscribe({
-      next: (updatedDebt) => {
-        const index = this.debts.findIndex(d => d.id === debt.id);
-        if (index !== -1) {
-          this.debts[index] = updatedDebt;
-        }
-      },
-      error: (error) => {
-        console.error('Error sending reminder:', error);
+    const dialogRef = this.dialog.open(ReminderDialogComponent, {
+      width: '750px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        memberIds: [debt.memberId],
+        memberCount: 1,
+        memberName: debt.fullName,
+        debtDescription: this.getDebtTypeLabel(debt.debtType || ''),
+        debtAmount: debt.amount
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: ReminderDialogResult | undefined) => {
+      if (result && result.message) {
+        this.isSending = true;
+        this.debtService.sendReminder(debt.id, result.message).subscribe({
+          next: (updatedDebt) => {
+            this.isSending = false;
+            const index = this.debts.findIndex(d => d.id === debt.id);
+            if (index !== -1) {
+              this.debts[index] = updatedDebt;
+            }
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '400px',
+              panelClass: 'confirm-dialog-panel',
+              data: {
+                title: 'ההודעה נשלחה בהצלחה',
+                message: `הודעת תזכורת נשלחה ל-${debt.fullName}`,
+                confirmText: 'סגור'
+              }
+            });
+          },
+          error: (error) => {
+            this.isSending = false;
+            console.error('Error sending reminder:', error);
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '400px',
+              panelClass: 'confirm-dialog-panel',
+              data: {
+                icon: 'triangle-warning',
+                title: 'שגיאה בשליחת ההודעה',
+                message: 'אירעה שגיאה בעת שליחת הודעת התזכורת. אנא נסה שוב.',
+                confirmText: 'סגור'
+              }
+            });
+          }
+        });
       }
     });
   }

@@ -521,3 +521,85 @@
     margin: 0
     font-size: 14px
     color: $gray-700
+
+// Masav Section
+.masav-section
+  margin-top: 16px
+  animation: fadeIn 0.3s ease-out
+
+.bank-details-display
+  padding: 16px
+  border: 1px solid $gray-300
+  border-radius: 8px
+  background: white
+
+  h4
+    margin: 0 0 16px
+    font-size: 15px
+    font-weight: 600
+    color: $text-dark
+
+.bank-details-grid
+  display: grid
+  grid-template-columns: repeat(2, 1fr)
+  gap: 12px
+  margin-bottom: 16px
+
+.bank-detail-item
+  display: flex
+  flex-direction: column
+  gap: 4px
+
+  .label
+    font-size: 12px
+    color: $gray-700
+
+  .value
+    font-size: 14px
+    font-weight: 500
+    color: $text-dark
+    direction: ltr
+    text-align: right
+
+.new-bank-form
+  padding: 16px
+  border: 1px solid $gray-300
+  border-radius: 8px
+  background: white
+
+  h4
+    margin: 0 0 16px
+    font-size: 15px
+    font-weight: 600
+    color: $text-dark
+
+  .ltr-input
+    direction: ltr
+    text-align: left
+
+.btn-save-bank
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  width: 100%
+  padding: 12px 24px
+  margin-top: 16px
+  border: none
+  border-radius: 8px
+  font-size: 14px
+  font-weight: 600
+  cursor: pointer
+  background: $header-bg
+  color: white
+  transition: all 0.2s ease
+
+  &:hover:not(:disabled)
+    filter: brightness(0.95)
+
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed
+
+  i
+    font-size: 14px

@@ -9,6 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { PaymentComponent } from '../payment/payment';
 import { ExpenseFormComponent } from '../expenses/expense-form/expense-form';
 import { ReminderDialogComponent, ReminderDialogResult } from '../../shared/components/reminder-dialog/reminder-dialog';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { convertToHebrewDate } from '../../core/utils/hebrew-date.util';
 
 @Component({
@@ -30,6 +31,7 @@ export class DashboardComponent implements OnInit {
   recentDebts: Debt[] = [];
   isLoading = false;
   isLoadingDebts = false;
+  isSendingReminder = false;
   error: string | null = null;
 
   ngOnInit(): void {
@@ -350,8 +352,8 @@ export class DashboardComponent implements OnInit {
 
   sendReminder(debt: Debt): void {
     const dialogRef = this.dialog.open(ReminderDialogComponent, {
-      width: '600px',
-      panelClass: 'reminder-dialog-panel',
+      width: '750px',
+      panelClass: 'confirm-dialog-panel',
       backdropClass: 'confirm-dialog-backdrop',
       enterAnimationDuration: '0ms',
       exitAnimationDuration: '0ms',
@@ -359,19 +361,48 @@ export class DashboardComponent implements OnInit {
         memberIds: [debt.memberId],
         memberCount: 1,
         memberName: debt.fullName,
-        initialMessage: '',
-        debtStatus: debt.status
+        debtStatus: debt.status,
+        debtDescription: this.getDebtTypeLabel(debt.debtType || ''),
+        debtAmount: debt.amount
       }
     });
 
     dialogRef.afterClosed().subscribe(async (result: ReminderDialogResult | undefined) => {
       if (result && result.message) {
+        this.isSendingReminder = true;
         try {
-          await firstValueFrom(this.debtService.sendReminder(debt.id));
+          await firstValueFrom(this.debtService.sendReminder(debt.id, result.message));
+          this.isSendingReminder = false;
           // Reload recent debts after sending reminder
           this.loadRecentDebts();
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            panelClass: 'confirm-dialog-panel',
+            backdropClass: 'confirm-dialog-backdrop',
+            enterAnimationDuration: '0ms',
+            exitAnimationDuration: '0ms',
+            data: {
+              title: 'ההודעה נשלחה בהצלחה',
+              message: `הודעת תזכורת נשלחה ל-${debt.fullName}`,
+              confirmText: 'סגור'
+            }
+          });
         } catch (error) {
+          this.isSendingReminder = false;
           console.error('Error sending reminder:', error);
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            panelClass: 'confirm-dialog-panel',
+            backdropClass: 'confirm-dialog-backdrop',
+            enterAnimationDuration: '0ms',
+            exitAnimationDuration: '0ms',
+            data: {
+              icon: 'triangle-warning',
+              title: 'שגיאה בשליחת ההודעה',
+              message: 'אירעה שגיאה בעת שליחת הודעת התזכורת. אנא נסה שוב.',
+              confirmText: 'סגור'
+            }
+          });
         }
       }
     });
@@ -381,7 +412,7 @@ export class DashboardComponent implements OnInit {
     const dialogRef = this.dialog.open(PaymentComponent, {
       width: '900px',
       panelClass: 'payment-dialog',
-      disableClose: false,
+      disableClose: true,
       hasBackdrop: true,
       data: {}
     });

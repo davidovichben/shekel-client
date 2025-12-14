@@ -1,5 +1,5 @@
 <div class="payment-details-form">
-  @if (chargeSuccess || newCardSaved) {
+  @if (chargeSuccess || newCardSaved || masavChargeSuccess) {
     <div class="charge-complete-view">
       <div class="card-saved-success">
         <i class="fa-solid fa-check-circle"></i>
@@ -105,6 +105,91 @@
           <div class="no-cards-message">
             <p>לא נמצאו כרטיסי אשראי שמורים עבור חבר זה</p>
             <p>אנא הוסף כרטיס אשראי חדש</p>
+          </div>
+        }
+      </div>
+    }
+
+    @if (paymentDetails.paymentMethod === 'standingOrder' && paymentDetails.amount > 0) {
+      <div class="masav-section">
+        @if (isLoadingBankDetails) {
+          <div class="loading-cards">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <span>טוען פרטי בנק...</span>
+          </div>
+        } @else if (bankDetails && !showNewBankForm) {
+          <div class="bank-details-display">
+            <h4>פרטי חשבון בנק</h4>
+            <div class="bank-details-grid">
+              <div class="bank-detail-item">
+                <span class="label">שם מלא:</span>
+                <span class="value">{{ bankDetails.fullName }}</span>
+              </div>
+              <div class="bank-detail-item">
+                <span class="label">מספר בנק:</span>
+                <span class="value">{{ bankDetails.bankNumber }}</span>
+              </div>
+              <div class="bank-detail-item">
+                <span class="label">מספר סניף:</span>
+                <span class="value">{{ bankDetails.branchNumber }}</span>
+              </div>
+              <div class="bank-detail-item">
+                <span class="label">מספר חשבון:</span>
+                <span class="value">{{ bankDetails.accountNumber }}</span>
+              </div>
+            </div>
+            <button class="btn-charge" (click)="chargeMasav()" [disabled]="isMasavCharging">
+              @if (isMasavCharging) {
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>מבצע חיוב...</span>
+              } @else {
+                <i class="fa-solid fa-building-columns"></i>
+                <span>בצע חיוב מס"ב</span>
+              }
+            </button>
+            @if (masavChargeError) {
+              <div class="charge-error">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>{{ masavChargeError }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="new-bank-form">
+            <h4>הוספת פרטי בנק חדשים</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label>שם מלא</label>
+                <input type="text" [(ngModel)]="newBankDetails.fullName" name="fullName">
+              </div>
+              <div class="form-group">
+                <label>תעודת זהות</label>
+                <input type="text" [(ngModel)]="newBankDetails.idNumber" name="idNumber" class="ltr-input">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>מספר בנק</label>
+                <input type="text" [(ngModel)]="newBankDetails.bankNumber" name="bankNumber" class="ltr-input">
+              </div>
+              <div class="form-group">
+                <label>מספר סניף</label>
+                <input type="text" [(ngModel)]="newBankDetails.branchNumber" name="branchNumber" class="ltr-input">
+              </div>
+              <div class="form-group">
+                <label>מספר חשבון</label>
+                <input type="text" [(ngModel)]="newBankDetails.accountNumber" name="accountNumber" class="ltr-input">
+              </div>
+            </div>
+            <button class="btn-save-bank" (click)="saveBankDetails()" [disabled]="!canSaveBankDetails() || isSavingBankDetails">
+              @if (isSavingBankDetails) {
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>שומר...</span>
+              } @else {
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span>שמור פרטי בנק</span>
+              }
+            </button>
           </div>
         }
       </div>

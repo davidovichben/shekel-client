@@ -51,9 +51,9 @@
     <div class="table-actions">
       <div class="bulk-actions">
         <span>פעולות קולקטיביות:</span>
-        <button type="button" class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print.svg" alt=""></button>
-        <button type="button" class="action-icon" (click)="onBulkAction('delete')"><img src="assets/img/icons/trash.svg" alt=""></button>
-        <button type="button" class="action-icon" (click)="onBulkAction('email')"><i class="fa-regular fa-envelope"></i></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('email')"><img src="assets/img/icons/chat_bubble_blue.svg" alt=""></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('delete')"><img src="assets/img/icons/trash_blue.svg" alt=""></button>
+        <button type="button" class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print_blue.svg" alt=""></button>
       </div>
       <div class="export-action">
         <button class="btn-outline" (click)="openExportDialog()">ייצא לקובץ</button>
@@ -81,7 +81,7 @@
                  [checked]="isInvoiceSelected(invoice.id)"
                  (change)="toggleInvoiceSelection(invoice.id, $event)">
         </td>
-        <td class="clickable" (click)="navigateToInvoice(invoice)">{{ invoice.payerName }}</td>
+        <td class="clickable" (click)="openMemberView(invoice)">{{ invoice.payerName }}</td>
         <td>{{ invoice.invoiceNumber }}</td>
         <td><span class="amount">{{ invoice.totalAmount }} ₪</span></td>
         <td>{{ invoice.type }}</td>
@@ -126,4 +126,14 @@
       </button>
     </div>
   </div>
+
+  <!-- Loading Overlay -->
+  @if (isLoadingMember) {
+    <div class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">טוען פרטי חבר...</span>
+      </div>
+    </div>
+  }
 </div>

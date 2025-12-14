@@ -8,9 +8,13 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { ExportDialogComponent, ExportDialogResult } from '../../shared/components/export-dialog/export-dialog';
 import { ShareDialogComponent } from '../../shared/components/share-dialog/share-dialog';
 import { InvoiceFormComponent } from './invoice-form/invoice-form';
+import { MemberViewComponent } from '../community/member-view/member-view';
+import { MemberService } from '../../core/services/network/member.service';
+import { Member } from '../../core/entities/member.entity';
 
 interface Invoice {
   id: string;
+  payerId: string;
   payerName: string;
   invoiceNumber: string;
   totalAmount: number;
@@ -29,9 +33,11 @@ interface Invoice {
 })
 export class InvoicesComponent implements OnInit {
   private dialog = inject(MatDialog);
+  private memberService = inject(MemberService);
 
   invoices: Invoice[] = [];
   totalInvoices = 0;
+  isLoadingMember = false;
   currentPage = 1;
   itemsPerPage = 15;
   totalPages = 1;
@@ -98,21 +104,21 @@ export class InvoicesComponent implements OnInit {
     // Simulated data - replace with actual service call
     setTimeout(() => {
       this.invoices = [
-        { id: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '2', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '3', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '4', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית זיכוי', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '5', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '6', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית זיכוי', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '7', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '8', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '9', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '10', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '11', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '12', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '13', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '14', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
-        { id: '15', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '1', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '2', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '3', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '4', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית זיכוי', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '5', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '6', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית זיכוי', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '7', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '8', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '9', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '10', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '11', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '12', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '13', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '14', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
+        { id: '15', payerId: '1', payerName: 'מיכאל כהן', invoiceNumber: '2654', totalAmount: 280, type: 'חשבונית', hebrewDate: "כ' שבט תשפ\"ז", gregorianDate: '18/06/2025', paymentMethod: 'אשראי' },
       ];
       this.totalInvoices = 234;
       this.totalPages = Math.ceil(this.totalInvoices / this.itemsPerPage);
@@ -172,6 +178,7 @@ export class InvoicesComponent implements OnInit {
       this.dialog.open(ConfirmDialogComponent, {
         width: '500px',
         data: {
+          icon: 'triangle-warning',
           title: 'שים לב',
           message: 'יש לבחור לפחות פריט אחד לפני ביצוע פעולה קולקטיבית',
           confirmText: 'הבנתי'
@@ -218,9 +225,11 @@ export class InvoicesComponent implements OnInit {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(InvoiceFormComponent, {
-      width: '70%',
+      width: '900px',
+      maxWidth: '90vw',
       panelClass: 'invoice-form-dialog-panel',
-      autoFocus: false
+      autoFocus: false,
+      disableClose: false
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -232,9 +241,11 @@ export class InvoicesComponent implements OnInit {
 
   openEditDialog(invoice: Invoice): void {
     const dialogRef = this.dialog.open(InvoiceFormComponent, {
-      width: '70%',
+      width: '900px',
+      maxWidth: '90vw',
       panelClass: 'invoice-form-dialog-panel',
       autoFocus: false,
+      disableClose: false,
       data: { invoice }
     });
 
@@ -245,8 +256,32 @@ export class InvoicesComponent implements OnInit {
     });
   }
 
-  navigateToInvoice(invoice: Invoice): void {
-    console.log('Navigate to invoice:', invoice.id);
+  openMemberView(invoice: Invoice): void {
+    this.isLoadingMember = true;
+    this.memberService.getOne(invoice.payerId).subscribe({
+      next: (member: Member) => {
+        this.isLoadingMember = false;
+        const dialogRef = this.dialog.open(MemberViewComponent, {
+          width: '95vw',
+          maxWidth: '1400px',
+          height: '720px',
+          panelClass: 'member-view-dialog',
+          autoFocus: false,
+          disableClose: true,
+          data: { memberId: invoice.payerId, member }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadInvoices();
+          }
+        });
+      },
+      error: (error) => {
+        this.isLoadingMember = false;
+        console.error('Error loading member:', error);
+      }
+    });
   }
 
   shareInvoice(invoice: Invoice): void {

@@ -14,6 +14,7 @@ export type { StatsData, StatsType } from '../../../core/entities/stats.entity';
 export class StatsPanelComponent {
   @Input() stats: StatsData | null = null;
   @Input() type: StatsType = 'expenses';
+  @Input() isLoading = false;
 
   // Color constants
   private readonly primaryBlue = '#0b1a51'; // Dark blue for highest percentage

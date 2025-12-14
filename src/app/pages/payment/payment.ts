@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, Optional, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { Step1PayerComponent, PayerDetails } from './steps/step1-payer/step1-payer';
 import { Step2PaymentComponent, PaymentDetails, Step2ValidationState } from './steps/step2-payment/step2-payment';
@@ -35,6 +35,8 @@ interface TransactionSummary {
   styleUrl: './payment.sass'
 })
 export class PaymentComponent implements OnInit {
+  private dialog = inject(MatDialog);
+
   currentStep = 1;
   steps = [
     { number: 1, label: 'פרטי משלם' },

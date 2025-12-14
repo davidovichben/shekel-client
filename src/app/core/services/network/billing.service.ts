@@ -13,6 +13,16 @@ export interface ChargeBillingRequest {
   debt_ids?: number[]; // Array of debt IDs for bulk payment
 }
 
+export interface MasavChargeRequest {
+  bank_details_id: number;
+  amount: number;
+  description?: string;
+  type?: string;
+  createReceipt?: boolean;
+  debt_id?: number;
+  debt_ids?: number[];
+}
+
 export interface ChargeBillingResponse {
   success: boolean;
   transaction: {
@@ -95,5 +105,12 @@ export class BillingService {
    */
   getMemberPaymentIframeUrl(memberId: string, amount: number, type?: string): Observable<IframeResponse> {
     return this.http.post<IframeResponse>(`${this.apiUrl}/member-payment`, { member_id: memberId, amount, type });
+  }
+
+  /**
+   * Charge using masav (standing order) bank details
+   */
+  masavCharge(request: MasavChargeRequest): Observable<ChargeBillingResponse> {
+    return this.http.post<ChargeBillingResponse>(`${this.apiUrl}/masav-charge`, request);
   }
 }

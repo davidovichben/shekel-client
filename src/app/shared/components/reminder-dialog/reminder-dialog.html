@@ -13,7 +13,14 @@
   <div class="dialog-content">
     <div class="form-group">
       <label class="required">תוכן ההודעה:</label>
-      <textarea [(ngModel)]="message" rows="6"></textarea>
+      @if (isLoading) {
+        <div class="textarea-loading">
+          <div class="loading-spinner"></div>
+          <span>טוען תבנית הודעה...</span>
+        </div>
+      } @else {
+        <textarea [(ngModel)]="message" rows="6"></textarea>
+      }
     </div>
 
     @if (showWarning) {
@@ -26,7 +33,7 @@
 
   <div class="dialog-actions">
 
-    <button class="btn-send" (click)="onSend()">
+    <button class="btn-send" (click)="onSend()" [disabled]="isLoading">
       <img src="assets/img/icons/floppy.svg" alt="">
       שלח הודעה
     </button>

@@ -1,7 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { BusinessService } from '../../../core/services/network/business.service';
 
 export interface ReminderDialogData {
   memberIds: string[];
@@ -9,8 +10,10 @@ export interface ReminderDialogData {
   memberName?: string;
   hasNonDebtors?: boolean;
   memberBalance?: number;
-  initialMessage?: string;
   debtStatus?: string; // 'pending', 'paid', 'overdue', 'cancelled'
+  // Debt-specific data for placeholder substitution
+  debtDescription?: string;
+  debtAmount?: number;
 }
 
 export interface ReminderDialogResult {
@@ -24,20 +27,44 @@ export interface ReminderDialogResult {
   templateUrl: './reminder-dialog.html',
   styleUrl: './reminder-dialog.sass'
 })
-export class ReminderDialogComponent {
-  message = `שלום,
+export class ReminderDialogComponent implements OnInit {
+  message = '';
+  isLoading = true;
+
+  private defaultMessage = `שלום,
 זוהי הודעת תזכורת לתשלום חוב: {תיאור החוב} על סך {סכום} מבית הכנסת "אהל יצחק", נבקשך להסדיר את התשלום בהקדם.
 בתודה מראש
 גבאי בית הכנסת - רבי שלמה.`;
 
   constructor(
     public dialogRef: MatDialogRef<ReminderDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ReminderDialogData
-  ) {
-    // If initial message is provided, use it instead of default
-    if (data.initialMessage) {
-      this.message = data.initialMessage;
-    }
+    @Inject(MAT_DIALOG_DATA) public data: ReminderDialogData,
+    private businessService: BusinessService
+  ) {}
+
+  ngOnInit(): void {
+    // Fetch business message template
+    this.businessService.show().subscribe({
+      next: (business: any) => {
+        let template = this.defaultMessage;
+
+        // Handle message_template as string or object
+        if (business.message_template) {
+          if (typeof business.message_template === 'string') {
+            template = business.message_template;
+          } else if (business.message_template.content) {
+            template = business.message_template.content;
+          }
+        }
+
+        this.message = this.substitutePlaceholders(template);
+        this.isLoading = false;
+      },
+      error: () => {
+        this.message = this.substitutePlaceholders(this.defaultMessage);
+        this.isLoading = false;
+      }
+    });
   }
 
   get showWarning(): boolean {
@@ -57,6 +84,33 @@ export class ReminderDialogComponent {
       return 'שים לב, לחבר זה אין חוב פעיל.';
     }
     return 'שים לב, נבחרו גם חברי קהילה שאינם בעלי חוב פעיל חזור אחורה והסר את הבחירה במידה ולא תרצה לשלוח להם הודעה.';
+  }
+
+  private substitutePlaceholders(template: string): string {
+    // Don't substitute placeholders for bulk messages (multiple members)
+    if (this.data.memberCount > 1) {
+      return template;
+    }
+
+    let result = template;
+
+    // Substitute debt description placeholders
+    if (this.data.debtDescription) {
+      result = result.replace(/\{תיאור החוב\}/g, this.data.debtDescription);
+      result = result.replace(/\[תיאור החוב\]/g, this.data.debtDescription);
+    }
+
+    // Substitute debt amount placeholders - use debtAmount or fall back to memberBalance
+    const amount = this.data.debtAmount ?? (this.data.memberBalance !== undefined ? Math.abs(this.data.memberBalance) : undefined);
+    if (amount !== undefined) {
+      const amountStr = `${amount} ₪`;
+      result = result.replace(/\{סכום\}/g, amountStr);
+      result = result.replace(/\[סכום\]/g, amountStr);
+      result = result.replace(/\[סכום החוב\]/g, amountStr);
+      result = result.replace(/\{סכום החוב\}/g, amountStr);
+    }
+
+    return result;
   }
 
   onClose(): void {

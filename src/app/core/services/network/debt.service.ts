@@ -60,6 +60,7 @@ export class DebtService {
     sort_by?: string;
     sort_order?: 'asc' | 'desc';
     should_bill?: boolean;
+    search?: string;
   }): Observable<PaginationResponse<Debt>> {
     return this.http.get<any>(this.apiUrl, { params: params as any }).pipe(
       map(response => ({
@@ -110,8 +111,8 @@ export class DebtService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  sendReminder(id: string): Observable<Debt> {
-    return this.http.post<Debt>(`${this.apiUrl}/${id}/reminder`, {}).pipe(
+  sendReminder(id: string, message: string): Observable<Debt> {
+    return this.http.post<Debt>(`${this.apiUrl}/${id}/reminder`, { message }).pipe(
       map(debt => this.mapDebtFromApi(debt))
     );
   }

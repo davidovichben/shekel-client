@@ -380,6 +380,7 @@ export class IncomesComponent implements OnInit {
         enterAnimationDuration: '0ms',
         exitAnimationDuration: '0ms',
         data: {
+          icon: 'triangle-warning',
           title: 'שים לב',
           message: 'יש לבחור לפחות פריט אחד לפני ביצוע פעולה קולקטיבית',
           confirmText: 'הבנתי'

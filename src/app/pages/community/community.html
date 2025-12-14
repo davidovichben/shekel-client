@@ -42,9 +42,9 @@
     <div class="table-actions">
 	    <div class="bulk-actions">
 		    <span>פעולות קולקטיביות:</span>
-		    <button type="button" class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print.svg" alt=""></button>
-		    <button type="button" class="action-icon" (click)="onBulkAction('delete')"><img src="assets/img/icons/trash.svg" alt=""></button>
 		    <button type="button" class="action-icon" (click)="onBulkAction('email')"><img src="assets/img/icons/chat_bubble_blue.svg" alt=""></button>
+		    <button type="button" class="action-icon" (click)="onBulkAction('delete')"><img src="assets/img/icons/trash_blue.svg" alt=""></button>
+		    <button type="button" class="action-icon" (click)="onBulkAction('print')"><img src="assets/img/icons/print_blue.svg" alt=""></button>
 	    </div>
 	    <div class="export-action">
 		    <button class="btn-outline" (click)="openExportDialog()">ייצא לקובץ</button>
@@ -127,4 +127,24 @@
       </button>
     </div>
   </div>
+
+  <!-- Loading Overlay -->
+  @if (isLoadingMember) {
+    <div class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">טוען פרטי חבר...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Sending Message Overlay -->
+  @if (isSendingMessage) {
+    <div class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">שולח הודעה...</span>
+      </div>
+    </div>
+  }
 </div>

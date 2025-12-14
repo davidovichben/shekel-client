@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { DebtService } from '../../../core/services/network/debt.service';
 import { DebtStatus } from '../../../core/entities/debt.entity';
 import { Member } from '../../../core/entities/member.entity';
@@ -9,6 +9,8 @@ import { CustomSelectComponent } from '../../../shared/components/custom-select/
 import { MemberAutocompleteComponent } from '../../../shared/components/member-autocomplete/member-autocomplete';
 import { ToggleSwitchComponent } from '../../../shared/components/toggle-switch/toggle-switch';
 import { RadioGroupComponent } from '../../../shared/components/radio-group/radio-group';
+import { ReminderDialogComponent, ReminderDialogResult } from '../../../shared/components/reminder-dialog/reminder-dialog';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 export interface DebtFormDialogData {
   debt?: {
@@ -37,6 +39,7 @@ export interface DebtFormDialogData {
 export class DebtFormComponent implements OnInit, AfterViewInit {
   private debtService = inject(DebtService);
   private dialogRef = inject(MatDialogRef<DebtFormComponent>);
+  private dialog = inject(MatDialog);
   private data: DebtFormDialogData = inject(MAT_DIALOG_DATA);
 
   isEditMode = false;
@@ -73,6 +76,10 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
 
   sendReminderOnCreate = false;
   isSubmitting = false;
+
+  get isPaid(): boolean {
+    return this.debt.status === DebtStatus.Paid;
+  }
 
   private convertDateToInputFormat(dateString: string): string {
     if (!dateString) return '';
@@ -180,21 +187,74 @@ export class DebtFormComponent implements OnInit, AfterViewInit {
   onSendReminder(): void {
     if (!this.debtId) return;
 
-    this.isSubmitting = true;
-
-    this.debtService.sendReminder(this.debtId).subscribe({
-      next: (result) => {
-        this.isSubmitting = false;
-        // Update the local debt object with the updated reminder date
-        this.debt.lastReminderSentAt = result.lastReminderSentAt || null;
-        // Close dialog and refresh table
-        this.dialogRef.close(result);
-      },
-      error: (error) => {
-        console.error('Error sending reminder:', error);
-        this.isSubmitting = false;
+    const reminderDialogRef = this.dialog.open(ReminderDialogComponent, {
+      width: '750px',
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      enterAnimationDuration: '0ms',
+      exitAnimationDuration: '0ms',
+      data: {
+        memberIds: this.debt.memberId ? [this.debt.memberId] : [],
+        memberCount: 1,
+        memberName: this.debt.fullName,
+        debtDescription: this.getDebtTypeLabel(this.debt.debtType || ''),
+        debtAmount: this.debt.amount
       }
     });
+
+    reminderDialogRef.afterClosed().subscribe((result: ReminderDialogResult | undefined) => {
+      if (result && result.message) {
+        this.isSubmitting = true;
+
+        this.debtService.sendReminder(this.debtId, result.message).subscribe({
+          next: (debtResult) => {
+            this.isSubmitting = false;
+            // Update the local debt object with the updated reminder date
+            this.debt.lastReminderSentAt = debtResult.lastReminderSentAt || null;
+
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '400px',
+              panelClass: 'confirm-dialog-panel',
+              backdropClass: 'confirm-dialog-backdrop',
+              enterAnimationDuration: '0ms',
+              exitAnimationDuration: '0ms',
+              data: {
+                title: 'ההודעה נשלחה בהצלחה',
+                message: `הודעת תזכורת נשלחה ל-${this.debt.fullName}`,
+                confirmText: 'סגור'
+              }
+            });
+          },
+          error: (error) => {
+            console.error('Error sending reminder:', error);
+            this.isSubmitting = false;
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '400px',
+              panelClass: 'confirm-dialog-panel',
+              backdropClass: 'confirm-dialog-backdrop',
+              enterAnimationDuration: '0ms',
+              exitAnimationDuration: '0ms',
+              data: {
+                icon: 'triangle-warning',
+                title: 'שגיאה בשליחת ההודעה',
+                message: 'אירעה שגיאה בעת שליחת הודעת התזכורת. אנא נסה שוב.',
+                confirmText: 'סגור'
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+
+  private getDebtTypeLabel(type: string): string {
+    const types: Record<string, string> = {
+      'dues': 'מיסים',
+      'pledge': 'נדרים',
+      'donation': 'תרומות',
+      'other': 'אחר'
+    };
+    return types[type] || type || '';
   }
 
   onPay(): void {

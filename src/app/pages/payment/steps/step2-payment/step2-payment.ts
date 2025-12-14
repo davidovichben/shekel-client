@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CreditCardComponent, CreditCardData } from '../../../../shared/components/credit-card/credit-card';
 import { MemberCreditCardService } from '../../../../core/services/network/member-credit-card.service';
+import { MemberBankDetailsService } from '../../../../core/services/network/member-bank-details.service';
 import { BillingService } from '../../../../core/services/network/billing.service';
 import { TranzilaPaymentComponent, TranzilaResponse } from '../../../../shared/components/tranzila-payment/tranzila-payment';
+import { MemberBankDetails } from '../../../../core/entities/member-bank-details.entity';
 
 export interface PaymentDetails {
   amount: number;
@@ -30,6 +32,7 @@ export interface Step2ValidationState {
 })
 export class Step2PaymentComponent implements OnInit, OnChanges, OnDestroy {
   private memberCreditCardService = inject(MemberCreditCardService);
+  private memberBankDetailsService = inject(MemberBankDetailsService);
   private billingService = inject(BillingService);
 
   @Input() paymentDetails: PaymentDetails = {
@@ -58,6 +61,22 @@ export class Step2PaymentComponent implements OnInit, OnChanges, OnDestroy {
   isCharging = false;
   chargeSuccess = false;
   chargeError = '';
+
+  // Masav (standing order) state
+  isLoadingBankDetails = false;
+  bankDetails: MemberBankDetails | null = null;
+  showNewBankForm = false;
+  isSavingBankDetails = false;
+  isMasavCharging = false;
+  masavChargeSuccess = false;
+  masavChargeError = '';
+  newBankDetails = {
+    bankNumber: '',
+    branchNumber: '',
+    accountNumber: '',
+    idNumber: '',
+    fullName: ''
+  };
 
   // Polling for new cards
   private pollingInterval: ReturnType<typeof setInterval> | null = null;
@@ -157,13 +176,14 @@ export class Step2PaymentComponent implements OnInit, OnChanges, OnDestroy {
     this.validationStateChange.emit({
       isValid: this.isStepValid(),
       newCardSaved: this.newCardSaved,
-      paymentComplete: this.chargeSuccess || this.newCardSaved
+      paymentComplete: this.chargeSuccess || this.newCardSaved || this.masavChargeSuccess
     });
   }
 
   isStepValid(): boolean {
     if (this.paymentDetails.paymentMethod === 'standingOrder') {
-      return true;
+      // Masav requires successful charge before continuing
+      return this.masavChargeSuccess;
     }
     if (this.paymentDetails.paymentMethod === 'credit') {
       if (this.useNewCard) {
@@ -290,7 +310,89 @@ export class Step2PaymentComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onPaymentMethodChange(): void {
+    if (this.paymentDetails.paymentMethod === 'standingOrder' && this.memberId) {
+      this.loadBankDetails();
+    }
     this.emitValidationState();
+  }
+
+  private loadBankDetails(): void {
+    if (!this.memberId) return;
+
+    this.isLoadingBankDetails = true;
+    this.bankDetails = null;
+    this.showNewBankForm = false;
+
+    this.memberBankDetailsService.getByMemberId(this.memberId).subscribe({
+      next: (details) => {
+        this.bankDetails = details;
+        this.isLoadingBankDetails = false;
+      },
+      error: () => {
+        // No bank details found - show form to add new
+        this.bankDetails = null;
+        this.showNewBankForm = true;
+        this.isLoadingBankDetails = false;
+      }
+    });
+  }
+
+  saveBankDetails(): void {
+    if (this.isSavingBankDetails) return;
+
+    this.isSavingBankDetails = true;
+    this.memberBankDetailsService.create({
+      memberId: this.memberId,
+      bankNumber: this.newBankDetails.bankNumber,
+      branchNumber: this.newBankDetails.branchNumber,
+      accountNumber: this.newBankDetails.accountNumber,
+      idNumber: this.newBankDetails.idNumber,
+      fullName: this.newBankDetails.fullName
+    }).subscribe({
+      next: (details) => {
+        this.bankDetails = details;
+        this.showNewBankForm = false;
+        this.isSavingBankDetails = false;
+      },
+      error: () => {
+        this.isSavingBankDetails = false;
+      }
+    });
+  }
+
+  chargeMasav(): void {
+    if (!this.bankDetails || this.isMasavCharging) return;
+
+    this.isMasavCharging = true;
+    this.masavChargeError = '';
+
+    this.billingService.masavCharge({
+      bank_details_id: parseInt(this.bankDetails.id, 10),
+      amount: this.paymentDetails.amount,
+      description: this.paymentDetails.description,
+      type: this.paymentDetails.type
+    }).subscribe({
+      next: () => {
+        this.isMasavCharging = false;
+        this.masavChargeSuccess = true;
+        this.emitValidationState();
+      },
+      error: () => {
+        this.isMasavCharging = false;
+        this.masavChargeError = 'שגיאה בביצוע החיוב';
+        this.emitValidationState();
+      }
+    });
+  }
+
+  canSaveBankDetails(): boolean {
+    return !!(
+      this.newBankDetails.bankNumber &&
+      this.newBankDetails.branchNumber &&
+      this.newBankDetails.accountNumber &&
+      this.newBankDetails.idNumber &&
+      this.newBankDetails.fullName
+    );
   }
 
   onAmountChange(): void {

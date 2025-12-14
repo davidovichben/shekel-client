@@ -12,7 +12,9 @@ import { ReminderDialogComponent, ReminderDialogResult } from '../../shared/comp
 import { PaymentComponent } from '../payment/payment';
 import { DebtFormComponent } from './debt-form/debt-form';
 import { VowSetFormComponent } from './vow-set-form/vow-set-form';
+import { MemberViewComponent } from '../community/member-view/member-view';
 import { DebtService } from '../../core/services/network/debt.service';
+import { MemberService } from '../../core/services/network/member.service';
 import { Debt, DebtStatus } from '../../core/entities/debt.entity';
 import { ChipComponent, ChipVariant } from '../../shared/components/chip/chip';
 import { convertToHebrewDate } from '../../core/utils/hebrew-date.util';
@@ -27,6 +29,7 @@ import { convertToHebrewDate } from '../../core/utils/hebrew-date.util';
 export class DebtsComponent implements OnInit {
   private dialog = inject(MatDialog);
   private debtService = inject(DebtService);
+  private memberService = inject(MemberService);
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(DebtFormComponent, {
@@ -64,6 +67,7 @@ export class DebtsComponent implements OnInit {
     const dialogRef = this.dialog.open(VowSetFormComponent, {
       width: '900px',
       panelClass: 'vow-set-form-dialog',
+      disableClose: false,
       data: {}
     });
 
@@ -81,7 +85,12 @@ export class DebtsComponent implements OnInit {
   totalPages = 1;
   totalSum = 0;
   isLoading = false;
+  isLoadingMember = false;
+  isSendingReminder = false;
   selectedDebts: Set<string> = new Set();
+
+  searchText = '';
+  activeSearchText = '';
 
   activeTab = 'all';
   tabs = [
@@ -93,10 +102,12 @@ export class DebtsComponent implements OnInit {
   showAutoPaymentOnly = false;
 
   sortBy = 'date';
+  sortOrder: 'asc' | 'desc' = 'desc';
   sortOptions = [
     { value: 'date', label: 'תאריך' },
     { value: 'amount', label: 'סכום' },
-    { value: 'name', label: 'שם' }
+    { value: 'name', label: 'שם חבר' },
+    { value: 'description', label: 'תיאור' }
   ];
 
   displayRange = 'all';
@@ -164,10 +175,16 @@ export class DebtsComponent implements OnInit {
       sort_by?: string;
       sort_order?: 'asc' | 'desc';
       should_bill?: boolean;
+      search?: string;
     } = {
       page: this.currentPage,
       limit: this.itemsPerPage
     };
+
+    // Add search filter
+    if (this.activeSearchText) {
+      params.search = this.activeSearchText;
+    }
 
     // Map tab to status filter
     if (this.activeTab === 'active') {
@@ -191,7 +208,7 @@ export class DebtsComponent implements OnInit {
     // Add sorting
     if (this.sortBy) {
       params.sort_by = this.sortBy;
-      params.sort_order = 'desc'; // Default to descending
+      params.sort_order = this.sortOrder;
     }
 
     // Add auto payment filter
@@ -245,7 +262,13 @@ export class DebtsComponent implements OnInit {
     this.loadDebts();
   }
 
-  onSortChange(): void {
+  onSortChange(value: string): void {
+    if (this.sortBy === value) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = value;
+      this.sortOrder = 'desc';
+    }
     this.currentPage = 1;
     this.loadDebts();
   }
@@ -253,6 +276,22 @@ export class DebtsComponent implements OnInit {
   onAutoPaymentFilterChange(): void {
     this.currentPage = 1;
     this.loadDebts();
+  }
+
+  onSearch(): void {
+    this.activeSearchText = this.searchText.trim();
+    this.currentPage = 1;
+    this.loadDebts();
+  }
+
+  onResetSearch(): void {
+    const wasSearchActive = this.activeSearchText !== '';
+    this.searchText = '';
+    this.activeSearchText = '';
+    if (wasSearchActive) {
+      this.currentPage = 1;
+      this.loadDebts();
+    }
   }
 
   onPageChange(page: number): void {
@@ -421,6 +460,7 @@ export class DebtsComponent implements OnInit {
         enterAnimationDuration: '0ms',
         exitAnimationDuration: '0ms',
         data: {
+          icon: 'triangle-warning',
           title: 'שים לב',
           message: 'יש לבחור לפחות פריט אחד לפני ביצוע פעולה קולקטיבית',
           confirmText: 'הבנתי'
@@ -570,14 +610,16 @@ export class DebtsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(async (result: ReminderDialogResult | undefined) => {
       if (result && result.message) {
+        this.isSendingReminder = true;
         try {
           // Send reminder for each selected debt
           const reminderPromises = selectedIds.map(id =>
-            firstValueFrom(this.debtService.sendReminder(id))
+            firstValueFrom(this.debtService.sendReminder(id, result.message))
           );
 
           await Promise.all(reminderPromises);
 
+          this.isSendingReminder = false;
           this.selectedDebts.clear();
           this.loadDebts();
           this.loadTabCounts();
@@ -594,7 +636,21 @@ export class DebtsComponent implements OnInit {
             }
           });
         } catch (error) {
+          this.isSendingReminder = false;
           console.error('Error sending reminders:', error);
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            panelClass: 'confirm-dialog-panel',
+            backdropClass: 'confirm-dialog-backdrop',
+            enterAnimationDuration: '0ms',
+            exitAnimationDuration: '0ms',
+            data: {
+              icon: 'triangle-warning',
+              title: 'שגיאה בשליחת ההודעות',
+              message: 'אירעה שגיאה בעת שליחת הודעות התזכורת. אנא נסה שוב.',
+              confirmText: 'סגור'
+            }
+          });
         }
       }
     });
@@ -618,6 +674,7 @@ export class DebtsComponent implements OnInit {
         enterAnimationDuration: '0ms',
         exitAnimationDuration: '0ms',
         data: {
+          icon: 'triangle-warning',
           title: 'שים לב',
           message: 'חלק מהחובות שבחרת כבר שולמו, הסר והמשך',
           confirmText: 'הבנתי'
@@ -638,6 +695,7 @@ export class DebtsComponent implements OnInit {
         enterAnimationDuration: '0ms',
         exitAnimationDuration: '0ms',
         data: {
+          icon: 'triangle-warning',
           title: 'שים לב',
           message: 'לא ניתן לבצע תשלום אחד לחברים שונים',
           confirmText: 'הבנתי'
@@ -689,6 +747,7 @@ export class DebtsComponent implements OnInit {
           panelClass: 'payment-dialog-panel',
           backdropClass: 'payment-dialog-backdrop',
           autoFocus: false,
+          disableClose: true,
           data: {
             memberId: commonMemberId,
             memberName: commonMemberName,
@@ -716,12 +775,7 @@ export class DebtsComponent implements OnInit {
       return;
     }
 
-    // Pre-fill message with debt type and amount
     const debtTypeLabel = this.getDebtTypeLabel(debt.debtType);
-    const messageTemplate = `שלום,
-זוהי הודעת תזכורת לתשלום חוב: ${debtTypeLabel} על סך ${debt.amount} ₪ מבית הכנסת "אהל יצחק", נבקשך להסדיר את התשלום בהקדם.
-בתודה מראש
-גבאי בית הכנסת - רבי שלמה.`;
 
     const dialogRef = this.dialog.open(ReminderDialogComponent, {
       width: '750px',
@@ -733,16 +787,19 @@ export class DebtsComponent implements OnInit {
         memberIds: debt.memberId ? [debt.memberId] : [],
         memberCount: 1,
         memberName: debt.fullName,
-        initialMessage: messageTemplate,
-        debtStatus: debt.status
+        debtStatus: debt.status,
+        debtDescription: debtTypeLabel,
+        debtAmount: debt.amount
       }
     });
 
     dialogRef.afterClosed().subscribe(async (result: ReminderDialogResult | undefined) => {
       if (result && result.message) {
+        this.isSendingReminder = true;
         try {
-          await firstValueFrom(this.debtService.sendReminder(debt.id));
+          await firstValueFrom(this.debtService.sendReminder(debt.id, result.message));
 
+          this.isSendingReminder = false;
           this.loadDebts();
           this.loadTabCounts();
           this.dialog.open(ConfirmDialogComponent, {
@@ -758,7 +815,21 @@ export class DebtsComponent implements OnInit {
             }
           });
         } catch (error) {
+          this.isSendingReminder = false;
           console.error('Error sending reminder:', error);
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            panelClass: 'confirm-dialog-panel',
+            backdropClass: 'confirm-dialog-backdrop',
+            enterAnimationDuration: '0ms',
+            exitAnimationDuration: '0ms',
+            data: {
+              icon: 'triangle-warning',
+              title: 'שגיאה בשליחת ההודעה',
+              message: 'אירעה שגיאה בעת שליחת הודעת התזכורת. אנא נסה שוב.',
+              confirmText: 'סגור'
+            }
+          });
         }
       }
     });
@@ -775,6 +846,7 @@ export class DebtsComponent implements OnInit {
       panelClass: 'payment-dialog-panel',
       backdropClass: 'payment-dialog-backdrop',
       autoFocus: false,
+      disableClose: true,
       data: {
         memberId: debt.memberId,
         memberName: debt.fullName,
@@ -908,6 +980,36 @@ export class DebtsComponent implements OnInit {
       error: (error) => {
         console.error('Error exporting debts:', error);
         // TODO: Show error message to user
+      }
+    });
+  }
+
+  openMemberView(debt: Debt): void {
+    if (!debt.memberId) return;
+
+    this.isLoadingMember = true;
+    this.memberService.getOne(debt.memberId).subscribe({
+      next: (fullMember) => {
+        this.isLoadingMember = false;
+        const dialogRef = this.dialog.open(MemberViewComponent, {
+          width: '95vw',
+          maxWidth: '1400px',
+          height: '720px',
+          panelClass: 'member-view-dialog',
+          autoFocus: false,
+          disableClose: true,
+          data: { memberId: debt.memberId, member: fullMember }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadDebts();
+          }
+        });
+      },
+      error: (error) => {
+        this.isLoadingMember = false;
+        console.error('Error loading member:', error);
       }
     });
   }

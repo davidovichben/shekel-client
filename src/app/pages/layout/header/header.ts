@@ -207,6 +207,7 @@ export class HeaderComponent implements OnInit {
               height: '720px',
               panelClass: 'member-view-dialog',
               autoFocus: false,
+              disableClose: true,
               data: { memberId: item.id, member }
             });
           }
@@ -215,7 +216,8 @@ export class HeaderComponent implements OnInit {
       case 'debt':
         this.dialog.open(DebtFormComponent, {
           data: { debt: { id: item.id } },
-          width: '600px'
+          width: '600px',
+          disableClose: false
         });
         break;
       case 'receipt':
@@ -348,6 +350,7 @@ export class HeaderComponent implements OnInit {
             height: '720px',
             panelClass: 'member-view-dialog',
             autoFocus: false,
+            disableClose: true,
             data: { memberId: notification.type_id, member }
           });
         }

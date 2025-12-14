@@ -3,8 +3,14 @@
     <h2>{{ type === 'expenses' ? 'לאן הולך הכסף' : 'מאין נכנס הכסף' }}</h2>
   </div>
 
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <span class="loading-text">טוען נתונים...</span>
+  </div>
+
   <!-- Monthly Distribution -->
-  <div class="stats-section" *ngIf="stats">
+  <div class="stats-section" *ngIf="stats && !isLoading">
     <h3>{{ type === 'expenses' ? 'להלן התפלגות ההוצאות החודשית שלכם:' : 'להלן התפלגות ההכנסות החודשיות שלכם:' }}</h3>
     <div class="distribution-chart-container" *ngIf="stats && stats.categoryDistribution">
       @let sortedCategories = getSortedCategories();
@@ -48,7 +54,7 @@
   </div>
 
   <!-- Trend -->
-  <div class="stats-section" *ngIf="stats">
+  <div class="stats-section" *ngIf="stats && !isLoading">
     <h3>{{ type === 'expenses' ? 'מגמת ההוצאות ב 3 החודשים האחרונים:' : 'מגמת ההכנסות ב 3 החודשים האחרונים:' }}</h3>
     <div class="trend-chart" *ngIf="stats.trend">
       @for (monthData of getReversedTrend(); track monthData.month; let isFirst = $first) {
@@ -65,7 +71,7 @@
   </div>
 
   <!-- Unpaid/Uncollected -->
-  <div class="stats-section" *ngIf="stats">
+  <div class="stats-section" *ngIf="stats && !isLoading">
     <h3>{{ type === 'expenses' ? 'ההוצאות שלא שולמו מתוך יתרת החובות הפתוחים לחודש ' + getCurrentMonthHebrew() + ':' : 'ההכנסות שלא נגבו מתוך יתרת החובות הפתוחים לחודש ' + getCurrentMonthHebrew() + ':' }}</h3>
     <div class="unpaid-chart-container" *ngIf="(type === 'expenses' && stats.unpaidExpenses) || (type === 'incomes' && stats.uncollectedIncome)">
       <div class="unpaid-amount">

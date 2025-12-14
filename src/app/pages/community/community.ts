@@ -33,7 +33,8 @@ export class CommunityComponent implements OnInit {
     const dialogRef = this.dialog.open(MemberFormComponent, {
       width: '70%',
       panelClass: 'member-form-dialog-panel',
-      autoFocus: false
+      autoFocus: false,
+      disableClose: false
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -48,6 +49,7 @@ export class CommunityComponent implements OnInit {
       width: '70%',
       panelClass: 'member-form-dialog-panel',
       autoFocus: false,
+      disableClose: false,
       data: { member }
     });
 
@@ -59,15 +61,17 @@ export class CommunityComponent implements OnInit {
   }
 
   navigateToMember(member: Member): void {
-    // Pre-fetch member data before opening dialog
+    this.isLoadingMember = true;
     this.memberService.getOne(member.id).subscribe({
       next: (fullMember: Member) => {
+        this.isLoadingMember = false;
         const dialogRef = this.dialog.open(MemberViewComponent, {
           width: '95vw',
           maxWidth: '1400px',
           height: '720px',
           panelClass: 'member-view-dialog',
           autoFocus: false,
+          disableClose: true,
           data: { memberId: member.id, member: fullMember }
         });
 
@@ -78,6 +82,7 @@ export class CommunityComponent implements OnInit {
         });
       },
       error: (error) => {
+        this.isLoadingMember = false;
         console.error('Error loading member:', error);
       }
     });
@@ -92,6 +97,8 @@ export class CommunityComponent implements OnInit {
   itemsPerPage = 10;
   totalPages = 1;
   isLoading = false;
+  isLoadingMember = false;
+  isSendingMessage = false;
   selectedMembers: Set<string> = new Set();
 
   sortBy = 'fullName';
@@ -340,6 +347,7 @@ export class CommunityComponent implements OnInit {
         enterAnimationDuration: '0ms',
         exitAnimationDuration: '0ms',
         data: {
+          icon: 'triangle-warning',
           title: 'שים לב',
           message: 'יש לבחור לפחות פריט אחד לפני ביצוע פעולה קולקטיבית',
           confirmText: 'הבנתי'
@@ -516,6 +524,7 @@ export class CommunityComponent implements OnInit {
       panelClass: 'payment-dialog-panel',
       backdropClass: 'payment-dialog-backdrop',
       autoFocus: false,
+      disableClose: true,
       data: {
         memberId: member.id,
         memberName: member.fullName
@@ -541,8 +550,10 @@ export class CommunityComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: ReminderDialogResult | undefined) => {
       if (result) {
+        this.isSendingMessage = true;
         this.memberService.notify(member.id, result.message).subscribe({
           next: () => {
+            this.isSendingMessage = false;
             this.dialog.open(ConfirmDialogComponent, {
               width: '400px',
               panelClass: 'confirm-dialog-panel',
@@ -557,7 +568,21 @@ export class CommunityComponent implements OnInit {
             });
           },
           error: (error) => {
+            this.isSendingMessage = false;
             console.error('Error sending message:', error);
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '400px',
+              panelClass: 'confirm-dialog-panel',
+              backdropClass: 'confirm-dialog-backdrop',
+              enterAnimationDuration: '0ms',
+              exitAnimationDuration: '0ms',
+              data: {
+                icon: 'triangle-warning',
+                title: 'שגיאה בשליחת ההודעה',
+                message: 'אירעה שגיאה בעת שליחת ההודעה. אנא נסה שוב.',
+                confirmText: 'סגור'
+              }
+            });
           }
         });
       }
@@ -584,8 +609,10 @@ export class CommunityComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: ReminderDialogResult | undefined) => {
       if (result) {
+        this.isSendingMessage = true;
         this.memberService.notifyMany(selectedIds, result.message).subscribe({
           next: () => {
+            this.isSendingMessage = false;
             this.dialog.open(ConfirmDialogComponent, {
               width: '400px',
               panelClass: 'confirm-dialog-panel',
@@ -600,7 +627,21 @@ export class CommunityComponent implements OnInit {
             });
           },
           error: (error) => {
+            this.isSendingMessage = false;
             console.error('Error sending messages:', error);
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '400px',
+              panelClass: 'confirm-dialog-panel',
+              backdropClass: 'confirm-dialog-backdrop',
+              enterAnimationDuration: '0ms',
+              exitAnimationDuration: '0ms',
+              data: {
+                icon: 'triangle-warning',
+                title: 'שגיאה בשליחת ההודעות',
+                message: 'אירעה שגיאה בעת שליחת ההודעות. אנא נסה שוב.',
+                confirmText: 'סגור'
+              }
+            });
           }
         });
       }
